@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import AdvanceButton from '$lib/components/AdvanceButton.svelte';
 	import Beat from '$lib/components/Beat.svelte';
+	import JourneyLoader from '$lib/components/JourneyLoader.svelte';
 	import JourneyNav from '$lib/components/JourneyNav.svelte';
 	import JourneyProgress from '$lib/components/JourneyProgress.svelte';
 	import JourneyVideo from '$lib/components/JourneyVideo.svelte';
@@ -17,23 +18,45 @@
 	let scrollP = $state(0);
 	let activeBeats = $state(initialActiveBeats());
 	let reduced = $state(false);
+	let loading = $state(true);
+	let loadProgress = $state(0);
 
 	function jumpTo(p: number) {
+		if (loading) return;
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		window.scrollTo({ top: max * p, behavior: reduced ? 'auto' : 'smooth' });
 	}
 
 	function advance() {
+		if (loading) return;
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		const cur = max > 0 ? window.scrollY / max : 0;
 		jumpTo(nextBeatProgress(cur));
 	}
 
+	function setLoading(next: boolean) {
+		loading = next;
+		document.documentElement.classList.toggle('loading', next);
+	}
+
+	function bufferedRatio(video: HTMLVideoElement) {
+		if (!video.duration || !Number.isFinite(video.duration)) return 0;
+		if (!video.buffered.length) return 0;
+		let end = 0;
+		for (let i = 0; i < video.buffered.length; i++) {
+			end = Math.max(end, video.buffered.end(i));
+		}
+		return Math.min(1, end / video.duration);
+	}
+
 	onMount(() => {
 		reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		setLoading(true);
 
 		if (reduced) {
 			activeBeats = initialActiveBeats(true);
+			loadProgress = 1;
+			setLoading(false);
 			return;
 		}
 
@@ -43,8 +66,42 @@
 		let lastSet = -1;
 		let raf = 0;
 		let localScrollP = 0;
+		let finished = false;
+		let pollId = 0;
+
+		const finishLoading = async () => {
+			if (finished) return;
+			finished = true;
+			ready = true;
+			hasVideo = true;
+			loadProgress = 1;
+
+			try {
+				await videoEl?.play();
+				videoEl?.pause();
+			} catch {
+				/* autoplay may be blocked; scrubbing still works */
+			}
+
+			window.setTimeout(() => setLoading(false), 280);
+		};
+
+		const updateLoadProgress = () => {
+			const video = videoEl;
+			if (!video || finished) return;
+
+			const buffered = bufferedRatio(video);
+			const stateBoost = Math.min(1, video.readyState / 4);
+			loadProgress = Math.max(loadProgress, buffered * 0.85 + stateBoost * 0.15);
+
+			const enoughBuffered = buffered >= 0.35 || video.readyState >= 3;
+			if (video.duration && enoughBuffered) {
+				void finishLoading();
+			}
+		};
 
 		const onScroll = () => {
+			if (loading && !finished) return;
 			const max = document.documentElement.scrollHeight - window.innerHeight;
 			localScrollP = max > 0 ? window.scrollY / max : 0;
 			localScrollP = Math.min(1, Math.max(0, localScrollP));
@@ -78,38 +135,75 @@
 			raf = requestAnimationFrame(frame);
 		};
 
-		const onLoaded = async () => {
-			ready = true;
-			hasVideo = true;
-			try {
-				await videoEl?.play();
-				videoEl?.pause();
-			} catch {
-				/* autoplay may be blocked; scrubbing still works */
-			}
+		const onMeta = () => {
+			loadProgress = Math.max(loadProgress, 0.12);
+			updateLoadProgress();
+		};
+
+		const onProgress = () => updateLoadProgress();
+		const onCanPlay = () => updateLoadProgress();
+		const onCanPlayThrough = () => {
+			loadProgress = Math.max(loadProgress, 0.95);
+			void finishLoading();
 		};
 
 		window.addEventListener('scroll', onScroll, { passive: true });
-		videoEl?.addEventListener('loadedmetadata', onLoaded);
+
+		const attach = () => {
+			const video = videoEl;
+			if (!video) return;
+
+			video.addEventListener('loadedmetadata', onMeta);
+			video.addEventListener('progress', onProgress);
+			video.addEventListener('canplay', onCanPlay);
+			video.addEventListener('canplaythrough', onCanPlayThrough);
+
+			if (video.readyState >= 1) onMeta();
+			updateLoadProgress();
+		};
+
+		attach();
+		pollId = window.setInterval(updateLoadProgress, 200);
+
+		// Don't trap visitors forever on slow connections.
+		const timeout = window.setTimeout(() => {
+			if (!finished) void finishLoading();
+		}, 20000);
 
 		onScroll();
 		raf = requestAnimationFrame(frame);
 
 		return () => {
+			window.clearInterval(pollId);
+			window.clearTimeout(timeout);
 			window.removeEventListener('scroll', onScroll);
-			videoEl?.removeEventListener('loadedmetadata', onLoaded);
+			videoEl?.removeEventListener('loadedmetadata', onMeta);
+			videoEl?.removeEventListener('progress', onProgress);
+			videoEl?.removeEventListener('canplay', onCanPlay);
+			videoEl?.removeEventListener('canplaythrough', onCanPlayThrough);
 			cancelAnimationFrame(raf);
+			document.documentElement.classList.remove('loading');
 		};
+	});
+
+	$effect(() => {
+		if (missing && loading) {
+			loadProgress = 1;
+			document.documentElement.classList.remove('loading');
+			loading = false;
+		}
 	});
 </script>
 
+<JourneyLoader progress={loadProgress} visible={loading} />
 <JourneyVideo bind:videoEl bind:missing />
 <div id="scrim"></div>
 
-<JourneyNav onJump={jumpTo} />
-<JourneyProgress progress={scrollP} />
+{#if !loading}
+	<JourneyNav onJump={jumpTo} />
+	<JourneyProgress progress={scrollP} />
 
-<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Introduction">
+	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Introduction">
 	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">The privacy platform</div>
 	<h1
 		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
@@ -149,6 +243,7 @@
 	>
 		No real idea what your<br />people actually <em class="text-ember not-italic">know</em>.
 	</p>
+	<AdvanceButton class="mt-5" label="Next section" onclick={advance} />
 </Beat>
 
 <Beat
@@ -164,6 +259,7 @@
 	>
 		No idea how badly a<br />breach would actually <em class="text-ember not-italic">hurt</em>.
 	</p>
+	<AdvanceButton class="mt-5 ml-auto" label="Next section" onclick={advance} />
 </Beat>
 
 <Beat
@@ -179,6 +275,7 @@
 	>
 		A new AI tool went live.<br /><em class="text-ember not-italic">Nobody checked it.</em>
 	</p>
+	<AdvanceButton class="mt-5" label="Next section" onclick={advance} />
 </Beat>
 
 <Beat
@@ -194,6 +291,7 @@
 	>
 		You signed the supplier.<br /><em class="text-ember not-italic">Nobody checked their privacy.</em>
 	</p>
+	<AdvanceButton class="mt-5 ml-auto" label="Next section" onclick={advance} />
 </Beat>
 
 <Beat
@@ -209,6 +307,7 @@
 	>
 		It's all in ten places<br />and <em class="text-ember not-italic">one person's head</em>.
 	</p>
+	<AdvanceButton class="mt-5" label="Next: CultureLens" onclick={advance} />
 </Beat>
 
 <Beat id="beat-free" active={activeBeats['beat-free']} label="CultureLens free">
@@ -232,67 +331,7 @@
 			Create your free login
 		</a>
 	</div>
-	<AdvanceButton class="mt-7" label="Next: how we make money" onclick={advance} />
-</Beat>
-
-<Beat id="beat-honest" active={activeBeats['beat-honest']} label="How we make money">
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Act two · The honest bit</div>
-	<h2
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		Here's how we<br />make <em class="font-medium text-lens not-italic">money</em>
-	</h2>
-	<p
-		class="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed font-light text-bone-dim [text-shadow:0_1px_16px_rgba(4,6,10,0.7)]"
-	>
-		Your anonymised results feed our industry benchmark — that's the trade, stated plainly. Your data
-		stays yours, and the survey stays genuinely useful on its own.
-	</p>
-	<div
-		class="mt-6 grid grid-cols-1 gap-4 rounded-2xl border border-bone/15 bg-ink/60 p-5 text-left text-sm backdrop-blur-md sm:grid-cols-2 sm:gap-x-6"
-	>
-		<div>
-			<h3 class="mb-3 text-xs font-medium tracking-[0.2em] text-lens uppercase">Free gets you</h3>
-			<ul class="space-y-2">
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[7px] before:left-0 before:h-2 before:w-2 before:rounded-full before:border-[1.5px] before:border-lens before:content-['']"
-				>
-					A full, effective culture survey
-				</li>
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[7px] before:left-0 before:h-2 before:w-2 before:rounded-full before:border-[1.5px] before:border-lens before:content-['']"
-				>
-					Clear highlights of what needs attention
-				</li>
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[7px] before:left-0 before:h-2 before:w-2 before:rounded-full before:border-[1.5px] before:border-lens before:content-['']"
-				>
-					Unlimited runs, forever
-				</li>
-			</ul>
-		</div>
-		<div>
-			<h3 class="mb-3 text-xs font-medium tracking-[0.2em] text-ember uppercase">Free doesn't</h3>
-			<ul class="space-y-2">
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[9px] before:left-0.5 before:h-[1.5px] before:w-2 before:bg-ember before:content-['']"
-				>
-					Benchmark comparison against your industry
-				</li>
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[9px] before:left-0.5 before:h-[1.5px] before:w-2 before:bg-ember before:content-['']"
-				>
-					Action planning and tracking
-				</li>
-				<li
-					class="relative list-none pl-4 font-light leading-snug text-bone-dim before:absolute before:top-[9px] before:left-0.5 before:h-[1.5px] before:w-2 before:bg-ember before:content-['']"
-				>
-					The wider privacy platform
-				</li>
-			</ul>
-		</div>
-	</div>
-	<AdvanceButton class="mt-6" label="Next: pass through the lens" onclick={advance} />
+	<AdvanceButton class="mx-auto mt-7" label="Next: pass through the lens" onclick={advance} />
 </Beat>
 
 <Beat
@@ -307,10 +346,11 @@
 	>
 		Everything looks different<br />from <em class="font-medium text-lens not-italic">here</em>
 	</h2>
+	<AdvanceButton class="mx-auto mt-7" label="Next: the platform" onclick={advance} />
 </Beat>
 
 <Beat id="beat-platform" active={activeBeats['beat-platform']} label="The platform">
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Act three · The platform</div>
+	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Act two · The platform</div>
 	<h2
 		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
 	>
@@ -322,7 +362,7 @@
 		Dashboards, diagrams and visual screens — not walls of tables and forms. Your privacy posture,
 		mapped so anyone in the room understands it in seconds.
 	</p>
-	<AdvanceButton class="mt-7" label="Next: three ways in" onclick={advance} />
+	<AdvanceButton class="mx-auto mt-7" label="Next: three ways in" onclick={advance} />
 </Beat>
 
 <Beat
@@ -379,5 +419,7 @@
 		</a>
 	</div>
 </Beat>
+
+{/if}
 
 <div id="scroll-space" aria-hidden="true"></div>

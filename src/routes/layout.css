@@ -96,6 +96,21 @@
 	animation: wheel 1.6s infinite;
 }
 
+.loader-ring {
+	animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+html.loading,
+html.loading body {
+	overflow: hidden;
+}
+
 @keyframes wheel {
 	0% {
 		top: 2px;

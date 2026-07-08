@@ -22,13 +22,6 @@
 		</button>
 		<button
 			type="button"
-			onclick={() => onJump(NAV_JUMPS.deal)}
-			class="rounded text-bone-dim no-underline transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-		>
-			The deal
-		</button>
-		<button
-			type="button"
 			onclick={() => onJump(NAV_JUMPS.platform)}
 			class="rounded text-bone-dim no-underline transition-colors hover:text-bone focus-visible:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		>

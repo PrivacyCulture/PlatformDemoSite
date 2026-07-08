@@ -2,7 +2,7 @@
 	let {
 		label,
 		onclick,
-		class: className = ''
+		class: className = 'mx-auto'
 	}: {
 		label: string;
 		onclick: () => void;
@@ -15,7 +15,7 @@
 	{onclick}
 	aria-label={label}
 	class={[
-		'mx-auto flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/25 text-bone-dim transition-all hover:-translate-y-0.5 hover:border-bone/60 hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens',
+		'flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/25 text-bone-dim transition-all hover:-translate-y-0.5 hover:border-bone/60 hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens',
 		className
 	]}
 >

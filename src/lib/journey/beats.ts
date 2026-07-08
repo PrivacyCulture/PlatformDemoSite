@@ -6,7 +6,6 @@ export type BeatId =
 	| 'beat-clutter-4'
 	| 'beat-clutter-5'
 	| 'beat-free'
-	| 'beat-honest'
 	| 'beat-lens'
 	| 'beat-platform'
 	| 'beat-doors';
@@ -24,17 +23,15 @@ export const BEAT_DEFS: BeatDef[] = [
 	{ id: 'beat-clutter-3', from: 0.23, to: 0.285 },
 	{ id: 'beat-clutter-4', from: 0.305, to: 0.36 },
 	{ id: 'beat-clutter-5', from: 0.38, to: 0.44 },
-	{ id: 'beat-free', from: 0.48, to: 0.59 },
-	{ id: 'beat-honest', from: 0.62, to: 0.72 },
-	{ id: 'beat-lens', from: 0.745, to: 0.8 },
-	{ id: 'beat-platform', from: 0.83, to: 0.9 },
+	{ id: 'beat-free', from: 0.48, to: 0.62 },
+	{ id: 'beat-lens', from: 0.66, to: 0.78 },
+	{ id: 'beat-platform', from: 0.81, to: 0.9 },
 	{ id: 'beat-doors', from: 0.93, to: 1.03 }
 ];
 
 export const NAV_JUMPS = {
-	free: 0.52,
-	deal: 0.66,
-	platform: 0.86,
+	free: 0.54,
+	platform: 0.84,
 	start: 0.96
 } as const;
 
