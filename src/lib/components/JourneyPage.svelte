@@ -8,10 +8,14 @@
 	import JourneyVideo from '$lib/components/JourneyVideo.svelte';
 	import {
 		BEAT_DEFS,
+		beatFocusProgress,
+		currentBeatIndex,
 		initialActiveBeats,
 		nextBeatProgress,
 		type BeatId
 	} from '$lib/journey/beats';
+
+	const DWELL_MS = 4000;
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let missing = $state(false);
@@ -20,9 +24,27 @@
 	let reduced = $state(false);
 	let loading = $state(true);
 	let loadProgress = $state(0);
+	let playing = $state(false);
 
-	function jumpTo(p: number) {
+	let tourTimer: ReturnType<typeof setTimeout> | null = null;
+	let tourGen = 0;
+
+	function clearTourTimer() {
+		if (tourTimer !== null) {
+			clearTimeout(tourTimer);
+			tourTimer = null;
+		}
+	}
+
+	function stopTour() {
+		tourGen += 1;
+		clearTourTimer();
+		playing = false;
+	}
+
+	function jumpTo(p: number, opts: { keepTour?: boolean } = {}) {
 		if (loading) return;
+		if (!opts.keepTour) stopTour();
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		window.scrollTo({ top: max * p, behavior: reduced ? 'auto' : 'smooth' });
 	}
@@ -32,6 +54,52 @@
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		const cur = max > 0 ? window.scrollY / max : 0;
 		jumpTo(nextBeatProgress(cur));
+	}
+
+	function scheduleTourStep(gen: number, index: number) {
+		clearTourTimer();
+		if (gen !== tourGen || !playing) return;
+
+		if (index >= BEAT_DEFS.length) {
+			stopTour();
+			return;
+		}
+
+		const beat = BEAT_DEFS[index]!;
+		jumpTo(beatFocusProgress(beat), { keepTour: true });
+
+		const isLast = index === BEAT_DEFS.length - 1;
+		tourTimer = setTimeout(() => {
+			if (gen !== tourGen || !playing) return;
+			if (isLast) {
+				stopTour();
+				return;
+			}
+			scheduleTourStep(gen, index + 1);
+		}, DWELL_MS);
+	}
+
+	function togglePlay() {
+		if (loading) return;
+
+		if (playing) {
+			stopTour();
+			return;
+		}
+
+		playing = true;
+		const gen = ++tourGen;
+		const max = document.documentElement.scrollHeight - window.innerHeight;
+		const cur = max > 0 ? window.scrollY / max : 0;
+		let index = currentBeatIndex(cur);
+
+		// If we're already sitting on a beat past its focus, start from the next one.
+		const focus = beatFocusProgress(BEAT_DEFS[index]!);
+		if (cur > focus + 0.01 && index < BEAT_DEFS.length - 1) {
+			index += 1;
+		}
+
+		scheduleTourStep(gen, index);
 	}
 
 	function setLoading(next: boolean) {
@@ -183,6 +251,7 @@
 			videoEl?.removeEventListener('canplaythrough', onCanPlayThrough);
 			cancelAnimationFrame(raf);
 			document.documentElement.classList.remove('loading');
+			stopTour();
 		};
 	});
 
@@ -200,7 +269,7 @@
 <div id="scrim"></div>
 
 {#if !loading}
-	<JourneyNav onJump={jumpTo} />
+	<JourneyNav onJump={jumpTo} {playing} onTogglePlay={togglePlay} />
 	<JourneyProgress progress={scrollP} />
 
 	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Introduction">

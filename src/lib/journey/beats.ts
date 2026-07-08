@@ -51,3 +51,23 @@ export function nextBeatProgress(current: number): number {
 	}
 	return 1;
 }
+
+/** Mid-window scroll progress for a beat (good resting point while touring). */
+export function beatFocusProgress(beat: BeatDef): number {
+	const from = Math.max(0, beat.from);
+	const to = Math.min(1, beat.to);
+	return from + (to - from) * 0.35;
+}
+
+/** Index of the beat currently under the scroll position, or -1. */
+export function currentBeatIndex(current: number): number {
+	for (let i = 0; i < BEAT_DEFS.length; i++) {
+		const beat = BEAT_DEFS[i]!;
+		if (current >= beat.from && current <= beat.to) return i;
+	}
+	// Between beats: next one ahead
+	for (let i = 0; i < BEAT_DEFS.length; i++) {
+		if (BEAT_DEFS[i]!.from > current) return i;
+	}
+	return BEAT_DEFS.length - 1;
+}
