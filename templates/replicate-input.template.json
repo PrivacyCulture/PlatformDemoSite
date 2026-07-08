@@ -1,0 +1,7 @@
+{
+  "prompt": "{{PROMPT_WITH_STYLE}}",
+  "duration": 10,
+  "resolution": "1080p",
+  "aspect_ratio": "16:9",
+  "generate_audio": false
+}

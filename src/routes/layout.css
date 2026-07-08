@@ -1,0 +1,139 @@
+@import 'tailwindcss';
+
+@theme {
+	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+	--color-ink: #080c12;
+	--color-bone: #f2efe6;
+	--color-bone-dim: rgba(242, 239, 230, 0.62);
+	--color-lens: #4fd8c4;
+	--color-ember: #e8a33d;
+}
+
+/* Scroll + video layers — plain CSS so scrubbing behaviour stays intact */
+#scroll-space {
+	height: 1120vh;
+}
+
+#video-stage {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+}
+
+#journey-video {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+#scrim {
+	position: fixed;
+	inset: 0;
+	z-index: 5;
+	pointer-events: none;
+	background:
+		linear-gradient(90deg, rgba(4, 6, 10, 0.62) 0%, rgba(4, 6, 10, 0.18) 34%, rgba(4, 6, 10, 0) 55%),
+		radial-gradient(ellipse at center, transparent 50%, rgba(4, 6, 10, 0.5) 100%);
+}
+
+.beat {
+	position: fixed;
+	z-index: 20;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, calc(-50% + 26px));
+	opacity: 0;
+	transition:
+		opacity 0.5s ease,
+		transform 0.5s ease;
+	pointer-events: none;
+}
+
+.beat.on {
+	opacity: 1;
+	transform: translate(-50%, -50%);
+	pointer-events: auto;
+}
+
+/* Clutter beats — scattered off-centre, drift in from the side they live on */
+.beat.clutter {
+	width: min(86vw, 30rem);
+	max-width: none;
+}
+
+.beat.clutter.from-left {
+	left: clamp(1.25rem, 7vw, 8rem);
+	text-align: left;
+	transform: translate(-30px, calc(-50% + 6px));
+}
+
+.beat.clutter.from-left.on {
+	transform: translate(0, -50%);
+}
+
+.beat.clutter.from-right {
+	left: auto;
+	right: clamp(1.25rem, 7vw, 8rem);
+	text-align: right;
+	transform: translate(30px, calc(-50% + 6px));
+}
+
+.beat.clutter.from-right.on {
+	transform: translate(0, -50%);
+}
+
+.hint .dot::after {
+	content: '';
+	position: absolute;
+	left: 50%;
+	top: 2px;
+	width: 2px;
+	height: 3px;
+	background: rgba(242, 239, 230, 0.62);
+	transform: translateX(-50%);
+	animation: wheel 1.6s infinite;
+}
+
+@keyframes wheel {
+	0% {
+		top: 2px;
+		opacity: 1;
+	}
+	70% {
+		top: 5px;
+		opacity: 0;
+	}
+	100% {
+		top: 2px;
+		opacity: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	#scroll-space {
+		height: auto;
+	}
+
+	#video-stage,
+	#scrim,
+	#progress {
+		display: none;
+	}
+
+	.beat {
+		position: static;
+		opacity: 1;
+		transform: none;
+		pointer-events: auto;
+		margin: 14vh auto;
+		padding: 0 6vw;
+	}
+
+	.beat.clutter.from-left,
+	.beat.clutter.from-right {
+		text-align: left;
+		transform: none;
+	}
+}
