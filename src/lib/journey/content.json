@@ -1,0 +1,221 @@
+{
+	"meta": {
+		"title": "PrivacyCulture — Know thyself",
+		"description": "Know thyself. Most privacy teams don’t. Privacy Culture Platform is GDPR software for mid-market UK teams — living ROPA, DSARs, DPIAs, vendor risk, and shadow AI in one connected view."
+	},
+	"nav": {
+		"links": [
+			{
+				"label": "The Platform",
+				"href": "/platform"
+			},
+			{
+				"label": "Pricing",
+				"href": "/platform#pricing"
+			}
+		],
+		"demo": {
+			"label": "Book a demo",
+			"href": "/demo"
+		}
+	},
+	"legal": {
+		"links": [
+			{
+				"label": "Privacy Policy",
+				"href": "https://www.privacyculture.com/privacy-policy"
+			},
+			{
+				"label": "Cookie Notice",
+				"href": "https://www.privacyculture.com/cookie-notice"
+			},
+			{
+				"label": "Terms of Use",
+				"href": "https://www.privacyculture.com/terms-of-use"
+			},
+			{
+				"label": "Trust & Security",
+				"href": "/trust"
+			}
+		]
+	},
+	"coldOpen": {
+		"title": "Privacy platforms have started to look the same.",
+		"paragraphs": [
+			"A wall of modules. A licence fee. A shrug when the board asks the hard question.",
+			"We thought that was backwards.",
+			"So we started somewhere else — not “what do you need to record?” but “what do you actually need to fix?”"
+		],
+		"tagline": "This is privacy, rethought.",
+		"begin": "Begin",
+		"skip": "Skip"
+	},
+	"hero": {
+		"strapline": "From clutter to clarity to control",
+		"titleLines": [
+			"Know thyself.",
+			"Most privacy teams don’t."
+		],
+		"cta": "Start here to take the journey from clutter to clarity →",
+		"subline": "Your privacy truth is scattered across too many tools — and too many assumptions.",
+		"showMe": {
+			"label": "Just take me to the specs!",
+			"href": "/platform"
+		}
+	},
+	"scenes": [
+		{
+			"id": "beat-scene-1",
+			"label": "Connected View",
+			"pain": "You’ve got five tools, and five different answers…",
+			"whatIfRest": "it all told one story?",
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/connected-view"
+			}
+		},
+		{
+			"id": "beat-scene-2",
+			"label": "Living ROPA",
+			"pain": "Your ROPA was accurate once, a few reorgs ago…",
+			"whatIfRest": "it was always true?",
+			"align": "right",
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/living-ropa"
+			}
+		},
+		{
+			"id": "beat-scene-3",
+			"label": "DPIAs that land",
+			"pain": "You filed the assessment, and never opened it again…",
+			"whatIfRest": "nothing ever got forgotten?",
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/dpias"
+			}
+		},
+		{
+			"id": "beat-scene-4",
+			"label": "Vendor risk",
+			"pain": "You vetted them once, then trust took over…",
+			"whatIfRest": "you never stopped watching?",
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/vendor-risk"
+			}
+		},
+		{
+			"id": "beat-scene-5",
+			"label": "Shadow AI",
+			"pain": "Something went live with AI, and nobody checked…",
+			"whatIfRest": "nothing could hide?",
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/shadow-ai"
+			}
+		},
+		{
+			"id": "beat-scene-6",
+			"label": "Performance in numbers",
+			"pain": "The board asked if you’re compliant, and you shrugged…",
+			"whatIfRest": "you could just show them?",
+			"align": "right",
+			"textAfterSeconds": 1.25,
+			"showMe": {
+				"label": "See what it looks like!",
+				"href": "/platform/benchmark"
+			}
+		}
+	],
+	"lens": {
+		"eyebrow": "Come and see the view from here",
+		"eyebrowLines": ["Come and see", "the view from here"],
+		"textAfterSeconds": 5,
+		"title": "Where clarity meets control.",
+		"body": "Finally see your whole privacy picture brought into focus. Book a relaxed 25-minute walk-through to explore the Visual ROPA View using real sample data, and see how our connected workflows fit your team.",
+		"showMe": {
+			"label": "Show me the detail!",
+			"href": "/platform"
+		},
+		"principlesLabel": "Our 3 key guides",
+		"principles": [
+			{
+				"title": "Simplicity over software clutter",
+				"body": "No complex onboarding, no endless configuration, and no enterprise price tags. You get clean, intuitive workflows so you can get up and running without burning months on setup."
+			},
+			{
+				"title": "Visual clarity, not dense lists",
+				"body": "Privacy shouldn’t feel like endless scrolling through giant spreadsheets or text-heavy tables. We show your data flows, vendor ecosystem, and risks as a clear, interactive map—so you spot issues instantly instead of hunting through rows of text."
+			},
+			{
+				"title": "Distributed ownership",
+				"subtitle": "Across the whole business",
+				"body": "Privacy shouldn’t be a one-person job. Pass day-to-day tasks directly to team leads in HR, Marketing, or Product, while you keep full visibility and central control from your dashboard."
+			}
+		],
+		"primaryCta": {
+			"label": "Book a demo",
+			"href": "/demo"
+		},
+		"secondaryCta": {
+			"label": "Watch the 2-minute overview video",
+			"href": "https://www.privacyculture.com/software"
+		}
+	},
+	"emergence": {
+		"eyebrow": "Where clarity meets control",
+		"line1": "One story. Always true. Nothing forgotten.",
+		"line2Before": "Nothing hidden. And when they ask — you can",
+		"line2Em": "show them",
+		"line2After": "all of it.",
+		"differentiators": [
+			{
+				"title": "See where the risk really is.",
+				"body": "We start from your people, not a checklist — the ground reveals the weak spots audits miss."
+			},
+			{
+				"title": "See a risk, and the plan writes itself.",
+				"body": "Surfaced risks become prioritised tasks automatically."
+			},
+			{
+				"title": "Watch a record’s reach light up.",
+				"body": "Visual ROPA — see a processing activity’s blast radius, not read it."
+			},
+			{
+				"title": "See exactly how you compare to your peers.",
+				"body": "The benchmark — the thing no one else can offer."
+			}
+		],
+		"closing": "This is the rethink.",
+		"closingEm": "Which way in?"
+	},
+	"doors": {
+		"eyebrow": "Three doors",
+		"lineBefore": "Which way",
+		"lineEm": "in",
+		"subline": "Warts and all. Nothing hidden.",
+		"items": [
+			{
+				"status": "live",
+				"statusLabel": "Live",
+				"title": "See it in action",
+				"body": "Watch it work, then let us walk you through it. No card, no pressure.",
+				"cta": "Watch film + book a demo →",
+				"href": "/demo"
+			},
+			{
+				"status": "soon",
+				"statusLabel": "Coming soon",
+				"title": "See it for free",
+				"body": "Your privacy position, exactly as it is. No card, no call."
+			},
+			{
+				"status": "soon",
+				"statusLabel": "Coming soon",
+				"title": "Enter the sandbox",
+				"body": "A data-filled demo to open and play with freely."
+			}
+		]
+	}
+}

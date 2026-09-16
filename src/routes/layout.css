@@ -1,12 +1,19 @@
 @import 'tailwindcss';
 
 @theme {
-	--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
-	--color-ink: #080c12;
-	--color-bone: #f2efe6;
-	--color-bone-dim: rgba(242, 239, 230, 0.62);
-	--color-lens: #4fd8c4;
-	--color-ember: #e8a33d;
+	--font-sans: 'Poppins', 'Inter', system-ui, -apple-system, sans-serif;
+	/* PrivacyCulture brand palette from privacyculture.com */
+	--color-ink: #0b1220;
+	--color-bone: #f7fafc;
+	--color-bone-dim: rgba(247, 250, 252, 0.68);
+	--color-lens: #009bcc;
+	--color-horizon: #103389;
+	--color-heading: #263d86;
+	--color-ember: #079ac8;
+	--color-gold: #d4af6a;
+	--color-gold-ink: #1a1408;
+	/* Matches the /platform hero inset: clamp(1.5rem, 7vw, 5.5rem) */
+	--spacing-page: clamp(1.5rem, 7vw, 5.5rem);
 }
 
 /* Scroll + video layers — plain CSS so scrubbing behaviour stays intact */
@@ -18,9 +25,11 @@
 	position: fixed;
 	inset: 0;
 	z-index: 0;
+	overflow: hidden;
 }
 
-#journey-video {
+#journey-video,
+.journey-video-layer {
 	position: absolute;
 	inset: 0;
 	width: 100%;
@@ -36,6 +45,7 @@
 	background:
 		linear-gradient(90deg, rgba(4, 6, 10, 0.62) 0%, rgba(4, 6, 10, 0.18) 34%, rgba(4, 6, 10, 0) 55%),
 		radial-gradient(ellipse at center, transparent 50%, rgba(4, 6, 10, 0.5) 100%);
+	transition: background 1s ease;
 }
 
 .beat {
@@ -57,31 +67,147 @@
 	pointer-events: auto;
 }
 
-/* Clutter beats — scattered off-centre, drift in from the side they live on */
-.beat.clutter {
-	width: min(86vw, 30rem);
+/* Hero — left copy, full-width so the specs flash can sit on the right */
+.beat.hero-copy {
+	left: clamp(1.5rem, 7vw, 5.5rem);
+	right: clamp(1.5rem, 6vw, 5rem);
+	top: 48%;
+	width: auto;
 	max-width: none;
-}
-
-.beat.clutter.from-left {
-	left: clamp(1.25rem, 7vw, 8rem);
 	text-align: left;
-	transform: translate(-30px, calc(-50% + 6px));
+	transform: translate(-20px, calc(-50% + 12px));
 }
 
-.beat.clutter.from-left.on {
+.beat.hero-copy.on {
 	transform: translate(0, -50%);
 }
 
-.beat.clutter.from-right {
+.hero-main {
+	max-width: 36rem;
+}
+
+.hero-specs {
+	flex: 0 0 auto;
+	padding-bottom: 0.1rem;
+}
+
+/* Journey scenes — left-anchored copy matching the what-if layout */
+.beat.scene-copy {
+	left: clamp(1.25rem, 6vw, 5.5rem);
+	right: auto;
+	top: 50%;
+	width: min(78vw, 33rem);
+	max-width: none;
+	text-align: left;
+	transform: translate(-24px, calc(-50% + 10px));
+}
+
+.beat.scene-copy.on {
+	transform: translate(0, -50%);
+}
+
+.beat.scene-copy.from-right {
 	left: auto;
-	right: clamp(1.25rem, 7vw, 8rem);
+	right: clamp(4.5rem, 8vw, 6.5rem);
 	text-align: right;
-	transform: translate(30px, calc(-50% + 6px));
+	transform: translate(24px, calc(-50% + 10px));
 }
 
-.beat.clutter.from-right.on {
+.beat.scene-copy.from-right.on {
 	transform: translate(0, -50%);
+}
+
+/* Payoff conversion — vertically centered in the viewport */
+.beat.lens-copy {
+	top: 50%;
+	width: min(92vw, 72rem);
+	max-width: none;
+	max-height: calc(100vh - 9rem);
+	overflow-x: hidden;
+	overflow-y: auto;
+	text-align: center;
+	transform: translate(-50%, calc(-50% + 16px));
+	scrollbar-width: none;
+	overscroll-behavior: contain;
+	transition:
+		opacity 0.5s ease,
+		transform 0.7s ease,
+		top 0.85s ease,
+		max-height 0.85s ease;
+}
+
+.beat.lens-copy.on {
+	transform: translate(-50%, -50%);
+}
+
+/* Solo line sits in the sky above the sunrise */
+.beat.lens-copy.lens-view,
+.beat.lens-copy.lens-view.on {
+	top: 26%;
+	max-height: none;
+	overflow: visible;
+}
+
+.lens-view-arrow {
+	display: flex;
+	justify-content: center;
+	margin-top: 1.15rem;
+	color: var(--color-bone);
+	filter: drop-shadow(0 2px 12px rgba(4, 6, 10, 0.55));
+	animation: lens-view-arrow 1.8s ease-in-out infinite;
+}
+
+@keyframes lens-view-arrow {
+	0%,
+	100% {
+		transform: translateY(0);
+		opacity: 0.85;
+	}
+	50% {
+		transform: translateY(-7px);
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.lens-view-arrow {
+		animation: none;
+	}
+}
+
+.beat.lens-copy::-webkit-scrollbar {
+	display: none;
+}
+
+.lens-rest {
+	display: grid;
+	grid-template-rows: 0fr;
+	opacity: 0;
+	transition:
+		grid-template-rows 0.85s ease,
+		opacity 1s ease;
+}
+
+.lens-rest > .lens-rest-inner {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.lens-rest.open {
+	grid-template-rows: 1fr;
+	opacity: 1;
+}
+
+#scrim.scrim-view {
+	background:
+		linear-gradient(180deg, rgba(4, 6, 10, 0.16) 0%, transparent 42%, rgba(4, 6, 10, 0.22) 100%),
+		radial-gradient(ellipse at center, transparent 52%, rgba(4, 6, 10, 0.32) 100%);
+}
+
+#scrim.scrim-payoff {
+	background:
+		linear-gradient(180deg, rgba(4, 6, 10, 0.22) 0%, rgba(4, 6, 10, 0.12) 42%, rgba(4, 6, 10, 0.3) 100%),
+		radial-gradient(ellipse at center, rgba(4, 6, 10, 0.06) 32%, rgba(4, 6, 10, 0.32) 100%);
 }
 
 .hint .dot::after {
@@ -133,7 +259,12 @@ html.loading body {
 
 	#video-stage,
 	#scrim,
-	#progress {
+	#progress,
+	#video-clock-mobile,
+	#footage-picker,
+	#section-times,
+	#cold-open,
+	#scene-index {
 		display: none;
 	}
 
@@ -146,9 +277,32 @@ html.loading body {
 		padding: 0 6vw;
 	}
 
-	.beat.clutter.from-left,
-	.beat.clutter.from-right {
+	.beat.hero-copy,
+	.beat.scene-copy,
+	.beat.lens-copy {
 		text-align: left;
 		transform: none;
+		max-height: none;
+		overflow: visible;
+	}
+
+	.beat.hero-copy {
+		position: relative;
+		left: auto;
+		right: auto;
+		width: min(88vw, 72rem);
+		margin-left: auto;
+		margin-right: auto;
+	}
+
+	.beat.lens-copy {
+		text-align: center;
+	}
+
+	.lens-rest,
+	.lens-rest.open {
+		grid-template-rows: 1fr;
+		opacity: 1;
+		transition: none;
 	}
 }

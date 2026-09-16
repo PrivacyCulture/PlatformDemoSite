@@ -1,105 +1,498 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import AdvanceButton from '$lib/components/AdvanceButton.svelte';
 	import Beat from '$lib/components/Beat.svelte';
+	import JourneyColdOpen from '$lib/components/JourneyColdOpen.svelte';
 	import JourneyLoader from '$lib/components/JourneyLoader.svelte';
 	import JourneyNav from '$lib/components/JourneyNav.svelte';
-	import JourneyProgress from '$lib/components/JourneyProgress.svelte';
+	import JourneyScene from '$lib/components/JourneyScene.svelte';
+	import JourneySceneIndex from '$lib/components/JourneySceneIndex.svelte';
+	import JourneyLegal from '$lib/components/JourneyLegal.svelte';
 	import JourneyVideo from '$lib/components/JourneyVideo.svelte';
+	import ShowMeFlash from '$lib/components/ShowMeFlash.svelte';
 	import {
-		BEAT_DEFS,
 		beatFocusProgress,
+		beatWindow,
+		cloneBeatDefs,
 		currentBeatIndex,
 		initialActiveBeats,
+		isBeatActive,
+		isPayoffBeatId,
+		isSceneBeatId,
+		isSceneTextActive,
+		loadBeatDefsForVideo,
+		navJumpsFromBeats,
 		nextBeatProgress,
+		nextVisibleBeatIndex,
+		prevBeatProgress,
+		SCENE_TEXT_AFTER_SECONDS,
+		type BeatDef,
 		type BeatId
 	} from '$lib/journey/beats';
+	import {
+		COLD_OPEN_STORAGE_KEY,
+		DEFAULT_THEME_ID,
+		getTheme,
+		isJourneyThemeId,
+		sceneSrcForBeat,
+		themeTimingKey,
+		VIDEO_STORAGE_KEY,
+		type JourneyTheme
+	} from '$lib/journey/videos';
+	import { content, sceneClassName } from '$lib/journey/content';
 
-	const DWELL_MS = 4000;
+	const SCENES = content.scenes;
+	const PRINCIPLES = content.lens.principles;
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let themeId = $state(DEFAULT_THEME_ID);
+	let theme = $state<JourneyTheme>(getTheme(DEFAULT_THEME_ID));
+	let clipSrc = $state(sceneSrcForBeat(getTheme(DEFAULT_THEME_ID), 'beat-hero') ?? '');
+	let videoDuration = $state(0);
+	let beatDefs = $state<BeatDef[]>(cloneBeatDefs());
 	let missing = $state(false);
 	let scrollP = $state(0);
 	let activeBeats = $state(initialActiveBeats());
 	let reduced = $state(false);
 	let loading = $state(true);
 	let loadProgress = $state(0);
-	let playing = $state(false);
+	let mounted = $state(false);
+	let coldOpen = $state(false);
+	let journeyStarted = $state(false);
 
-	let tourTimer: ReturnType<typeof setTimeout> | null = null;
-	let tourGen = 0;
+	const navJumps = $derived(navJumpsFromBeats(beatDefs));
+	const activeBeatId = $derived.by(() => {
+		const on = Object.entries(activeBeats).find(([, active]) => active)?.[0] as BeatId | undefined;
+		if (on) return on;
+		const idx = currentBeatIndex(scrollP, beatDefs);
+		for (let i = idx; i >= 0; i--) {
+			if (!beatDefs[i]!.hidden) return beatDefs[i]!.id;
+		}
+		return 'beat-hero';
+	});
+	const activeSceneNumber = $derived.by(() => {
+		const idx = currentBeatIndex(scrollP, beatDefs);
+		const id = beatDefs[idx]?.id;
+		if (id && isSceneBeatId(id)) return Number(id.replace('beat-scene-', ''));
+		return 0;
+	});
+	const sceneIndexVisible = $derived(
+		!loading && !coldOpen && journeyStarted && activeSceneNumber > 0
+	);
 
-	function clearTourTimer() {
-		if (tourTimer !== null) {
-			clearTimeout(tourTimer);
-			tourTimer = null;
+	let heroShowMeOpen = $state(false);
+	const HERO_SHOW_ME_DELAY_MS = 1100;
+	const onHero = $derived(!loading && !coldOpen && activeBeatId === 'beat-hero');
+
+	let lensCopyOpen = $state(false);
+	const LENS_COPY_DELAY_MS = (content.lens.textAfterSeconds ?? 3) * 1000;
+	const onLens = $derived(!loading && !coldOpen && activeBeatId === 'beat-lens');
+
+	const playback = {
+		ready: false,
+		hasVideo: false,
+		easedT: 0,
+		lastSet: -1,
+		localScrollP: 0,
+		nativePlay: false,
+		clipFinished: false
+	};
+
+	let clipTime = $state(0);
+	let clipReady = $state(false);
+	let scenePlayGen = 0;
+	let lastScenePlayed: string | null = null;
+	/** True while the back control is reverse-scrubbing via scroll. */
+	let reverseNavigating = $state(false);
+
+	let reverseNavGen = 0;
+	let reverseRaf = 0;
+
+	function stopReverseNav() {
+		reverseNavGen += 1;
+		if (reverseRaf) {
+			cancelAnimationFrame(reverseRaf);
+			reverseRaf = 0;
+		}
+		reverseNavigating = false;
+	}
+
+	function stopNativePlay(opts: { hold?: boolean } = {}) {
+		scenePlayGen += 1;
+		playback.nativePlay = false;
+		const video = videoEl;
+		if (video) {
+			video.loop = false;
+			video.playbackRate = 1;
+			if (!video.paused) video.pause();
+		}
+		if (opts.hold && video?.duration) {
+			try {
+				video.currentTime = Math.max(0, video.duration - 0.05);
+				clipTime = video.duration;
+				playback.clipFinished = true;
+			} catch {
+				/* ignore */
+			}
 		}
 	}
 
-	function stopTour() {
-		tourGen += 1;
-		clearTourTimer();
-		playing = false;
+	/** Seek to the first frame and resolve after the browser paints it (avoids end-frame flash). */
+	function seekVideoToStart(video: HTMLVideoElement, gen: number): Promise<void> {
+		return new Promise((resolve) => {
+			if (gen !== scenePlayGen) {
+				resolve();
+				return;
+			}
+
+			const done = () => {
+				video.removeEventListener('seeked', done);
+				window.clearTimeout(fallback);
+				clipTime = 0;
+				playback.easedT = 0;
+				playback.lastSet = 0;
+				resolve();
+			};
+
+			// Already on (or very near) the first frame.
+			if (video.currentTime < 0.05 && !video.seeking) {
+				clipTime = 0;
+				playback.easedT = 0;
+				playback.lastSet = 0;
+				resolve();
+				return;
+			}
+
+			video.addEventListener('seeked', done);
+			const fallback = window.setTimeout(done, 250);
+			try {
+				video.currentTime = 0;
+			} catch {
+				done();
+			}
+		});
 	}
 
-	function jumpTo(p: number, opts: { keepTour?: boolean } = {}) {
-		if (loading) return;
-		if (!opts.keepTour) stopTour();
+	function isPlayableClipBeat(id: BeatId) {
+		return isSceneBeatId(id) || isPayoffBeatId(id);
+	}
+
+	/** Play a scene / payoff clip from the start to the end (real playback). */
+	async function playActiveSceneToEnd(forBeatId?: BeatId): Promise<void> {
+		const beatId = forBeatId ?? activeBeatId;
+		if (!isPlayableClipBeat(beatId)) return;
+
+		// Clear end-hold before any scrub/frame loop can paint the last frame.
+		playback.clipFinished = false;
+		if (lastScenePlayed === beatId) lastScenePlayed = null;
+
+		if (!playback.hasVideo || !clipReady) return;
+
+		const video = videoEl;
+		if (!video) return;
+
+		const expected = sceneSrcForBeat(theme, beatId);
+		if (expected && clipSrc !== expected) return;
+		if (expected && !videoMatchesSrc(video, expected)) return;
+
+		const gen = ++scenePlayGen;
+		video.loop = false;
+		video.playbackRate = 1;
+		playback.nativePlay = true;
+		playback.clipFinished = false;
+		lastScenePlayed = beatId;
+
+		await seekVideoToStart(video, gen);
+		if (gen !== scenePlayGen) return;
+
+		await new Promise<void>((resolve) => {
+			let settled = false;
+			const finish = () => {
+				if (settled || gen !== scenePlayGen) return;
+				settled = true;
+				video.removeEventListener('ended', finish);
+				video.removeEventListener('timeupdate', onTime);
+				window.clearTimeout(safety);
+				try {
+					if (video.duration && Number.isFinite(video.duration)) {
+						video.currentTime = Math.max(0, video.duration - 0.05);
+						clipTime = video.duration;
+					}
+				} catch {
+					/* ignore */
+				}
+				video.pause();
+				if (gen === scenePlayGen) {
+					playback.nativePlay = false;
+					playback.clipFinished = true;
+				}
+				resolve();
+			};
+
+			const onTime = () => {
+				if (gen !== scenePlayGen) return;
+				clipTime = video.currentTime;
+			};
+
+			video.addEventListener('ended', finish);
+			video.addEventListener('timeupdate', onTime);
+
+			void video.play().catch(() => finish());
+
+			const dur =
+				video.duration && Number.isFinite(video.duration) && video.duration > 0
+					? video.duration
+					: 12;
+			const safety = window.setTimeout(finish, (dur + 1.5) * 1000);
+		});
+	}
+
+	function jumpTo(p: number, opts: { instant?: boolean; keepPlayhead?: boolean } = {}) {
+		if (loading || coldOpen) return;
+		stopReverseNav();
+		if (!opts.keepPlayhead && !(p <= 0.02 && isHeroLoopBeat(activeBeatId))) {
+			stopNativePlay();
+		}
+		if (p > 0.02) journeyStarted = true;
 		const max = document.documentElement.scrollHeight - window.innerHeight;
-		window.scrollTo({ top: max * p, behavior: reduced ? 'auto' : 'smooth' });
+		const top = max * Math.min(1, Math.max(0, p));
+		window.scrollTo({
+			top,
+			behavior: opts.instant || reduced ? 'auto' : 'smooth'
+		});
+		if (opts.instant || reduced) {
+			syncScrollState(Math.min(1, Math.max(0, p)));
+		}
+	}
+
+	function sceneTextAfter(beatId: BeatId): number {
+		return SCENES.find((s) => s.id === beatId)?.textAfterSeconds ?? SCENE_TEXT_AFTER_SECONDS;
+	}
+
+	function isHeroLoopBeat(id: BeatId) {
+		return id === 'beat-hero' && Boolean(theme.hero);
+	}
+
+	/** Keep the hero plate looping at its native speed until the journey starts. */
+	function playHeroLoop() {
+		if (!isHeroLoopBeat(activeBeatId)) return;
+		if (!playback.hasVideo || !clipReady) return;
+
+		const video = videoEl;
+		if (!video) return;
+
+		const expected = sceneSrcForBeat(theme, 'beat-hero');
+		if (expected && clipSrc !== expected) return;
+		if (expected && !videoMatchesSrc(video, expected)) return;
+
+		video.loop = true;
+		video.playbackRate = 1;
+		playback.nativePlay = true;
+		playback.clipFinished = false;
+		lastScenePlayed = null;
+		if (video.paused) {
+			void video.play().catch(() => {
+				/* autoplay blocked — still frame is fine */
+			});
+		}
+	}
+
+	/** Keep playhead ready for scene / payoff autoplay (no end-frame flash). */
+	function prepareSceneEnter(beatId: BeatId) {
+		if (!isPlayableClipBeat(beatId)) return;
+		playback.clipFinished = false;
+		lastScenePlayed = null;
+		playback.easedT = 0;
+		playback.lastSet = -1;
+		playback.nativePlay = true;
+		const expected = sceneSrcForBeat(theme, beatId);
+		const video = videoEl;
+		if (video && expected && clipSrc === expected) {
+			try {
+				video.pause();
+				video.currentTime = 0;
+			} catch {
+				/* ignore */
+			}
+			clipTime = 0;
+		}
+	}
+
+	function beginJourney() {
+		if (loading) return;
+		stopReverseNav();
+		journeyStarted = true;
+		const firstScene = beatDefs.find((b) => b.id === 'beat-scene-1');
+		if (!firstScene) {
+			jumpTo(nextBeatProgress(0, beatDefs, videoDuration), { instant: true });
+			return;
+		}
+		prepareSceneEnter(firstScene.id);
+		jumpTo(firstScene.at + 0.01, { instant: true, keepPlayhead: true });
+	}
+
+	function jumpToScene(sceneNumber: number) {
+		const id = `beat-scene-${sceneNumber}` as BeatId;
+		const beat = beatDefs.find((b) => b.id === id);
+		if (!beat) return;
+		journeyStarted = true;
+		prepareSceneEnter(id);
+		jumpTo(beat.at + 0.01, { instant: true, keepPlayhead: true });
 	}
 
 	function advance() {
-		if (loading) return;
-		const max = document.documentElement.scrollHeight - window.innerHeight;
-		const cur = max > 0 ? window.scrollY / max : 0;
-		jumpTo(nextBeatProgress(cur));
-	}
+		if (loading || coldOpen) return;
+		stopReverseNav();
+		journeyStarted = true;
+		const idx = currentBeatIndex(scrollProgress(), beatDefs);
 
-	function scheduleTourStep(gen: number, index: number) {
-		clearTourTimer();
-		if (gen !== tourGen || !playing) return;
-
-		if (index >= BEAT_DEFS.length) {
-			stopTour();
+		const nextIdx = nextVisibleBeatIndex(beatDefs, idx + 1);
+		if (nextIdx < 0) {
+			jumpTo(1, { instant: true });
 			return;
 		}
 
-		const beat = BEAT_DEFS[index]!;
-		jumpTo(beatFocusProgress(beat), { keepTour: true });
+		const next = beatDefs[nextIdx]!;
+		if (isPlayableClipBeat(next.id)) {
+			prepareSceneEnter(next.id);
+			jumpTo(next.at + 0.01, { instant: true, keepPlayhead: true });
+		} else {
+			jumpTo(beatFocusProgress(next, beatDefs, videoDuration, sceneTextAfter(next.id)), {
+				instant: true
+			});
+		}
+	}
 
-		const isLast = index === BEAT_DEFS.length - 1;
-		tourTimer = setTimeout(() => {
-			if (gen !== tourGen || !playing) return;
-			if (isLast) {
-				stopTour();
+	/** Animate scroll backward so the active clip scrubs in reverse, like scrolling up. */
+	function retreat() {
+		if (loading || coldOpen) return;
+		stopNativePlay();
+		playback.clipFinished = false;
+		lastScenePlayed = null;
+		playback.easedT = -1;
+		playback.lastSet = -1;
+
+		const cur = scrollProgress();
+		const idx = currentBeatIndex(cur, beatDefs);
+		const lead = sceneTextAfter(beatDefs[idx]?.id ?? 'beat-hero');
+		const target = prevBeatProgress(cur, beatDefs, videoDuration, lead);
+		if (Math.abs(cur - target) < 0.002) return;
+
+		void animateRetreatTo(target);
+	}
+
+	function animateRetreatTo(target: number): Promise<void> {
+		const gen = ++reverseNavGen;
+		if (reverseRaf) {
+			cancelAnimationFrame(reverseRaf);
+			reverseRaf = 0;
+		}
+		reverseNavigating = true;
+
+		return new Promise((resolve) => {
+			const max = document.documentElement.scrollHeight - window.innerHeight;
+			const startY = window.scrollY;
+			const endY = max * Math.min(1, Math.max(0, target));
+			const distance = Math.abs(endY - startY);
+
+			const finish = () => {
+				if (gen !== reverseNavGen) {
+					resolve();
+					return;
+				}
+				window.scrollTo({ top: endY, behavior: 'auto' });
+				syncScrollState(Math.min(1, Math.max(0, target)));
+				if (target <= 0.02) journeyStarted = false;
+
+				// Land on the previous beat's text hold (end frame for scenes).
+				const landed = beatDefs[currentBeatIndex(target, beatDefs)];
+				if (landed && isSceneBeatId(landed.id)) {
+					playback.clipFinished = true;
+					lastScenePlayed = landed.id;
+					const video = videoEl;
+					if (video?.duration) {
+						try {
+							video.currentTime = Math.max(0, video.duration - 0.05);
+							clipTime = video.duration;
+							playback.easedT = video.currentTime;
+							playback.lastSet = video.currentTime;
+						} catch {
+							/* ignore */
+						}
+					}
+				}
+
+				reverseNavigating = false;
+				reverseRaf = 0;
+				resolve();
+			};
+
+			if (reduced || distance < 2) {
+				finish();
 				return;
 			}
-			scheduleTourStep(gen, index + 1);
-		}, DWELL_MS);
+
+			// Pace reverse scrub roughly like watching the clip rewind (~1.15× realtime).
+			const clipMs =
+				videoDuration && Number.isFinite(videoDuration) ? videoDuration * 1000 * 1.15 : 1400;
+			const durationMs = Math.min(3200, Math.max(900, Math.max(clipMs * 0.55, distance * 5500)));
+			const start = performance.now();
+
+			const step = (now: number) => {
+				if (gen !== reverseNavGen) {
+					resolve();
+					return;
+				}
+				const t = Math.min(1, (now - start) / durationMs);
+				// Gentle ease — mostly linear so reverse scrub stays readable.
+				const eased = t * (2 - t);
+				const y = startY + (endY - startY) * eased;
+				window.scrollTo({ top: y, behavior: 'auto' });
+				syncScrollState(max > 0 ? y / max : 0);
+				if (t < 1) {
+					reverseRaf = requestAnimationFrame(step);
+				} else {
+					finish();
+				}
+			};
+			reverseRaf = requestAnimationFrame(step);
+		});
 	}
 
-	function togglePlay() {
-		if (loading) return;
+	function markColdOpenSeen() {
+		try {
+			localStorage.setItem(COLD_OPEN_STORAGE_KEY, '1');
+		} catch {
+			/* ignore */
+		}
+	}
 
-		if (playing) {
-			stopTour();
+	function dismissColdOpen(skipToPlatform: boolean) {
+		markColdOpenSeen();
+		coldOpen = false;
+		if (skipToPlatform) {
+			journeyStarted = true;
+			jumpTo(navJumps.platform);
 			return;
 		}
+		journeyStarted = false;
+		jumpTo(0);
+	}
 
-		playing = true;
-		const gen = ++tourGen;
+	function scrollProgress(): number {
 		const max = document.documentElement.scrollHeight - window.innerHeight;
-		const cur = max > 0 ? window.scrollY / max : 0;
-		let index = currentBeatIndex(cur);
+		return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+	}
 
-		// If we're already sitting on a beat past its focus, start from the next one.
-		const focus = beatFocusProgress(BEAT_DEFS[index]!);
-		if (cur > focus + 0.01 && index < BEAT_DEFS.length - 1) {
-			index += 1;
+	function syncScrollState(progress = scrollProgress()) {
+		playback.localScrollP = progress;
+		scrollP = progress;
+		const next = {} as Record<BeatId, boolean>;
+		for (let i = 0; i < beatDefs.length; i++) {
+			const beat = beatDefs[i]!;
+			next[beat.id] = isBeatActive(progress, beatDefs, i);
 		}
-
-		scheduleTourStep(gen, index);
+		activeBeats = next;
+		if (progress > 0.02) journeyStarted = true;
 	}
 
 	function setLoading(next: boolean) {
@@ -107,388 +500,518 @@
 		document.documentElement.classList.toggle('loading', next);
 	}
 
-	function bufferedRatio(video: HTMLVideoElement) {
-		if (!video.duration || !Number.isFinite(video.duration)) return 0;
-		if (!video.buffered.length) return 0;
-		let end = 0;
-		for (let i = 0; i < video.buffered.length; i++) {
-			end = Math.max(end, video.buffered.end(i));
+	/** Non-reactive: must not be read as an $effect dependency. */
+	let firstClipLoaded = false;
+
+	function handleClipReady() {
+		firstClipLoaded = true;
+		playback.ready = true;
+		playback.hasVideo = true;
+		clipReady = true;
+		const video = videoEl;
+		if (video?.duration && Number.isFinite(video.duration)) {
+			videoDuration = video.duration;
 		}
-		return Math.min(1, end / video.duration);
+		if (reverseNavigating && video?.duration && Number.isFinite(video.duration)) {
+			try {
+				const local = localClipProgress(playback.localScrollP, activeBeatId);
+				const dur = Math.max(0.001, video.duration - 0.05);
+				const seekTo = Math.min(dur, Math.max(0, local * dur));
+				video.currentTime = seekTo;
+				clipTime = seekTo;
+				playback.easedT = seekTo;
+				playback.lastSet = seekTo;
+			} catch {
+				/* ignore */
+			}
+		} else if (video && isHeroLoopBeat(activeBeatId)) {
+			playHeroLoop();
+		} else if (video) {
+			try {
+				video.loop = false;
+				video.playbackRate = 1;
+				video.pause();
+				if (video.currentTime > 0.05) video.currentTime = 0;
+				clipTime = video.currentTime;
+			} catch {
+				/* ignore */
+			}
+		}
+		window.setTimeout(() => setLoading(false), 200);
+	}
+
+	function videoMatchesSrc(video: HTMLVideoElement, expected: string) {
+		const activeSrc = video.currentSrc || video.src;
+		if (!activeSrc) return false;
+		return activeSrc.includes(expected) || activeSrc.endsWith(expected.replace(/^\//, ''));
+	}
+
+	/** Local 0–1 progress inside the active beat (scrub mode only). */
+	function localClipProgress(progress: number, beatId: BeatId): number {
+		const index = beatDefs.findIndex((b) => b.id === beatId);
+		if (index < 0) return 0;
+
+		if (beatId === 'beat-hero' || !journeyStarted) return 0;
+
+		// Finished scene / payoff clip: hold the end frame (not during reverse scrub).
+		if (
+			!playback.nativePlay &&
+			isPlayableClipBeat(beatId) &&
+			playback.clipFinished &&
+			lastScenePlayed === beatId
+		) {
+			return 1;
+		}
+
+		// Payoff waiting to play: stay on the first frame. Seeking to the end
+		// of a freshly loaded clip often paints black.
+		if (isPayoffBeatId(beatId)) return 0;
+
+		const { from, to } = beatWindow(beatDefs, index);
+		const span = Math.max(0.01, to - from);
+		return Math.min(1, Math.max(0, (progress - from) / span));
+	}
+
+	function sceneShowsText(sceneId: BeatId, sceneIndex: number, afterSeconds: number): boolean {
+		if (sceneIndex < 0) return false;
+		if (!isBeatActive(scrollP, beatDefs, sceneIndex)) return false;
+		if (activeBeatId === sceneId && videoDuration > 0) {
+			return clipTime >= afterSeconds;
+		}
+		return isSceneTextActive(scrollP, beatDefs, sceneIndex, videoDuration, afterSeconds);
 	}
 
 	onMount(() => {
 		reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-		setLoading(true);
+
+		try {
+			const savedTheme = localStorage.getItem(VIDEO_STORAGE_KEY);
+			if (savedTheme && isJourneyThemeId(savedTheme)) {
+				themeId = savedTheme;
+				theme = getTheme(savedTheme);
+				beatDefs = loadBeatDefsForVideo(themeTimingKey(theme));
+				clipSrc = sceneSrcForBeat(theme, 'beat-hero') ?? theme.src ?? '';
+			}
+			const seenCold = localStorage.getItem(COLD_OPEN_STORAGE_KEY);
+			coldOpen = seenCold !== '1';
+		} catch {
+			coldOpen = true;
+		}
+
+		mounted = true;
 
 		if (reduced) {
-			activeBeats = initialActiveBeats(true);
+			activeBeats = initialActiveBeats(true, beatDefs);
 			loadProgress = 1;
 			setLoading(false);
+			coldOpen = false;
 			return;
 		}
 
-		let ready = false;
-		let hasVideo = false;
-		let easedT = 0;
-		let lastSet = -1;
 		let raf = 0;
-		let localScrollP = 0;
-		let finished = false;
-		let pollId = 0;
+		let lastScrollP = 0;
 
-		const finishLoading = async () => {
-			if (finished) return;
-			finished = true;
-			ready = true;
-			hasVideo = true;
-			loadProgress = 1;
-
-			try {
-				await videoEl?.play();
-				videoEl?.pause();
-			} catch {
-				/* autoplay may be blocked; scrubbing still works */
-			}
-
-			window.setTimeout(() => setLoading(false), 280);
-		};
-
-		const updateLoadProgress = () => {
-			const video = videoEl;
-			if (!video || finished) return;
-
-			const buffered = bufferedRatio(video);
-			const stateBoost = Math.min(1, video.readyState / 4);
-			loadProgress = Math.max(loadProgress, buffered * 0.85 + stateBoost * 0.15);
-
-			const enoughBuffered = buffered >= 0.35 || video.readyState >= 3;
-			if (video.duration && enoughBuffered) {
-				void finishLoading();
-			}
+		const onUserScrollIntent = () => {
+			if (reverseNavigating) stopReverseNav();
 		};
 
 		const onScroll = () => {
-			if (loading && !finished) return;
+			if (loading && !playback.ready) return;
+			if (coldOpen) return;
 			const max = document.documentElement.scrollHeight - window.innerHeight;
-			localScrollP = max > 0 ? window.scrollY / max : 0;
-			localScrollP = Math.min(1, Math.max(0, localScrollP));
-			scrollP = localScrollP;
+			playback.localScrollP = max > 0 ? window.scrollY / max : 0;
+			playback.localScrollP = Math.min(1, Math.max(0, playback.localScrollP));
+			scrollP = playback.localScrollP;
+
+			// Manual scrub backward — snap video ease so it doesn't keep drifting forward.
+			if (playback.localScrollP < lastScrollP - 0.008) {
+				playback.easedT = -1;
+				playback.lastSet = -1;
+			}
+			lastScrollP = playback.localScrollP;
+
+			if (playback.localScrollP > 0.02) journeyStarted = true;
 
 			const next = {} as Record<BeatId, boolean>;
-			for (const beat of BEAT_DEFS) {
-				next[beat.id] = localScrollP >= beat.from && localScrollP <= beat.to;
+			for (let i = 0; i < beatDefs.length; i++) {
+				const beat = beatDefs[i]!;
+				next[beat.id] = isBeatActive(playback.localScrollP, beatDefs, i);
 			}
 			activeBeats = next;
 		};
 
 		const frame = () => {
 			const video = videoEl;
-			if (ready && hasVideo && video && video.duration && video.readyState >= 2) {
-				const dur = Math.max(0.001, video.duration - 0.05);
-				const target = localScrollP * dur;
-				easedT += (target - easedT) * 0.12;
+			if (
+				playback.ready &&
+				playback.hasVideo &&
+				video &&
+				video.duration &&
+				video.readyState >= 2
+			) {
+				if (playback.nativePlay) {
+					clipTime = video.currentTime;
+					playback.easedT = video.currentTime;
+					playback.lastSet = video.currentTime;
+				} else {
+					if (!video.paused) video.pause();
 
-				const shouldSeek =
-					!video.seeking &&
-					(lastSet < 0 || Math.abs(lastSet - easedT) > 1 / 30) &&
-					Math.abs(video.currentTime - easedT) > 0.02;
+					const dur = Math.max(0.001, video.duration - 0.05);
+					const local = theme.scenes?.length
+						? localClipProgress(playback.localScrollP, activeBeatId)
+						: playback.localScrollP;
+					const target = local * dur;
+					if (reverseNavigating || playback.easedT < 0) {
+						playback.easedT = target;
+					} else {
+						playback.easedT += (target - playback.easedT) * 0.12;
+					}
 
-				if (shouldSeek) {
-					const clamped = Math.min(dur, Math.max(0, easedT));
-					video.currentTime = clamped;
-					lastSet = clamped;
+					const shouldSeek =
+						!video.seeking &&
+						(playback.lastSet < 0 || Math.abs(playback.lastSet - playback.easedT) > 1 / 30) &&
+						Math.abs(video.currentTime - playback.easedT) > 0.02;
+
+					if (shouldSeek) {
+						const clamped = Math.min(dur, Math.max(0, playback.easedT));
+						video.currentTime = clamped;
+						playback.lastSet = clamped;
+						clipTime = clamped;
+					}
 				}
 			}
 			raf = requestAnimationFrame(frame);
 		};
 
-		const onMeta = () => {
-			loadProgress = Math.max(loadProgress, 0.12);
-			updateLoadProgress();
-		};
+		window.addEventListener('wheel', onUserScrollIntent, { passive: true });
+		window.addEventListener('touchstart', onUserScrollIntent, { passive: true });
+		const onKeyNav = (e: KeyboardEvent) => {
+			const tag = (e.target as HTMLElement | null)?.tagName;
+			if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable) {
+				return;
+			}
 
-		const onProgress = () => updateLoadProgress();
-		const onCanPlay = () => updateLoadProgress();
-		const onCanPlayThrough = () => {
-			loadProgress = Math.max(loadProgress, 0.95);
-			void finishLoading();
+			if (e.key === 'ArrowRight') {
+				e.preventDefault();
+				advance();
+				return;
+			}
+			if (e.key === 'ArrowLeft') {
+				e.preventDefault();
+				retreat();
+			}
 		};
-
+		window.addEventListener('keydown', onKeyNav);
 		window.addEventListener('scroll', onScroll, { passive: true });
-
-		const attach = () => {
-			const video = videoEl;
-			if (!video) return;
-
-			video.addEventListener('loadedmetadata', onMeta);
-			video.addEventListener('progress', onProgress);
-			video.addEventListener('canplay', onCanPlay);
-			video.addEventListener('canplaythrough', onCanPlayThrough);
-
-			if (video.readyState >= 1) onMeta();
-			updateLoadProgress();
-		};
-
-		attach();
-		pollId = window.setInterval(updateLoadProgress, 200);
-
-		// Don't trap visitors forever on slow connections.
-		const timeout = window.setTimeout(() => {
-			if (!finished) void finishLoading();
-		}, 20000);
-
 		onScroll();
 		raf = requestAnimationFrame(frame);
 
 		return () => {
-			window.clearInterval(pollId);
-			window.clearTimeout(timeout);
+			window.removeEventListener('wheel', onUserScrollIntent);
+			window.removeEventListener('touchstart', onUserScrollIntent);
+			window.removeEventListener('keydown', onKeyNav);
 			window.removeEventListener('scroll', onScroll);
-			videoEl?.removeEventListener('loadedmetadata', onMeta);
-			videoEl?.removeEventListener('progress', onProgress);
-			videoEl?.removeEventListener('canplay', onCanPlay);
-			videoEl?.removeEventListener('canplaythrough', onCanPlayThrough);
 			cancelAnimationFrame(raf);
 			document.documentElement.classList.remove('loading');
-			stopTour();
+			stopReverseNav();
+			stopNativePlay();
 		};
+	});
+
+	$effect(() => {
+		if (!mounted || reduced) return;
+		// Finish reverse-scrub on the current clip, then swap (hero loop / next scene).
+		if (reverseNavigating) return;
+		const nextSrc = sceneSrcForBeat(theme, activeBeatId) ?? theme.src ?? '';
+		if (nextSrc && nextSrc !== clipSrc) {
+			clipSrc = nextSrc;
+			playback.easedT = 0;
+			playback.lastSet = -1;
+			playback.clipFinished = false;
+			clipTime = 0;
+			// Hold the outgoing layer (hero keeps looping; scenes keep last frame) until promote.
+			playback.nativePlay = true;
+			if (isPlayableClipBeat(activeBeatId)) lastScenePlayed = null;
+		}
+	});
+
+	$effect(() => {
+		if (!mounted || reduced || !clipReady || reverseNavigating) return;
+		const id = activeBeatId;
+		void clipSrc;
+		void videoEl;
+
+		if (isHeroLoopBeat(id)) {
+			playHeroLoop();
+			return;
+		}
+
+		if (loading) return;
+
+		if (!isPlayableClipBeat(id)) {
+			if (playback.nativePlay) stopNativePlay();
+			lastScenePlayed = null;
+			return;
+		}
+
+		const expected = sceneSrcForBeat(theme, id);
+		if (expected && clipSrc !== expected) return;
+		const video = videoEl;
+		if (!video || (expected && !videoMatchesSrc(video, expected))) return;
+
+		if (id === lastScenePlayed && (playback.clipFinished || playback.nativePlay)) return;
+
+		void playActiveSceneToEnd();
 	});
 
 	$effect(() => {
 		if (missing && loading) {
 			loadProgress = 1;
+			firstClipLoaded = true;
 			document.documentElement.classList.remove('loading');
 			loading = false;
 		}
 	});
+
+	$effect(() => {
+		const next = {} as Record<BeatId, boolean>;
+		for (let i = 0; i < beatDefs.length; i++) {
+			const beat = beatDefs[i]!;
+			next[beat.id] = isBeatActive(scrollP, beatDefs, i);
+		}
+		activeBeats = next;
+	});
+
+	$effect(() => {
+		if (!onHero) {
+			heroShowMeOpen = false;
+			return;
+		}
+		if (reduced) {
+			heroShowMeOpen = true;
+			return;
+		}
+		heroShowMeOpen = false;
+		const timer = window.setTimeout(() => {
+			heroShowMeOpen = true;
+		}, HERO_SHOW_ME_DELAY_MS);
+		return () => window.clearTimeout(timer);
+	});
+
+	$effect(() => {
+		if (!onLens) {
+			lensCopyOpen = false;
+			return;
+		}
+		if (reduced) {
+			lensCopyOpen = true;
+			return;
+		}
+		lensCopyOpen = false;
+		const timer = window.setTimeout(() => {
+			lensCopyOpen = true;
+		}, LENS_COPY_DELAY_MS);
+		return () => window.clearTimeout(timer);
+	});
 </script>
 
 <JourneyLoader progress={loadProgress} visible={loading} />
-<JourneyVideo bind:videoEl bind:missing />
-<div id="scrim"></div>
+{#if mounted && !reduced}
+	<JourneyVideo
+		bind:videoEl
+		bind:missing
+		bind:ready={clipReady}
+		bind:loadProgress
+		src={clipSrc}
+		onReady={handleClipReady}
+	/>
+{/if}
+<div id="scrim" class={onLens ? (lensCopyOpen ? 'scrim-payoff' : 'scrim-view') : ''}></div>
 
-{#if !loading}
-	<JourneyNav onJump={jumpTo} {playing} onTogglePlay={togglePlay} />
-	<JourneyProgress progress={scrollP} />
+{#if mounted}
+	<JourneyColdOpen
+		visible={coldOpen && !loading}
+		copy={content.coldOpen}
+		onBegin={() => dismissColdOpen(false)}
+		onSkip={() => dismissColdOpen(true)}
+	/>
+{/if}
 
-	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Introduction">
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">The privacy platform</div>
-	<h1
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		From clutter<br />to <em class="font-medium text-lens not-italic">clarity</em>
-	</h1>
-	<p
-		class="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed font-light text-bone-dim [text-shadow:0_1px_16px_rgba(4,6,10,0.7)]"
-	>
-		You can't fix what you can't see. Move forward and watch the noise your business lives in resolve
-		into a clear picture.
-	</p>
-	<button
-		type="button"
-		onclick={advance}
-		aria-label="Move to the next section"
-		class="hint mx-auto mt-6 flex cursor-pointer items-center justify-center gap-2.5 rounded border-0 bg-transparent text-xs tracking-[0.22em] text-bone-dim uppercase transition-colors hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-	>
-		<span class="dot relative h-2.5 w-1.5 rounded-md border border-bone-dim" aria-hidden="true"
-		></span>
-		Scroll to move forward
-	</button>
-</Beat>
+{#if !loading && !coldOpen}
+	<JourneyNav
+		onHome={() => jumpTo(navJumps.hero)}
+		onJump={jumpTo}
+		jumps={navJumps}
+		copy={content.nav}
+	/>
+	<JourneySceneIndex
+		current={activeSceneNumber}
+		visible={sceneIndexVisible}
+		onSelect={jumpToScene}
+	/>
+	<JourneyLegal links={content.legal.links} />
 
-<!-- The clutter: five blind spots that fly past on the way through -->
+	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Hero" class="hero-copy">
+		<div class="flex items-end justify-between gap-4 sm:gap-8">
+			<div class="hero-main min-w-0">
+				<p
+					class="mb-4 text-[12px] tracking-[0.2em] text-lens uppercase sm:text-[13px] sm:tracking-[0.22em]"
+				>
+					{content.hero.strapline}
+				</p>
+				<h1
+					class="text-[clamp(2.75rem,6.5vw,5rem)] leading-[1.02] font-bold tracking-tight text-bone"
+				>
+					{#each content.hero.titleLines as line, i (line)}
+						{#if i > 0}<br />{/if}{line}
+					{/each}
+				</h1>
 
-<Beat
-	id="beat-clutter-1"
-	active={activeBeats['beat-clutter-1']}
-	label="Blind spot: what people know"
-	class="clutter from-left"
-	style="top:42%"
->
-	<div class="mb-3 text-[11px] tracking-[0.28em] text-ember uppercase">The noise</div>
-	<p
-		class="text-[clamp(1.6rem,4.4vw,3rem)] leading-[1.1] font-semibold tracking-tight [text-shadow:0_2px_24px_rgba(4,6,10,0.75)]"
-	>
-		No real idea what your<br />people actually <em class="text-ember not-italic">know</em>.
-	</p>
-	<AdvanceButton class="mt-5" label="Next section" onclick={advance} />
-</Beat>
+				<div class="mt-9 flex flex-wrap items-center gap-5">
+					<button
+						type="button"
+						onclick={beginJourney}
+						class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-lens px-7 py-3.5 text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+					>
+						{content.hero.cta}
+					</button>
+				</div>
 
-<Beat
-	id="beat-clutter-2"
-	active={activeBeats['beat-clutter-2']}
-	label="Blind spot: breach impact"
-	class="clutter from-right"
-	style="top:58%"
->
-	<div class="mb-3 text-[11px] tracking-[0.28em] text-ember uppercase">The noise</div>
-	<p
-		class="text-[clamp(1.6rem,4.4vw,3rem)] leading-[1.1] font-semibold tracking-tight [text-shadow:0_2px_24px_rgba(4,6,10,0.75)]"
-	>
-		No idea how badly a<br />breach would actually <em class="text-ember not-italic">hurt</em>.
-	</p>
-	<AdvanceButton class="mt-5 ml-auto" label="Next section" onclick={advance} />
-</Beat>
+				<p
+					class="mt-6 max-w-[42ch] text-[15px] leading-relaxed font-light text-bone/75 [text-shadow:0_1px_18px_rgba(4,6,10,0.8)]"
+				>
+					{content.hero.subline}
+				</p>
+			</div>
 
-<Beat
-	id="beat-clutter-3"
-	active={activeBeats['beat-clutter-3']}
-	label="Blind spot: unchecked AI tools"
-	class="clutter from-left"
-	style="top:38%"
->
-	<div class="mb-3 text-[11px] tracking-[0.28em] text-ember uppercase">The noise</div>
-	<p
-		class="text-[clamp(1.6rem,4.4vw,3rem)] leading-[1.1] font-semibold tracking-tight [text-shadow:0_2px_24px_rgba(4,6,10,0.75)]"
-	>
-		A new AI tool went live.<br /><em class="text-ember not-italic">Nobody checked it.</em>
-	</p>
-	<AdvanceButton class="mt-5" label="Next section" onclick={advance} />
-</Beat>
+			<div class="hero-specs">
+				<ShowMeFlash
+					label={content.hero.showMe.label}
+					href={content.hero.showMe.href}
+					open={heroShowMeOpen}
+					stacked
+				/>
+			</div>
+		</div>
+	</Beat>
 
-<Beat
-	id="beat-clutter-4"
-	active={activeBeats['beat-clutter-4']}
-	label="Blind spot: unchecked suppliers"
-	class="clutter from-right"
-	style="top:60%"
->
-	<div class="mb-3 text-[11px] tracking-[0.28em] text-ember uppercase">The noise</div>
-	<p
-		class="text-[clamp(1.6rem,4.4vw,3rem)] leading-[1.1] font-semibold tracking-tight [text-shadow:0_2px_24px_rgba(4,6,10,0.75)]"
-	>
-		You signed the supplier.<br /><em class="text-ember not-italic">Nobody checked their privacy.</em>
-	</p>
-	<AdvanceButton class="mt-5 ml-auto" label="Next section" onclick={advance} />
-</Beat>
+	{#each SCENES as scene (scene.id)}
+		{@const sceneIndex = beatDefs.findIndex((b) => b.id === scene.id)}
+		{@const lead = scene.textAfterSeconds ?? SCENE_TEXT_AFTER_SECONDS}
+		<JourneyScene
+			id={scene.id}
+			active={reduced || sceneShowsText(scene.id, sceneIndex, lead)}
+			label={scene.label}
+			pain={scene.pain}
+			whatIfRest={scene.whatIfRest}
+			showMe={scene.showMe}
+			class={sceneClassName(scene)}
+			onAdvance={advance}
+			onRetreat={retreat}
+		/>
+	{/each}
 
-<Beat
-	id="beat-clutter-5"
-	active={activeBeats['beat-clutter-5']}
-	label="Blind spot: no single view"
-	class="clutter from-left"
-	style="top:50%"
->
-	<div class="mb-3 text-[11px] tracking-[0.28em] text-ember uppercase">And underneath it all</div>
-	<p
-		class="text-[clamp(1.7rem,4.8vw,3.2rem)] leading-[1.1] font-semibold tracking-tight [text-shadow:0_2px_24px_rgba(4,6,10,0.75)]"
+	<Beat
+		id="beat-lens"
+		active={activeBeats['beat-lens']}
+		label="The view"
+		class="lens-copy px-5 sm:px-8 {lensCopyOpen ? '' : 'lens-view'}"
 	>
-		It's all in ten places<br />and <em class="text-ember not-italic">one person's head</em>.
-	</p>
-	<AdvanceButton class="mt-5" label="Next: CultureLens" onclick={advance} />
-</Beat>
-
-<Beat id="beat-free" active={activeBeats['beat-free']} label="CultureLens free">
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Act one · CultureLens</div>
-	<h2
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		See your culture.<br /><em class="font-medium text-lens not-italic">Free. Forever.</em>
-	</h2>
-	<p
-		class="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed font-light text-bone-dim [text-shadow:0_1px_16px_rgba(4,6,10,0.7)]"
-	>
-		A real, effective culture survey with clear highlights of what your business needs. No credit
-		card. No trial clock. No catch waiting at the end.
-	</p>
-	<div class="mt-7 flex flex-wrap justify-center gap-3.5">
-		<a
-			class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border border-bone/35 bg-ink/45 px-6 py-3.5 text-sm font-medium tracking-wide text-bone no-underline backdrop-blur-sm transition-all hover:-translate-y-0.5 hover:border-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-			href="#signup"
+		<h2
+			class={[
+				'transition-all duration-700',
+				lensCopyOpen
+					? 'mb-2 text-[10px] tracking-[0.28em] text-gold uppercase sm:text-[11px]'
+					: 'text-[clamp(2.5rem,5.8vw,4.15rem)] leading-[1.08] font-bold tracking-tight text-bone'
+			]}
 		>
-			Create your free login
-		</a>
-	</div>
-	<AdvanceButton class="mx-auto mt-7" label="Next: pass through the lens" onclick={advance} />
-</Beat>
+			{#if lensCopyOpen}
+				{content.lens.eyebrow}
+			{:else}
+				{#each content.lens.eyebrowLines ?? [content.lens.eyebrow] as line, i (line)}
+					{#if i > 0}<br />{/if}{line}
+				{/each}
+			{/if}
+		</h2>
+		{#if !lensCopyOpen}
+			<div class="lens-view-arrow" aria-hidden="true">
+				<svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+					<path
+						d="M12 5v14M6 11l6-6 6 6"
+						stroke="currentColor"
+						stroke-width="1.75"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+			</div>
+		{/if}
+		<div class={['lens-rest', lensCopyOpen && 'open']} inert={!lensCopyOpen}>
+			<div class="lens-rest-inner">
+				<p
+					class="text-[clamp(1.7rem,3.6vw,2.75rem)] leading-[1.08] font-bold tracking-tight text-bone"
+				>
+					{content.lens.title}
+				</p>
+				<p
+					class="mx-auto mt-3 max-w-[50ch] text-[14px] leading-relaxed font-light text-bone/85 [text-shadow:0_1px_18px_rgba(4,6,10,0.8)] sm:text-[15px]"
+				>
+					{content.lens.body}
+				</p>
 
-<Beat
-	id="beat-lens"
-	active={activeBeats['beat-lens']}
-	label="Through the lens"
-	class="w-full max-w-3xl px-6 text-center"
->
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Pass through the lens</div>
-	<h2
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		Everything looks different<br />from <em class="font-medium text-lens not-italic">here</em>
-	</h2>
-	<AdvanceButton class="mx-auto mt-7" label="Next: the platform" onclick={advance} />
-</Beat>
+				<div class="mt-5 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+					<a
+						id="demo"
+						href={content.lens.primaryCta.href}
+						class="inline-flex cursor-pointer items-center justify-center rounded-full bg-gold px-7 py-3 text-[14px] font-semibold tracking-wide text-gold-ink shadow-[0_0_0_1px_rgba(212,175,106,0.35),0_0_28px_rgba(212,175,106,0.28),0_10px_24px_rgba(0,0,0,0.35)] no-underline transition-all hover:-translate-y-0.5 hover:bg-[#e0c07a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+					>
+						{content.lens.primaryCta.label}
+					</a>
+					<a
+						href={content.lens.showMe.href}
+						class="inline-flex cursor-pointer items-center justify-center rounded-full bg-lens px-7 py-3 text-[14px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_28px_rgba(0,155,204,0.28),0_10px_24px_rgba(0,0,0,0.35)] no-underline transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+					>
+						{content.lens.showMe.label}
+					</a>
+				</div>
+				<a
+					href={content.lens.secondaryCta.href}
+					target="_blank"
+					rel="noopener noreferrer"
+					class="mt-3 inline-flex cursor-pointer items-center justify-center gap-2 text-[13px] font-medium text-bone/80 no-underline underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+				>
+					<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M8 5.14v13.72L19.06 12 8 5.14z" />
+					</svg>
+					{content.lens.secondaryCta.label}
+				</a>
 
-<Beat id="beat-platform" active={activeBeats['beat-platform']} label="The platform">
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">Act two · The platform</div>
-	<h2
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		Clarity you<br />can <em class="font-medium text-lens not-italic">see</em>
-	</h2>
-	<p
-		class="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed font-light text-bone-dim [text-shadow:0_1px_16px_rgba(4,6,10,0.7)]"
-	>
-		Dashboards, diagrams and visual screens — not walls of tables and forms. Your privacy posture,
-		mapped so anyone in the room understands it in seconds.
-	</p>
-	<AdvanceButton class="mx-auto mt-7" label="Next: three ways in" onclick={advance} />
-</Beat>
-
-<Beat
-	id="beat-doors"
-	active={activeBeats['beat-doors']}
-	label="Three ways in"
-	class="w-full max-w-4xl px-6 text-center"
->
-	<div class="mb-5 text-xs tracking-[0.28em] text-lens uppercase">You've arrived</div>
-	<h2
-		class="text-[clamp(2.5rem,6vw,4.75rem)] leading-[1.02] font-semibold tracking-tight [text-shadow:0_2px_30px_rgba(4,6,10,0.6)]"
-	>
-		Three ways <em class="font-medium text-lens not-italic">in</em>
-	</h2>
-	<p
-		class="mx-auto mt-5 max-w-[44ch] text-[17px] leading-relaxed font-light text-bone-dim [text-shadow:0_1px_16px_rgba(4,6,10,0.7)]"
-	>
-		Start free, play with a full sandbox, or talk to us properly. Pick your door.
-	</p>
-	<div class="mt-8 grid grid-cols-1 gap-4 md:grid-cols-3">
-		<a
-			id="signup"
-			class="door block cursor-pointer rounded-[18px] border border-bone/15 bg-ink/65 p-6 text-left text-bone no-underline backdrop-blur-md transition-all hover:-translate-y-1.5 hover:border-lens focus-visible:-translate-y-1.5 focus-visible:border-lens focus-visible:outline-none"
-			href="#signup"
-		>
-			<div class="mb-3 text-[11px] tracking-[0.24em] text-lens uppercase">Free</div>
-			<h3 class="mb-2.5 text-[23px] leading-tight font-semibold">CultureLens login</h3>
-			<p class="m-0 text-[13.5px] leading-relaxed font-light text-bone-dim">
-				Run your first culture survey today. Free forever, no credit card.
-			</p>
-			<span class="mt-4 inline-flex items-center gap-2 text-[13px] text-lens">Create login →</span>
-		</a>
-		<a
-			class="door block cursor-pointer rounded-[18px] border border-lens/55 bg-ink/65 p-6 text-left text-bone no-underline backdrop-blur-md transition-all hover:-translate-y-1.5 hover:border-lens focus-visible:-translate-y-1.5 focus-visible:border-lens focus-visible:outline-none"
-			href="#sandbox"
-		>
-			<div class="mb-3 text-[11px] tracking-[0.24em] text-lens uppercase">Explore</div>
-			<h3 class="mb-2.5 text-[23px] leading-tight font-semibold">Platform sandbox</h3>
-			<p class="m-0 text-[13.5px] leading-relaxed font-light text-bone-dim">
-				A data-filled demo environment. Open real reports, dashboards and diagrams — play freely.
-			</p>
-			<span class="mt-4 inline-flex items-center gap-2 text-[13px] text-lens">Enter sandbox →</span>
-		</a>
-		<a
-			class="door block cursor-pointer rounded-[18px] border border-bone/15 bg-ink/65 p-6 text-left text-bone no-underline backdrop-blur-md transition-all hover:-translate-y-1.5 hover:border-lens focus-visible:-translate-y-1.5 focus-visible:border-lens focus-visible:outline-none"
-			href="#demo"
-		>
-			<div class="mb-3 text-[11px] tracking-[0.24em] text-lens uppercase">Enterprise</div>
-			<h3 class="mb-2.5 text-[23px] leading-tight font-semibold">One-to-one demo</h3>
-			<p class="m-0 text-[13.5px] leading-relaxed font-light text-bone-dim">
-				A guided walkthrough plus the conversation about our service wrapper around the platform.
-			</p>
-			<span class="mt-4 inline-flex items-center gap-2 text-[13px] text-lens">Book a demo →</span>
-		</a>
-	</div>
-</Beat>
-
+				<h3 class="mt-6 mb-3 text-[11px] tracking-[0.24em] text-bone/70 uppercase">
+					{content.lens.principlesLabel}
+				</h3>
+				<ol class="grid grid-cols-1 gap-3 text-left sm:grid-cols-3">
+					{#each PRINCIPLES as item, i (item.title)}
+						<li
+							class="rounded-2xl border border-gold/25 bg-ink/55 p-4 shadow-[0_12px_40px_rgba(4,6,10,0.35)] backdrop-blur-md"
+						>
+							<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
+								{String(i + 1).padStart(2, '0')}
+							</p>
+							<p class="mt-1.5 text-[14px] leading-snug font-bold tracking-tight text-bone">
+								{item.title}
+								{#if item.subtitle}
+									<span class="mt-0.5 block text-[12px] font-medium text-gold/90">{item.subtitle}</span>
+								{/if}
+							</p>
+							<p class="mt-1.5 text-[12px] leading-relaxed font-light text-bone-dim">
+								{item.body}
+							</p>
+						</li>
+					{/each}
+				</ol>
+			</div>
+		</div>
+	</Beat>
 {/if}
 
 <div id="scroll-space" aria-hidden="true"></div>
