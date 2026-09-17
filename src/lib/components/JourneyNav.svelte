@@ -28,7 +28,7 @@
 >
 	<a
 		href="/"
-		class="shrink-0 no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		aria-label="PrivacyCulture — home"
 		onclick={(e) => {
 			if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
@@ -41,21 +41,21 @@
 		<img
 			src="/brand/privacyculture-platform-colour-white.png"
 			alt="PrivacyCulture"
-			class="h-7 w-auto sm:h-8"
+			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
 			width="500"
 			height="50"
 			decoding="async"
 		/>
 	</a>
 
-	<div class="flex items-center gap-6 lg:gap-8">
+	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label="Main" class="hidden translate-y-[5px] items-center gap-7 md:flex">
+		<nav aria-label="Main" class="hidden translate-y-[5px] items-center gap-7 whitespace-nowrap lg:flex">
 			{#each copy.links as link (link.label)}
 				{#if link.href}
 					<a
 						href={link.href}
-						class="rounded text-[14px] tracking-normal text-bone no-underline transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+						class="-my-3 rounded py-3 text-[14px] tracking-normal text-bone no-underline transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 						target={link.href.startsWith('http') ? '_blank' : undefined}
 						rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
 					>
@@ -65,7 +65,7 @@
 					<button
 						type="button"
 						onclick={() => handleLink(link)}
-						class="cursor-pointer rounded text-[14px] tracking-normal text-bone transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+						class="-my-3 cursor-pointer rounded py-3 text-[14px] tracking-normal text-bone transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 					>
 						{link.label}
 					</button>
@@ -77,7 +77,7 @@
 			<a
 				href={copy.demo.href}
 				onclick={() => (menuOpen = false)}
-				class="inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
+				class="hidden min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] sm:inline-flex transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
 			>
 				{copy.demo.label}
 				<span aria-hidden="true">→</span>
@@ -85,7 +85,7 @@
 
 			<button
 				type="button"
-				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/15 text-bone transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens md:hidden"
+				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/15 text-bone transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden"
 				aria-expanded={menuOpen}
 				aria-controls="journey-mobile-nav"
 				onclick={() => (menuOpen = !menuOpen)}
@@ -107,7 +107,7 @@
 	<nav
 		id="journey-mobile-nav"
 		aria-label="Mobile"
-		class="fixed inset-x-0 top-[4.25rem] z-40 border-b border-bone/10 bg-ink/95 px-5 py-4 backdrop-blur-md md:hidden sm:top-[4.75rem]"
+		class="fixed inset-x-0 top-[4.25rem] z-40 border-b border-bone/10 bg-ink/95 px-5 py-4 backdrop-blur-md lg:hidden sm:top-[4.75rem]"
 	>
 		<ul class="flex flex-col gap-1">
 			{#each copy.links as link (link.label)}
@@ -130,6 +130,16 @@
 					{/if}
 				</li>
 			{/each}
+			<li class="mt-2 px-3 sm:hidden">
+				<a
+					href={copy.demo.href}
+					onclick={() => (menuOpen = false)}
+					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+				>
+					{copy.demo.label}
+					<span aria-hidden="true">→</span>
+				</a>
+			</li>
 		</ul>
 	</nav>
 {/if}

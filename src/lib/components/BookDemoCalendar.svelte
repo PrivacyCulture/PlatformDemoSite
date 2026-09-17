@@ -27,8 +27,8 @@
 	);
 	const selectCls = $derived(
 		light
-			? 'mt-1.5 min-h-11 w-full cursor-pointer rounded-lg border border-ink/15 bg-white px-3 text-[15px] text-ink outline-none focus:border-lens'
-			: 'mt-1.5 min-h-11 w-full cursor-pointer rounded-lg border border-bone/15 bg-ink px-3 text-[15px] text-bone outline-none focus:border-lens'
+			? 'mt-1.5 min-h-11 w-full cursor-pointer rounded-lg border border-ink/15 bg-white px-3 text-[16px] text-ink outline-none focus:border-lens'
+			: 'mt-1.5 min-h-11 w-full cursor-pointer rounded-lg border border-bone/15 bg-ink px-3 text-[16px] text-bone outline-none focus:border-lens'
 	);
 	const ghostBtn = $derived(
 		light

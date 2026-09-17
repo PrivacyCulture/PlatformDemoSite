@@ -144,7 +144,7 @@
 	top: 50%;
 	width: min(92vw, 72rem);
 	max-width: none;
-	max-height: calc(100vh - 9rem);
+	max-height: calc(100dvh - 9rem);
 	overflow-x: hidden;
 	overflow-y: auto;
 	text-align: center;
@@ -201,6 +201,34 @@
 
 .beat.lens-copy::-webkit-scrollbar {
 	display: none;
+}
+
+/* Phones in landscape: the fixed beats are taller than the viewport, so let them scroll
+   inside the space between the header and the legal strip instead of colliding with both. */
+@media (max-height: 560px) and (orientation: landscape) {
+	.beat.hero-copy,
+	.beat.scene-copy {
+		top: calc(50% + 1.25rem);
+		max-height: calc(100dvh - 6.5rem);
+		overflow-y: auto;
+		scrollbar-width: none;
+	}
+
+	.beat.hero-copy h1 {
+		font-size: 2rem;
+	}
+
+	.beat.scene-copy > p:first-child {
+		font-size: 1.6rem;
+	}
+
+	.beat.lens-copy {
+		max-height: calc(100dvh - 6rem);
+	}
+
+	.journey-legal-fade {
+		height: 80px;
+	}
 }
 
 .lens-rest {

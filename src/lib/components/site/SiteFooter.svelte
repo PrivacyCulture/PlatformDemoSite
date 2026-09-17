@@ -15,7 +15,7 @@
 				<img
 					src={site.footer.logo.src}
 					alt={site.footer.logo.alt}
-					class="mx-0 block h-auto w-auto max-w-[50%] lg:max-w-[12vw]"
+					class="mx-0 block h-auto w-auto max-w-[11rem] sm:max-w-[50%] md:max-w-[9rem] lg:max-w-[12vw]"
 					width="420"
 					height="72"
 					decoding="async"
@@ -81,7 +81,7 @@
 							href={site.footer.linkedin}
 							target="_blank"
 							rel="noopener noreferrer"
-							class="inline-flex text-white hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+							class="-m-3 inline-flex p-3 text-white hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
 							aria-label="Privacy Culture on LinkedIn"
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" fill="none" aria-hidden="true">

@@ -792,39 +792,39 @@
 	<JourneyLegal links={content.legal.links} />
 
 	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Hero" class="hero-copy">
-		<div class="flex items-end justify-between gap-4 sm:gap-8">
-			<div class="hero-main min-w-0">
+		<div class="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
+			<div class="hero-main w-full min-w-0">
 				<p
 					class="mb-4 text-[12px] tracking-[0.2em] text-lens uppercase sm:text-[13px] sm:tracking-[0.22em]"
 				>
 					{content.hero.strapline}
 				</p>
 				<h1
-					class="text-[clamp(2.75rem,6.5vw,5rem)] leading-[1.02] font-bold tracking-tight text-bone"
+					class="text-[clamp(2.25rem,6.5vw,5rem)] leading-[1.02] font-bold tracking-tight text-bone"
 				>
 					{#each content.hero.titleLines as line, i (line)}
 						{#if i > 0}<br />{/if}{line}
 					{/each}
 				</h1>
 
-				<div class="mt-9 flex flex-wrap items-center gap-5">
+				<div class="mt-7 flex flex-wrap items-center gap-5 sm:mt-9">
 					<button
 						type="button"
 						onclick={beginJourney}
-						class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-lens px-7 py-3.5 text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+						class="inline-flex max-w-full cursor-pointer items-center gap-2 rounded-full bg-lens px-6 py-3 text-center text-[14px] sm:px-7 sm:py-3.5 sm:text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 					>
 						{content.hero.cta}
 					</button>
 				</div>
 
 				<p
-					class="mt-6 max-w-[42ch] text-[15px] leading-relaxed font-light text-bone/75 [text-shadow:0_1px_18px_rgba(4,6,10,0.8)]"
+					class="mt-5 max-w-[42ch] text-[14px] leading-relaxed font-light text-bone/75 [text-shadow:0_1px_18px_rgba(4,6,10,0.8)] sm:mt-6 sm:text-[15px]"
 				>
 					{content.hero.subline}
 				</p>
 			</div>
 
-			<div class="hero-specs">
+			<div class="hero-specs flex w-full justify-end sm:w-auto sm:justify-start">
 				<ShowMeFlash
 					label={content.hero.showMe.label}
 					href={content.hero.showMe.href}

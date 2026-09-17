@@ -15,7 +15,7 @@
 	<p class="mb-6">
 		<a
 			href="/platform"
-			class="text-[13px] tracking-wide text-bone/70 no-underline transition-colors hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+			class="text-[13px] tracking-wide text-ink/60 no-underline transition-colors hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		>
 			← The Platform
 		</a>
@@ -25,7 +25,7 @@
 	<h1 class="text-[clamp(2.2rem,5.5vw,3.75rem)] leading-[1.04] font-bold tracking-tight">
 		{spec.label}
 	</h1>
-	<p class="mt-6 max-w-[36ch] text-[clamp(1.35rem,3vw,1.85rem)] leading-[1.2] font-bold tracking-tight text-bone">
+	<p class="mt-6 max-w-[36ch] text-[clamp(1.35rem,3vw,1.85rem)] leading-[1.2] font-bold tracking-tight text-ink/80">
 		{spec.pain}
 	</p>
 	<p
@@ -44,21 +44,21 @@
 		</a>
 		<a
 			href="/"
-			class="inline-flex cursor-pointer items-center text-[14px] font-medium text-bone/75 no-underline underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
+			class="inline-flex cursor-pointer items-center text-[14px] font-medium text-ink/70 no-underline underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
 		>
 			Or take the journey →
 		</a>
 	</div>
 
 	{#if others.length}
-		<nav class="mt-16 border-t border-bone/10 pt-8" aria-label="Other specs">
-			<p class="mb-4 text-[11px] tracking-[0.22em] text-bone/55 uppercase">Also in the platform</p>
+		<nav class="mt-16 border-t border-ink/10 pt-8" aria-label="Other specs">
+			<p class="mb-4 text-[11px] tracking-[0.22em] text-ink/50 uppercase">Also in the platform</p>
 			<ul class="flex flex-wrap gap-x-5 gap-y-2">
 				{#each others as item (item.slug)}
 					<li>
 						<a
 							href={item.href}
-							class="text-[14px] text-bone/80 no-underline transition-colors hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+							class="text-[14px] text-ink/80 no-underline transition-colors hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 						>
 							{item.label}
 						</a>

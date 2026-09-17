@@ -28,8 +28,8 @@
 	const light = $derived(tone === 'light');
 	const fieldClass = $derived(
 		light
-			? 'mt-1.5 min-h-11 w-full rounded-lg border border-ink/15 bg-white px-3 text-[15px] text-ink outline-none transition-colors focus:border-lens'
-			: 'mt-1.5 min-h-11 w-full rounded-lg border border-bone/15 bg-ink px-3 text-[15px] text-bone outline-none transition-colors focus:border-lens'
+			? 'mt-1.5 min-h-11 w-full rounded-lg border border-ink/15 bg-white px-3 text-[16px] text-ink outline-none transition-colors focus:border-lens'
+			: 'mt-1.5 min-h-11 w-full rounded-lg border border-bone/15 bg-ink px-3 text-[16px] text-bone outline-none transition-colors focus:border-lens'
 	);
 	const labelClass = $derived(
 		light ? 'block text-[13px] font-medium text-ink/75' : 'block text-[13px] font-medium text-bone/80'

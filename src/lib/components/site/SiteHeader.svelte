@@ -27,27 +27,27 @@
 >
 	<a
 		href="/"
-		class="shrink-0 no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		aria-label="PrivacyCulture — home"
 	>
 		<img
 			src="/brand/privacyculture-platform-colour.png"
 			alt="PrivacyCulture"
-			class="h-7 w-auto sm:h-8"
+			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
 			width="500"
 			height="50"
 			decoding="async"
 		/>
 	</a>
 
-	<div class="flex items-center gap-6 lg:gap-8">
+	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label="Main" class="hidden translate-y-[5px] items-baseline gap-7 md:flex">
+		<nav aria-label="Main" class="hidden translate-y-[5px] items-baseline gap-7 whitespace-nowrap lg:flex">
 			{#each site.nav.links as link (link.href)}
 				<a
 					href={link.href}
 					aria-current={isCurrent(link.href) ? 'page' : undefined}
-					class="rounded text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
+					class="-my-3 rounded py-3 text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
 						link.href
 					)
 						? 'text-lens'
@@ -62,7 +62,7 @@
 			<a
 				href={site.nav.demo.href}
 				aria-current={isCurrent(site.nav.demo.href) ? 'page' : undefined}
-				class="inline-flex min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
+				class="hidden min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] sm:inline-flex transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
 			>
 				{site.nav.demo.label}
 				<span aria-hidden="true">→</span>
@@ -70,7 +70,7 @@
 
 			<button
 				type="button"
-				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink/15 text-ink transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens md:hidden"
+				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink/15 text-ink transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden"
 				aria-expanded={open}
 				aria-controls="mobile-nav"
 				onclick={() => (open = !open)}
@@ -92,7 +92,7 @@
 	<nav
 		id="mobile-nav"
 		aria-label="Mobile"
-		class="border-b border-ink/10 bg-white/95 py-4 backdrop-blur-md md:hidden"
+		class="border-b border-ink/10 bg-white/95 py-4 backdrop-blur-md lg:hidden"
 	>
 		<ul class="flex flex-col gap-1">
 			{#each site.nav.links as link (link.href)}
@@ -116,6 +116,15 @@
 					class="block rounded-lg px-3 py-3 text-[15px] text-ink no-underline hover:bg-ink/[0.03]"
 				>
 					FAQ
+				</a>
+			</li>
+			<li class="mt-2 px-3 sm:hidden">
+				<a
+					href={site.nav.demo.href}
+					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+				>
+					{site.nav.demo.label}
+					<span aria-hidden="true">→</span>
 				</a>
 			</li>
 		</ul>
