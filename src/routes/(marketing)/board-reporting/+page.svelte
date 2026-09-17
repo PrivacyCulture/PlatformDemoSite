@@ -1,5 +1,4 @@
 <script lang="ts">
-	import BoardDashboard from '$lib/components/site/BoardDashboard.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
@@ -41,7 +40,35 @@
 />
 
 <section class="mt-14 w-full sm:mt-20">
-	<BoardDashboard />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			The whole operation on one screen.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the Privacy Operations Centre. The row across the top is the state of play: tasks
+			open, how many are past their target date, how many are still waiting on an owner, the
+			average days to close and the share closed within SLA this year. Underneath, created against
+			resolved over twelve months answers the question a board actually asks, whether the team is
+			keeping up or falling behind, and the category breakdown shows where the work lands, from
+			vendor assessments to subject rights requests. Every tile exports, and every number traces
+			back to the tasks behind it.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/poc-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/poc-screen.png"
+				alt="The Privacy Operations Centre dashboard, showing open, overdue and unassigned task counts above charts for status, monthly created against resolved volume, tasks by category and priority."
+				width="2048"
+				height="1152"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

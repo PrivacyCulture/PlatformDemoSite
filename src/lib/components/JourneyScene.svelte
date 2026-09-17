@@ -45,8 +45,15 @@
 	/** Screenshot enters from the side opposite the copy. */
 	const previewFromRight = $derived(!fromRight);
 
+	/** Below 900px the panel is centred, so anchor it under the header rather than the heading. */
+	const MOBILE_PREVIEW_TOP = 80;
+
 	function syncPreviewTop() {
 		if (!headingEl) return;
+		if (window.matchMedia('(max-width: 900px)').matches) {
+			previewTop = MOBILE_PREVIEW_TOP;
+			return;
+		}
 		previewTop = Math.round(headingEl.getBoundingClientRect().top);
 	}
 
@@ -203,20 +210,20 @@
 	<div
 		id="preview-{id}"
 		class={[
-			'feature-preview pointer-events-none fixed z-[35] w-[min(42vw,30rem)] max-w-[calc(50vw-2.5rem)]',
+			'feature-preview fixed z-[35] w-[min(42vw,30rem)] max-w-[calc(50vw-2.5rem)]',
 			previewFromRight ? 'preview-side-right' : 'preview-side-left',
-			previewOpen ? 'is-visible pointer-events-auto' : ''
+			previewOpen ? 'is-visible pointer-events-auto' : 'pointer-events-none'
 		]}
-		style={previewTop != null ? `top: ${previewTop}px` : undefined}
+		style={previewTop != null ? `top: ${previewTop}px; --preview-top: ${previewTop}px` : undefined}
 		aria-hidden={!previewOpen}
 	>
 		<div
 			class={[
-				'feature-preview-panel overflow-hidden rounded-2xl border border-bone/15 bg-ink/90 shadow-[0_28px_70px_rgba(0,0,0,0.55)] backdrop-blur-md',
+				'feature-preview-panel flex max-h-[calc(100dvh-var(--preview-top,5rem)-6.5rem)] flex-col overflow-hidden rounded-2xl border border-bone/15 bg-ink/90 shadow-[0_28px_70px_rgba(0,0,0,0.55)] backdrop-blur-md',
 				previewFromRight ? 'from-right' : 'from-left'
 			]}
 		>
-			<div class="flex items-center justify-between gap-3 border-b border-bone/10 px-4 py-3">
+			<div class="flex shrink-0 items-center justify-between gap-3 border-b border-bone/10 px-4 py-3">
 				<p class="text-[12px] tracking-[0.18em] text-lens uppercase">{label}</p>
 				<button
 					type="button"
@@ -230,63 +237,89 @@
 				</button>
 			</div>
 
-			<!-- Placeholder product UI — swap for real screenshots later -->
-			<svg
-				class="block h-auto w-full"
-				viewBox="0 0 640 400"
-				role="img"
-				aria-label="Preview of {label}"
-			>
-				<rect width="640" height="400" fill="#0b1220" />
-				<rect x="0" y="0" width="640" height="44" fill="#103389" opacity="0.55" />
-				<circle cx="24" cy="22" r="5" fill="#009bcc" />
-				<rect x="40" y="17" width="96" height="10" rx="2" fill="#f7fafc" opacity="0.35" />
-				<rect x="160" y="17" width="56" height="10" rx="2" fill="#f7fafc" opacity="0.2" />
-				<rect x="228" y="17" width="64" height="10" rx="2" fill="#f7fafc" opacity="0.2" />
+			<div class="min-h-0 flex-1 overflow-y-auto">
+			{#if showMe.image}
+				<div class="bg-white p-[10px]">
+					<picture>
+						{#if showMe.image.webp}
+							<source srcset={showMe.image.webp} type="image/webp" />
+						{/if}
+						<img
+							src={showMe.image.src}
+							alt={showMe.image.alt}
+							width={showMe.image.width}
+							height={showMe.image.height}
+							class="block h-auto w-full"
+							loading="lazy"
+							decoding="async"
+						/>
+					</picture>
+				</div>
+				{#if showMe.caption}
+					<p class="px-4 pt-3 pb-4 text-[13px] leading-relaxed font-light text-bone/80">
+						{showMe.caption}
+					</p>
+				{/if}
+			{:else}
+				<!-- Placeholder product UI — swap for real screenshots later -->
+				<svg
+					class="block h-auto w-full"
+					viewBox="0 0 640 400"
+					role="img"
+					aria-label="Preview of {label}"
+				>
+					<rect width="640" height="400" fill="#0b1220" />
+					<rect x="0" y="0" width="640" height="44" fill="#103389" opacity="0.55" />
+					<circle cx="24" cy="22" r="5" fill="#009bcc" />
+					<rect x="40" y="17" width="96" height="10" rx="2" fill="#f7fafc" opacity="0.35" />
+					<rect x="160" y="17" width="56" height="10" rx="2" fill="#f7fafc" opacity="0.2" />
+					<rect x="228" y="17" width="64" height="10" rx="2" fill="#f7fafc" opacity="0.2" />
 
-				<rect x="20" y="64" width="180" height="316" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
-				<rect x="36" y="84" width="110" height="10" rx="2" fill="#009bcc" opacity="0.85" />
-				{#each [0, 1, 2, 3, 4, 5] as row (row)}
-					<rect
-						x="36"
-						y={118 + row * 36}
-						width={140 - (row % 3) * 18}
-						height="10"
-						rx="2"
-						fill="#f7fafc"
-						opacity={0.18 + (row % 2) * 0.08}
-					/>
-				{/each}
+					<rect x="20" y="64" width="180" height="316" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
+					<rect x="36" y="84" width="110" height="10" rx="2" fill="#009bcc" opacity="0.85" />
+					{#each [0, 1, 2, 3, 4, 5] as row (row)}
+						<rect
+							x="36"
+							y={118 + row * 36}
+							width={140 - (row % 3) * 18}
+							height="10"
+							rx="2"
+							fill="#f7fafc"
+							opacity={0.18 + (row % 2) * 0.08}
+						/>
+					{/each}
 
-				<rect x="220" y="64" width="400" height="150" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
-				<rect x="240" y="84" width="160" height="12" rx="2" fill="#f7fafc" opacity="0.4" />
-				<rect x="240" y="110" width="280" height="8" rx="2" fill="#f7fafc" opacity="0.16" />
-				<rect x="240" y="128" width="240" height="8" rx="2" fill="#f7fafc" opacity="0.12" />
-				<rect x="240" y="158" width="88" height="28" rx="14" fill="#009bcc" />
-				<rect x="344" y="164" width="72" height="16" rx="2" fill="#f7fafc" opacity="0.2" />
+					<rect x="220" y="64" width="400" height="150" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
+					<rect x="240" y="84" width="160" height="12" rx="2" fill="#f7fafc" opacity="0.4" />
+					<rect x="240" y="110" width="280" height="8" rx="2" fill="#f7fafc" opacity="0.16" />
+					<rect x="240" y="128" width="240" height="8" rx="2" fill="#f7fafc" opacity="0.12" />
+					<rect x="240" y="158" width="88" height="28" rx="14" fill="#009bcc" />
+					<rect x="344" y="164" width="72" height="16" rx="2" fill="#f7fafc" opacity="0.2" />
 
-				<rect x="220" y="232" width="190" height="148" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
-				<circle cx="315" cy="292" r="34" fill="none" stroke="#009bcc" stroke-width="8" stroke-dasharray="140 80" />
-				<rect x="280" y="340" width="70" height="8" rx="2" fill="#f7fafc" opacity="0.2" />
+					<rect x="220" y="232" width="190" height="148" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
+					<circle cx="315" cy="292" r="34" fill="none" stroke="#009bcc" stroke-width="8" stroke-dasharray="140 80" />
+					<rect x="280" y="340" width="70" height="8" rx="2" fill="#f7fafc" opacity="0.2" />
 
-				<rect x="430" y="232" width="190" height="148" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
-				{#each [0, 1, 2, 3, 4] as bar (bar)}
-					<rect
-						x={452 + bar * 30}
-						y={340 - (bar + 1) * 16}
-						width="18"
-						height={(bar + 1) * 16}
-						rx="3"
-						fill="#009bcc"
-						opacity={0.35 + bar * 0.12}
-					/>
-				{/each}
-			</svg>
+					<rect x="430" y="232" width="190" height="148" rx="10" fill="#121a2b" stroke="#ffffff" stroke-opacity="0.08" />
+					{#each [0, 1, 2, 3, 4] as bar (bar)}
+						<rect
+							x={452 + bar * 30}
+							y={340 - (bar + 1) * 16}
+							width="18"
+							height={(bar + 1) * 16}
+							rx="3"
+							fill="#009bcc"
+							opacity={0.35 + bar * 0.12}
+						/>
+					{/each}
+				</svg>
+
+			{/if}
 
 			{#if showMe.href}
 				<div class="border-t border-bone/10 px-4 py-3 text-right">
 					<a
-						href={showMe.href}
+						href={showMe.exploreHref ?? showMe.href}
 						class="inline-flex items-center gap-1.5 text-[13px] font-medium text-lens no-underline transition-colors hover:text-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lens"
 					>
 						Explore {label}
@@ -294,6 +327,7 @@
 					</a>
 				</div>
 			{/if}
+			</div>
 		</div>
 	</div>
 {/if}

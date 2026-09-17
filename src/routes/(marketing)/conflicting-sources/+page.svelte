@@ -4,7 +4,6 @@
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import ProblemPager from '$lib/components/site/ProblemPager.svelte';
-	import SourceReconciliation from '$lib/components/site/SourceReconciliation.svelte';
 	import { site } from '$lib/site/content';
 
 	const functions = [
@@ -47,7 +46,34 @@
 </blockquote>
 
 <section class="mt-14 w-full sm:mt-20">
-	<SourceReconciliation />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			Every register reporting into one screen.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the screen the morning starts on. Programme at a glance holds each register as a
+			tile, operational assessments, third parties, the ROPA, risks, incidents, subject rights and
+			tasks, giving the counts a stack of spreadsheets would give you, except they are drawn from
+			one estate rather than eight and they agree with each other. The line under the greeting is
+			the one that matters on a Monday: how many items are overdue, and how many of those carry a
+			statutory deadline. Scope it to your own work, your team's, or everything you can see.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/dashboard-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/dashboard-screen.png"
+				alt="The platform dashboard, showing overdue and upcoming item counts above a programme at a glance panel with tiles for assessments, third parties, ROPA, risk, incidents, subject rights, tasks and the operations centre."
+				width="2048"
+				height="1152"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

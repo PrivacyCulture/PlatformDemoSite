@@ -1,5 +1,4 @@
 <script lang="ts">
-	import BreachClock from '$lib/components/site/BreachClock.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
@@ -47,7 +46,34 @@
 </blockquote>
 
 <section class="mt-14 w-full sm:mt-20">
-	<BreachClock />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			The shape of your incidents, before the next one.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the breach readiness view. The top row is the current position: incidents open, how
+			many are still awaiting triage, how many have been confirmed and how many have crossed the
+			threshold for notifying a regulator. Below it, the pipeline shows where cases are stacked up
+			and how long each stage is taking in practice, from triage through investigation and
+			containment to closure. Severity and root cause sit alongside, so the pattern behind the
+			incidents is something you can point at rather than something you suspect.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/breach-readiness-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/breach-readiness-screen.png"
+				alt="The Breach Readiness dashboard, showing incident counts and notifications required above charts for incidents over time, stage pipeline and duration, severity distribution and root causes."
+				width="2048"
+				height="1152"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

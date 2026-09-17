@@ -3,7 +3,20 @@ import raw from '$lib/journey/content.json';
 
 export type JourneyShowMe = {
 	label: string;
+	/** Platform spec page; also drives the generated /platform/[slug] routes. */
 	href: string;
+	/** Where the preview panel's Explore link goes. Defaults to href. */
+	exploreHref?: string;
+	/** Real product screenshot for the preview panel; the placeholder mock is used when absent. */
+	image?: {
+		src: string;
+		webp?: string;
+		alt: string;
+		width: number;
+		height: number;
+	};
+	/** Short explanation shown under the screenshot. */
+	caption?: string;
 };
 
 export type JourneySceneContent = {

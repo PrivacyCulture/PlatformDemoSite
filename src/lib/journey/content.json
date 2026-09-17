@@ -60,7 +60,16 @@
 			"whatIfRest": "it all told one story?",
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/connected-view"
+				"href": "/platform/connected-view",
+				"exploreHref": "/conflicting-sources",
+				"image": {
+					"src": "/Images/front/dashboard-view.png",
+					"webp": "/Images/front/dashboard-view.webp",
+					"alt": "The platform dashboard, showing overdue and upcoming item counts above a programme at a glance panel with tiles for assessments, third parties, ROPA, risk, incidents, subject rights and tasks.",
+					"width": 1024,
+					"height": 838
+				},
+				"caption": "Programme at a glance, with every register reporting into one screen: operational assessments, third parties, the ROPA, risk, incidents, subject rights and tasks. The counts are drawn from one estate rather than eight spreadsheets, so they agree with each other. The line under the greeting is the one that matters on a Monday: six items overdue, three of them carrying a statutory deadline."
 			}
 		},
 		{
@@ -71,7 +80,16 @@
 			"align": "right",
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/living-ropa"
+				"href": "/platform/living-ropa",
+				"exploreHref": "/stale-ropa",
+				"image": {
+					"src": "/Images/front/ropa-view.png",
+					"webp": "/Images/front/ropa-view.webp",
+					"alt": "The Visual ROPA View with review status switched on, showing processing activities as coloured nodes on a map.",
+					"width": 1024,
+					"height": 777
+				},
+				"caption": "The Visual ROPA View with review status switched on. Every processing activity is a node, coloured by whether its owner has confirmed it: green complete, purple under review, red not started. The filters on the left cut the estate by vendor, asset, risk or legal basis."
 			}
 		},
 		{
@@ -81,7 +99,16 @@
 			"whatIfRest": "nothing ever got forgotten?",
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/dpias"
+				"href": "/platform/dpias",
+				"exploreHref": "/dpia-follow-through",
+				"image": {
+					"src": "/Images/front/dpia-review.png",
+					"webp": "/Images/front/dpia-review.webp",
+					"alt": "The DPIA Review board, showing assessments as cards in Not started, In progress, Under review and Complete columns.",
+					"width": 1024,
+					"height": 744
+				},
+				"caption": "The DPIA Review board with every assessment on one wall. Cards sit in Not started, In progress, Under review or Complete, each carrying its owner, when it was created and when it last moved, so an assessment nobody has touched since spring is visible rather than filed away. The counters above split the estate into active and archived."
 			}
 		},
 		{
@@ -91,7 +118,16 @@
 			"whatIfRest": "you never stopped watching?",
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/vendor-risk"
+				"href": "/platform/vendor-risk",
+				"exploreHref": "/vendor-drift",
+				"image": {
+					"src": "/Images/front/vendor-view.png",
+					"webp": "/Images/front/vendor-view.webp",
+					"alt": "A table of third parties requiring attention, listing each vendor's category, business unit, risk rating, DPA status, last assessment, next review date and the reason it needs attention.",
+					"width": 1012,
+					"height": 694
+				},
+				"caption": "Third parties requiring attention, ten of forty-eight. Every row is on the list for a reason, held in the last column: a high risk rating, a DPIA that is due, a DPA still pending or never signed. A last assessment reading never, and a review date already past, are what turn a vendor you once trusted into a vendor you look at again."
 			}
 		},
 		{
@@ -101,7 +137,16 @@
 			"whatIfRest": "nothing could hide?",
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/shadow-ai"
+				"href": "/platform/shadow-ai",
+				"exploreHref": "/shadow-ai",
+				"image": {
+					"src": "/Images/front/shadowai-view.png",
+					"webp": "/Images/front/shadowai-view.webp",
+					"alt": "The ROPA view filtered by AI capability, showing eight processing activities as linked node clusters beside a panel of active filters.",
+					"width": 1024,
+					"height": 773
+				},
+				"caption": "The ROPA view filtered by AI capability, showing eight of forty-two processing activities. Each cluster carries the vendors, assets and risks already attached to it, so a tool somebody signed up for arrives with its hallucination and data leakage risks on the record. The panel on the right holds the filters that produced it."
 			}
 		},
 		{
@@ -113,7 +158,16 @@
 			"textAfterSeconds": 1.25,
 			"showMe": {
 				"label": "See what it looks like!",
-				"href": "/platform/benchmark"
+				"href": "/platform/benchmark",
+				"exploreHref": "/board-reporting",
+				"image": {
+					"src": "/Images/front/poc-view.png",
+					"webp": "/Images/front/poc-view.webp",
+					"alt": "The Privacy Operations Centre dashboard, showing open, overdue and unassigned task counts above charts for status, monthly volume, category and priority.",
+					"width": 989,
+					"height": 760
+				},
+				"caption": "The Privacy Operations Centre. The row across the top is the answer to the board's question: tasks open, how many are past their target date, how many are still waiting on an owner, and the share closed within SLA this year. Created against resolved over twelve months shows whether the team is keeping up, and every tile drills back to the tasks behind it."
 			}
 		}
 	],
