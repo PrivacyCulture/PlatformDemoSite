@@ -1,6 +1,5 @@
 <script lang="ts">
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
-	import DpiaLinkage from '$lib/components/site/DpiaLinkage.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
@@ -41,7 +40,33 @@
 />
 
 <section class="mt-14 w-full sm:mt-20">
-	<DpiaLinkage />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			Every assessment, and where it has got to.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the DPIA Review board. Every assessment sits in a column for not started, in
+			progress, under review or complete, with the total, active and archived counts across the
+			top. Each card carries who raised it, when it was last touched and whether the processing it
+			covers is still live, so you can see which risks have someone working on them and which have
+			stalled since sign-off. Search, filter or export the lot to Excel when the auditor asks.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/dpia-status-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/dpia-status-screen.png"
+				alt="The DPIA Review board showing assessments as cards in columns for not started, in progress, under review and complete, with total, active and archived counts above."
+				width="1920"
+				height="1024"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

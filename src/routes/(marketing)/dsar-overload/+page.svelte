@@ -1,6 +1,5 @@
 <script lang="ts">
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
-	import DsarTimeline from '$lib/components/site/DsarTimeline.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
@@ -47,7 +46,34 @@
 </blockquote>
 
 <section class="mt-14 w-full sm:mt-20">
-	<DsarTimeline />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			Every open request against its statutory clock.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the DSAR Overview. Across the top sit the numbers that matter on a Monday morning:
+			how many requests are open, how many arrived this month, how many are past their statutory
+			deadline or due within seven days, which have extensions running and the share closed inside
+			30 days. Below that the requests break down by the right being exercised, the channel they
+			came in through, the volume month by month and where identity verification has got to, so you
+			can see the pattern behind the backlog rather than one request at a time.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/dsr-overview-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/dsr-overview-screen.png"
+				alt="The DSAR Overview dashboard with counts of open, new, overdue and due-soon requests, the SLA met rate, and charts breaking requests down by right type, monthly volume, intake channel and identity verification status."
+				width="2048"
+				height="1152"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

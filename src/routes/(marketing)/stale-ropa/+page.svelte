@@ -4,7 +4,6 @@
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import ProblemPager from '$lib/components/site/ProblemPager.svelte';
-	import RopaFreshness from '$lib/components/site/RopaFreshness.svelte';
 	import { site } from '$lib/site/content';
 
 	const functions = [
@@ -41,7 +40,33 @@
 />
 
 <section class="mt-14 w-full sm:mt-20">
-	<RopaFreshness />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			See at a glance which records are still true.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the Visual ROPA View in review status mode. Every processing activity is a node,
+			coloured by where its owner's confirmation stands: green when it is complete, purple while
+			it is under review, red when it has not started. Filter by vendor, asset, risk or legal
+			basis, and the register shows you where to chase next instead of leaving you to hunt
+			through a spreadsheet.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/ropa-freshness-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/ropa-freshness-screen.png"
+				alt="The Visual ROPA View in review status mode, showing every processing activity as a node with complete, in progress and not started records picked out by colour."
+				width="1920"
+				height="1024"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">

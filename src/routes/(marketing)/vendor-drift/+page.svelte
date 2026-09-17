@@ -4,7 +4,6 @@
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import ProblemPager from '$lib/components/site/ProblemPager.svelte';
-	import VendorWatch from '$lib/components/site/VendorWatch.svelte';
 	import { site } from '$lib/site/content';
 
 	const functions = [
@@ -41,7 +40,34 @@
 />
 
 <section class="mt-14 w-full sm:mt-20">
-	<VendorWatch />
+	<div class="w-full">
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">In the platform</p>
+		<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+			The vendors that need you this week.
+		</h2>
+		<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+			This is the third parties requiring attention list. Every processor on it has a reason to
+			be there: a high risk rating, a DPA that is still pending or was never signed, or an
+			assessment that has never happened. Each row shows the business unit that owns the
+			relationship, the current DPA status, when the vendor was last assessed and when the next
+			review falls due, with overdue dates picked out in red. Export it to CSV when procurement
+			or the auditor wants the list.
+		</p>
+	</div>
+	<figure class="mt-8 w-full sm:mt-10">
+		<picture>
+			<source srcset="/Images/screenshots/vendor-overview-status-screen.webp" type="image/webp" />
+			<img
+				src="/Images/screenshots/vendor-overview-status-screen.png"
+				alt="A table of third parties requiring attention, listing each vendor's category, business unit, risk rating, DPA status, last assessment, next review date and the reason it needs attention."
+				width="2048"
+				height="1152"
+				class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
+				loading="lazy"
+				decoding="async"
+			/>
+		</picture>
+	</figure>
 </section>
 
 <MountainScene side="left" class="mt-16 sm:mt-24">
