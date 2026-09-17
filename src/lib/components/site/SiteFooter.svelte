@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
 
-	const colA = site.footer.links.slice(0, 5);
-	const colB = site.footer.links.slice(5);
+	const colA = site.footer.links;
+	const colB = site.footer.secondaryLinks;
 </script>
 
 <footer class="relative z-10 w-full bg-horizon pt-8 pb-5 text-white" aria-label="Site footer">

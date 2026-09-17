@@ -1,16 +1,15 @@
 <script lang="ts">
 	import SiteFooter from './SiteFooter.svelte';
 	import SiteHeader from './SiteHeader.svelte';
+	import poster from '$lib/assets/clips/Mountain/startmountain.webp';
+	import loopSrc from '$lib/assets/clips/Mountain/endmountain.mp4';
 
 	let { children }: { children: import('svelte').Snippet } = $props();
-
-	const poster = '/clips/Mountain/startmountain.jpeg';
-	const loopSrc = '/clips/Mountain/endmountain.mp4';
 </script>
 
 <div class="site-shell relative min-h-dvh overflow-x-hidden bg-white text-ink">
 	<div class="site-mountain pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
-		<img src={poster} alt="" width="1920" height="1080" decoding="async" />
+		<img src={poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
 		<video
 			class="site-mountain-video"
 			src={loopSrc}
@@ -31,11 +30,14 @@
 		Skip to content
 	</a>
 
-	<SiteHeader />
-
-	<main id="main" class="relative z-10 px-page pb-10">
-		{@render children()}
-	</main>
+	<div class="relative z-10 px-page">
+		<div class="mx-auto w-full max-w-page">
+			<SiteHeader />
+			<main id="main" class="pb-10">
+				{@render children()}
+			</main>
+		</div>
+	</div>
 
 	<SiteFooter />
 </div>

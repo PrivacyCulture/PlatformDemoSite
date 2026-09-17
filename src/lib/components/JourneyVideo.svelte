@@ -1,8 +1,9 @@
 <script lang="ts">
-	const CROSSFADE_MS = 480;
+	const CROSSFADE_MS = 320;
 
 	let {
-		src = '/journey.mp4',
+		src = '',
+		nextSrc = '',
 		videoEl = $bindable(null),
 		missing = $bindable(false),
 		ready = $bindable(false),
@@ -10,6 +11,8 @@
 		onReady
 	}: {
 		src?: string;
+		/** Clip expected after `src`; warmed in the idle layer so the swap is instant. */
+		nextSrc?: string;
 		videoEl?: HTMLVideoElement | null;
 		missing?: boolean;
 		ready?: boolean;
@@ -24,17 +27,36 @@
 	let opacityB = $state(0);
 	/** Which layer sits on top during / after a fade. */
 	let topIsA = $state(true);
+	/**
+	 * True from the moment a swap starts until the outgoing layer has fully faded out.
+	 * Prefetch must wait: reassigning `src` on a layer that is still visible blanks it and
+	 * then paints the next clip's first frame under the crossfade.
+	 */
+	let swapping = $state(false);
 	/** Non-reactive mirror so the load effect does not re-run on promote. */
 	let frontIsARef = true;
 	let shownSrc = '';
 	let swapGen = 0;
 	let fadeTimer = 0;
+	/** URL last assigned to each layer, so a prefetched clip is not reloaded. */
+	const assigned = new WeakMap<HTMLVideoElement, string>();
 
 	function reducedMotion() {
 		return (
 			typeof window !== 'undefined' &&
 			window.matchMedia('(prefers-reduced-motion: reduce)').matches
 		);
+	}
+
+	function assignSrc(video: HTMLVideoElement, url: string) {
+		if (assigned.get(video) === url) return;
+		assigned.set(video, url);
+		video.src = url;
+		try {
+			video.load();
+		} catch {
+			/* ignore */
+		}
 	}
 
 	function bufferedRatio(video: HTMLVideoElement) {
@@ -72,12 +94,7 @@
 		video.loop = false;
 		video.playbackRate = 1;
 		video.pause();
-		video.src = url;
-		try {
-			video.load();
-		} catch {
-			/* ignore */
-		}
+		assignSrc(video, url);
 
 		const enough = () =>
 			Boolean(video.duration) && (bufferedRatio(video) >= 0.12 || video.readyState >= 2);
@@ -162,6 +179,7 @@
 					/* ignore */
 				}
 			}
+			swapping = false;
 			return;
 		}
 
@@ -193,9 +211,12 @@
 					/* ignore */
 				}
 			}
+			// Outgoing layer is now at opacity 0 — safe to reuse it for the next prefetch.
+			swapping = false;
 		}, CROSSFADE_MS + 40);
 	}
 
+	// Swap: load `src` into the idle layer, then crossfade it to the front.
 	$effect(() => {
 		const url = src;
 		const a = layerA;
@@ -209,6 +230,7 @@
 		const trackProgress = first;
 
 		if (first) ready = false;
+		swapping = true;
 
 		void (async () => {
 			const ok = await loadInto(incoming, url, gen, trackProgress);
@@ -216,6 +238,29 @@
 			promote(incoming, url, first);
 		})();
 	});
+
+	// Prefetch: once a swap settles, start downloading the next clip into the idle layer
+	// (preload="auto" pulls the whole file) so the following scene change needs no network.
+	$effect(() => {
+		const url = nextSrc;
+		const a = layerA;
+		const b = layerB;
+		const idle = topIsA ? b : a;
+		if (swapping || !url || !a || !b || !videoEl || !idle || idle === videoEl) return;
+		if (url === shownSrc || assigned.get(idle) === url) return;
+		if (Number(idle.style.opacity || 0) > 0) return;
+		try {
+			idle.pause();
+		} catch {
+			/* ignore */
+		}
+		assignSrc(idle, url);
+	});
+
+	/** Only flag "missing" for the clip we are actually trying to show, not a prefetch. */
+	function onLayerError(layer: HTMLVideoElement | null) {
+		if (layer && assigned.get(layer) === src) missing = true;
+	}
 </script>
 
 <div id="video-stage" class="bg-ink">
@@ -230,7 +275,7 @@
 		playsinline
 		preload="auto"
 		autoplay={false}
-		onerror={() => (missing = true)}
+		onerror={() => onLayerError(layerA)}
 	></video>
 	<video
 		id="journey-video-b"
@@ -243,23 +288,19 @@
 		playsinline
 		preload="auto"
 		autoplay={false}
-		onerror={() => (missing = true)}
+		onerror={() => onLayerError(layerB)}
 	></video>
 	{#if missing}
 		<div class="absolute inset-0 flex items-center justify-center p-6 text-center">
 			<div
 				class="max-w-[520px] rounded-2xl border border-dashed border-bone/30 p-7 text-sm leading-relaxed font-light text-bone-dim"
 			>
-				<strong class="text-bone">Drop your journey footage here.</strong><br /><br />
-				Add scene clips under
-				<code class="font-mono text-[13px] text-lens">static/clips/</code>
-				or a single scrubbable
-				<code class="font-mono text-[13px] text-lens">journey.mp4</code>. For buttery scroll-scrubbing,
-				re-encode with a keyframe on every frame:<br /><br />
-				<code class="font-mono text-[13px] text-lens"
-					>ffmpeg -i raw.mp4 -vf scale=1920:-2 -c:v libx264 -g 1 -crf 23 -an -movflags +faststart
-					shot.mp4</code
-				>
+				<strong class="text-bone">Journey footage failed to load.</strong><br /><br />
+				Scene clips live under
+				<code class="font-mono text-[13px] text-lens">src/lib/assets/clips/Mountain/</code>
+				and are listed in
+				<code class="font-mono text-[13px] text-lens">src/lib/journey/videos.ts</code>. Encode
+				recipe is in the README.
 			</div>
 		</div>
 	{/if}
@@ -274,7 +315,7 @@
 		height: 100%;
 		object-fit: cover;
 		pointer-events: none;
-		transition: opacity var(--fade-ms, 480ms) ease-in-out;
+		transition: opacity var(--fade-ms, 320ms) ease-in-out;
 	}
 
 	.journey-video-layer.is-top {

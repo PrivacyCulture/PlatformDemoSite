@@ -1,3 +1,6 @@
+import { content as journey } from '$lib/journey/content';
+
+// The footer links mirror the journey (front-end) legal bar so both stay in sync.
 export const site = {
 	brand: 'Privacy Culture Platform',
 	legalName: 'Privacy Culture Ltd',
@@ -16,16 +19,10 @@ export const site = {
 			alt: 'PrivacyCulture',
 			href: 'https://www.privacyculture.com/'
 		},
-		links: [
-			{ label: 'Home', href: 'https://www.privacyculture.com/' },
-			{ label: 'Resources', href: 'https://www.privacyculture.com/resources' },
-			{ label: 'Careers', href: 'https://www.privacyculture.com/careers' },
-			{ label: 'Case studies', href: 'https://www.privacyculture.com/case-studies' },
-			{ label: 'Privacy Policy', href: 'https://www.privacyculture.com/privacy-policy' },
-			{ label: 'Cookie Notice', href: 'https://www.privacyculture.com/cookie-notice' },
-			{ label: 'Terms of Use', href: 'https://www.privacyculture.com/terms-of-use' },
-			{ label: 'Trust & Security', href: '/trust' },
-			{ label: 'AI Index (LLMs)', href: 'https://www.privacyculture.com/llms.txt' }
+		links: journey.legal.links,
+		secondaryLinks: [
+			{ label: 'Book a demo', href: '/demo' },
+			{ label: 'Privacy Culture Services', href: 'https://www.privacyculture.com/' }
 		],
 		address: ['Bouverie House,', '154-160 Fleet Street, London, EC4A 2DQ'],
 		phone: '+44 (0) 20 7112 9360',
@@ -66,7 +63,7 @@ export const site = {
 		]
 	},
 	video: {
-		src: '/clips/TestVersionOffice.mp4',
+		src: '/clips/ExplainerTest.mp4',
 		label: 'Watch the 2-minute overview',
 		caption: 'A short walk-through of the Visual ROPA View and connected workflows.'
 	},

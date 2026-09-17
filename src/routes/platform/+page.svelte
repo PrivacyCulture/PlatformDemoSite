@@ -1,72 +1,26 @@
 <script lang="ts">
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import { site } from '$lib/site/content';
+	import { problems } from '$lib/site/problems';
 
 	let explainerOpen = $state(false);
 
-	function playWhenVisible(node: HTMLVideoElement) {
-		const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-		const playIfIdle = () => {
-			if (reducedMotion.matches || !node.paused) return;
-			void node.play().catch(() => {});
-		};
-
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries.some((entry) => entry.isIntersecting)) playIfIdle();
-			},
-			{ threshold: 0.4 }
-		);
-		observer.observe(node);
-
-		return {
-			destroy() {
-				observer.disconnect();
-			}
-		};
-	}
-
-	const capabilities = [
+	const pillars = [
 		{
-			title: 'Visual ROPA View',
-			body: 'Replace flat records with a live, visual map of data flows, processing activities, and system dependencies.',
-			href: '/platform/living-ropa'
+			title: 'Simple',
+			body: 'No twelve-month rollout. Clear workflows, transparent pricing, no enterprise implementation programme.'
 		},
 		{
-			title: 'Automated Task Routing',
-			body: 'Distribute ownership across business functions while retaining central privacy governance and audit trails.',
-			href: '/platform/connected-view'
+			title: 'Visual',
+			body: "See your processing as a map, not a spreadsheet. The whole estate at a glance, a record's reach when needed."
 		},
 		{
-			title: 'Integrated Vendor & Risk Tracking',
-			body: 'Automatically calculate risk scores, log vendor processing terms, and monitor third-party sub-processors.',
-			href: '/platform/vendor-risk'
-		},
-		{
-			title: 'Incident & DSAR Logging',
-			body: 'Connect data subject requests and security incidents directly to the underlying systems and processing activities involved.',
-			href: '/dsar-overload'
-		}
-	];
-
-	const problems = [
-		{
-			title: 'DSAR overload',
-			body: 'Locate data subject records in minutes instead of weeks.',
-			href: '/dsar-overload'
-		},
-		{
-			title: 'Audit readiness',
-			body: 'Keep a continuous evidence log instead of scrambling before review.',
-			href: '/audit-readiness'
-		},
-		{
-			title: 'Training that misses the risk',
-			body: 'Point education at operational weak spots, not generic tick-boxes.',
-			href: '/training-budget'
+			title: 'Federated',
+			body: 'Owners in the business confirm their own records are right. You keep the central view.'
 		}
 	];
 </script>
@@ -93,88 +47,95 @@
 	<ExplainerVideo bind:open={explainerOpen} compact />
 </PageHero>
 
-<section class="mt-4 w-full sm:mt-8">
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Key capabilities</p>
-	<h2 class="max-w-[18ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
-		One estate. Four connected operational layers.
-	</h2>
-	<ul class="mt-8 grid gap-4 sm:grid-cols-2">
-		{#each capabilities as item, i (item.title)}
-			<li class="rounded-2xl border border-lens/50 bg-transparent p-5">
-				<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
-					{String(i + 1).padStart(2, '0')}
-				</p>
-				<h3 class="mt-2 text-[1.15rem] leading-snug font-bold tracking-tight">{item.title}</h3>
-				<p class="mt-2 text-[14px] leading-relaxed font-light text-ink/70">{item.body}</p>
-				<a
-					href={item.href}
-					class="mt-4 inline-flex text-[13px] font-medium text-lens no-underline underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+<section class="mt-10 w-full sm:mt-16">
+	<div class="rounded-3xl bg-silver/45 p-6 ring-1 ring-ink/5 sm:p-10">
+		<div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+			<div class="min-w-0">
+				<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">How it fits together</p>
+				<h2
+					class="max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
 				>
-					See how it works →
-				</a>
-			</li>
-		{/each}
-	</ul>
-</section>
-
-<section class="mt-16 w-full sm:mt-24">
-	<div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
-		<div class="min-w-0">
-			<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">How it fits together</p>
-			<h2
-				class="max-w-[18ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
-			>
-				From the map down to the task.
-			</h2>
-			<p class="mt-3 max-w-[50ch] text-[15px] leading-relaxed font-light text-ink/70">
-				Start in the Visual ROPA View, open the record that needs attention, and let routing carry
-				the work to the right owner — with board-ready governance sitting underneath.
-			</p>
+					One live privacy estate.<br />Not five spreadsheets and a guess.
+				</h2>
+				<p class="mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">
+					Bring the records and workflows you already keep, scattered across tools and tabs, into one
+					place. The privacy team sees the whole estate, hands ownership out to the people who do
+					the processing, and everyone works from the same picture.
+				</p>
+			</div>
+			<div class="rounded-2xl bg-white p-4 sm:p-6 lg:p-8">
+				<img
+					class="aspect-video w-full object-contain"
+					src="/Images/FromExcelToTeams.png"
+					width="2048"
+					height="1152"
+					loading="lazy"
+					decoding="async"
+					alt="Scattered spreadsheets resolving into one connected privacy estate shared across teams"
+				/>
+			</div>
 		</div>
-		<video
-			use:playWhenVisible
-			class="aspect-video w-full border-0 object-cover outline-none"
-			src="/clips/RopaVideo.mp4"
-			playsinline
-			muted
-			preload="metadata"
-			aria-label="How the Visual ROPA View fits together"
-		></video>
+
+		<ul class="mt-8 grid gap-4 sm:grid-cols-3 sm:mt-10">
+			{#each pillars as pillar (pillar.title)}
+				<li class="rounded-2xl bg-white/80 p-5 ring-1 ring-ink/5">
+					<p class="flex items-center gap-2.5">
+						<span class="size-2.5 shrink-0 bg-gold" aria-hidden="true"></span>
+						<span class="text-[1.05rem] font-bold tracking-tight text-heading">{pillar.title}</span>
+					</p>
+					<p class="mt-3 text-[14px] leading-relaxed font-light text-ink/70">{pillar.body}</p>
+				</li>
+			{/each}
+		</ul>
 	</div>
 </section>
 
-<section class="mt-16 w-full sm:mt-24">
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Problems this solves</p>
-	<h2 class="max-w-[16ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
-		Clarity where the work actually breaks.
-	</h2>
-	<ul class="mt-8 divide-y divide-ink/10 border-y border-ink/10">
-		{#each problems as item (item.href)}
-			<li>
-				<a
-					href={item.href}
-					class="group flex cursor-pointer items-start justify-between gap-4 py-5 no-underline transition-colors hover:bg-ink/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-				>
-					<div>
-						<p class="text-[1.15rem] font-bold tracking-tight text-ink">{item.title}</p>
-						<p class="mt-1 max-w-[46ch] text-[14px] leading-relaxed font-light text-ink/70">
-							{item.body}
-						</p>
-					</div>
-					<span
-						class="mt-1 hidden text-ink/35 transition-transform group-hover:translate-x-1 group-hover:text-lens sm:inline"
-						aria-hidden="true">→</span
-					>
-				</a>
-			</li>
-		{/each}
-	</ul>
-</section>
+<MountainScene side="left" class="mt-16 sm:mt-24">
+	<section class="w-full">
+			<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Problems this solves</p>
+			<h2
+				class="max-w-[22ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
+			>
+				Clarity where the work actually breaks.
+			</h2>
 
-<div class="mt-16 w-full sm:mt-24">
+			<ul class="mt-10 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16">
+				{#each problems as item, i (item.href)}
+					<li class="border-b border-ink/10">
+						<a
+							href={item.href}
+							class="group flex h-full cursor-pointer items-baseline gap-4 py-5 no-underline transition-colors hover:bg-ink/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+						>
+							<span
+								class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums transition-colors group-hover:text-lens"
+								aria-hidden="true"
+							>
+								{String(i + 1).padStart(2, '0')}
+							</span>
+							<span class="min-w-0 flex-1">
+								<span class="block text-[1.05rem] font-bold tracking-tight text-heading transition-colors group-hover:text-lens">
+									{item.title}
+								</span>
+								<span class="mt-1.5 block max-w-[40ch] text-[14px] leading-relaxed font-light text-ink/70">
+									{item.body}
+								</span>
+							</span>
+							<span
+								class="shrink-0 text-ink/35 transition-transform group-hover:translate-x-1 group-hover:text-lens"
+								aria-hidden="true">→</span
+							>
+						</a>
+					</li>
+				{/each}
+			</ul>
+	</section>
+</MountainScene>
+
+<MountainScene side="right" class="mt-16 sm:mt-24">
 	<PricingStrip />
-</div>
+</MountainScene>
 
 <div class="mt-10 w-full">
 	<DemoCtaBlock />
 </div>
+

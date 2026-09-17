@@ -77,7 +77,7 @@
 					{/if}
 				</div>
 
-				<div class="hero-specs w-full max-w-[40rem] shrink-0 lg:max-w-[min(40rem,46vw)]">
+				<div class="hero-specs w-full max-w-[40rem] shrink-0 lg:w-[min(40rem,46%)]">
 					{@render children?.()}
 				</div>
 			</div>

@@ -39,17 +39,6 @@
 			}
 		]
 	},
-	"coldOpen": {
-		"title": "Privacy platforms have started to look the same.",
-		"paragraphs": [
-			"A wall of modules. A licence fee. A shrug when the board asks the hard question.",
-			"We thought that was backwards.",
-			"So we started somewhere else — not “what do you need to record?” but “what do you actually need to fix?”"
-		],
-		"tagline": "This is privacy, rethought.",
-		"begin": "Begin",
-		"skip": "Skip"
-	},
 	"hero": {
 		"strapline": "From clutter to clarity to control",
 		"titleLines": [
@@ -130,32 +119,34 @@
 	],
 	"lens": {
 		"eyebrow": "Come and see the view from here",
-		"eyebrowLines": ["Come and see", "the view from here"],
+		"eyebrowLines": [
+			"Come and see",
+			"the view from here"
+		],
 		"textAfterSeconds": 5,
-		"title": "Where clarity meets control.",
-		"body": "Finally see your whole privacy picture brought into focus. Book a relaxed 25-minute walk-through to explore the Visual ROPA View using real sample data, and see how our connected workflows fit your team.",
+		"title": "This is what solved looks like.",
+		"body": "Every data flow, vendor and risk on one interactive map. Day-to-day tasks sit with the teams who own the data, while full visibility and sign-off stay with you.",
 		"showMe": {
-			"label": "Show me the detail!",
+			"label": "See it working",
 			"href": "/platform"
 		},
-		"principlesLabel": "Our 3 key guides",
+		"principlesLabel": "What changes",
 		"principles": [
 			{
-				"title": "Simplicity over software clutter",
-				"body": "No complex onboarding, no endless configuration, and no enterprise price tags. You get clean, intuitive workflows so you can get up and running without burning months on setup."
+				"title": "You start seeing it in the first session",
+				"body": "Load your real data and the map builds in front of you. No configuration project, no months of setup before anything is visible."
 			},
 			{
-				"title": "Visual clarity, not dense lists",
-				"body": "Privacy shouldn’t feel like endless scrolling through giant spreadsheets or text-heavy tables. We show your data flows, vendor ecosystem, and risks as a clear, interactive map—so you spot issues instantly instead of hunting through rows of text."
+				"title": "One map instead of a thousand rows",
+				"body": "Data flows, vendor ecosystem and risk all render as a single interactive view. Gaps show up as gaps, so you spot the problem instead of hunting for it."
 			},
 			{
-				"title": "Distributed ownership",
-				"subtitle": "Across the whole business",
-				"body": "Privacy shouldn’t be a one-person job. Pass day-to-day tasks directly to team leads in HR, Marketing, or Product, while you keep full visibility and central control from your dashboard."
+				"title": "Everyone owns their part",
+				"body": "Tasks route to the leads in HR, Marketing and Product who already know that data best. You keep central control and see everything from one dashboard."
 			}
 		],
 		"primaryCta": {
-			"label": "Book a demo",
+			"label": "Book a 25-minute walk-through",
 			"href": "/demo"
 		},
 		"secondaryCta": {

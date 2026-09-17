@@ -122,8 +122,22 @@
 	.show-me-orb {
 		opacity: 0;
 		transform: scale(0.15) rotate(-120deg);
-		filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.4));
 		transform-origin: center;
+	}
+
+	/* Static soft shadow: a drop-shadow filter here was re-rasterised every frame of the HUD spin. */
+	.show-me-orb::before {
+		content: '';
+		position: absolute;
+		inset: -8px;
+		border-radius: 50%;
+		background: radial-gradient(
+			circle,
+			rgba(0, 0, 0, 0.42) 0%,
+			rgba(0, 0, 0, 0.18) 45%,
+			transparent 72%
+		);
+		transform: translateY(4px);
 	}
 
 	.show-me.is-open .show-me-orb {

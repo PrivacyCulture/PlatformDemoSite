@@ -36,13 +36,6 @@ export type JourneyContent = {
 	legal: {
 		links: { label: string; href: string }[];
 	};
-	coldOpen: {
-		title: string;
-		paragraphs: string[];
-		tagline: string;
-		begin: string;
-		skip: string;
-	};
 	hero: {
 		strapline: string;
 		titleLines: string[];

@@ -146,7 +146,7 @@ export function homepageJsonLd(origin: string) {
 	const softwareId = `${root}/#software`;
 	const faqId = `${root}/#faq`;
 	const termsId = `${root}/#search-terms`;
-	const logoUrl = `${root}/brand/privacyculture-logo.png`;
+	const logoUrl = `${root}/brand/privacyculture-platform-colour.png`;
 
 	return {
 		'@context': 'https://schema.org',

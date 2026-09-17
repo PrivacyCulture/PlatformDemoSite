@@ -1,3 +1,9 @@
+/* Self-hosted Poppins (latin subset, only the weights we use) — no Google Fonts request. */
+@import '@fontsource/poppins/300.css';
+@import '@fontsource/poppins/400.css';
+@import '@fontsource/poppins/500.css';
+@import '@fontsource/poppins/600.css';
+@import '@fontsource/poppins/700.css';
 @import 'tailwindcss';
 
 @theme {
@@ -11,9 +17,12 @@
 	--color-heading: #263d86;
 	--color-ember: #079ac8;
 	--color-gold: #d4af6a;
+	--color-silver: #dbe1e7;
 	--color-gold-ink: #1a1408;
 	/* Matches the /platform hero inset: clamp(1.5rem, 7vw, 5.5rem) */
 	--spacing-page: clamp(1.5rem, 7vw, 5.5rem);
+	/* Caps split layouts so media stays next to copy on wide screens */
+	--max-width-page: 72rem;
 }
 
 /* Scroll + video layers — plain CSS so scrubbing behaviour stays intact */
@@ -28,7 +37,6 @@
 	overflow: hidden;
 }
 
-#journey-video,
 .journey-video-layer {
 	position: absolute;
 	inset: 0;
@@ -42,10 +50,24 @@
 	inset: 0;
 	z-index: 5;
 	pointer-events: none;
+}
+
+/* Gradients can't be interpolated, so each scrim is its own layer and only opacity animates. */
+.scrim-layer {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	transition: opacity 1s ease;
+}
+
+.scrim-layer.on {
+	opacity: 1;
+}
+
+.scrim-base {
 	background:
 		linear-gradient(90deg, rgba(4, 6, 10, 0.62) 0%, rgba(4, 6, 10, 0.18) 34%, rgba(4, 6, 10, 0) 55%),
 		radial-gradient(ellipse at center, transparent 50%, rgba(4, 6, 10, 0.5) 100%);
-	transition: background 1s ease;
 }
 
 .beat {
@@ -129,23 +151,25 @@
 	transform: translate(-50%, calc(-50% + 16px));
 	scrollbar-width: none;
 	overscroll-behavior: contain;
+	/* Compositor-only transitions: animating `top` / `max-height` reflowed every frame. */
 	transition:
 		opacity 0.5s ease,
-		transform 0.7s ease,
-		top 0.85s ease,
-		max-height 0.85s ease;
+		transform 0.85s ease;
 }
 
 .beat.lens-copy.on {
 	transform: translate(-50%, -50%);
 }
 
-/* Solo line sits in the sky above the sunrise */
-.beat.lens-copy.lens-view,
-.beat.lens-copy.lens-view.on {
-	top: 26%;
+/* Solo line sits in the sky above the sunrise (centre at 26vh, moved with transform not `top`) */
+.beat.lens-copy.lens-view {
 	max-height: none;
 	overflow: visible;
+	transform: translate(-50%, calc(-50% - 24vh + 16px));
+}
+
+.beat.lens-copy.lens-view.on {
+	transform: translate(-50%, calc(-50% - 24vh));
 }
 
 .lens-view-arrow {
@@ -198,13 +222,13 @@
 	opacity: 1;
 }
 
-#scrim.scrim-view {
+.scrim-view {
 	background:
 		linear-gradient(180deg, rgba(4, 6, 10, 0.16) 0%, transparent 42%, rgba(4, 6, 10, 0.22) 100%),
 		radial-gradient(ellipse at center, transparent 52%, rgba(4, 6, 10, 0.32) 100%);
 }
 
-#scrim.scrim-payoff {
+.scrim-payoff {
 	background:
 		linear-gradient(180deg, rgba(4, 6, 10, 0.22) 0%, rgba(4, 6, 10, 0.12) 42%, rgba(4, 6, 10, 0.3) 100%),
 		radial-gradient(ellipse at center, rgba(4, 6, 10, 0.06) 32%, rgba(4, 6, 10, 0.32) 100%);
@@ -259,11 +283,6 @@ html.loading body {
 
 	#video-stage,
 	#scrim,
-	#progress,
-	#video-clock-mobile,
-	#footage-picker,
-	#section-times,
-	#cold-open,
 	#scene-index {
 		display: none;
 	}
@@ -279,7 +298,9 @@ html.loading body {
 
 	.beat.hero-copy,
 	.beat.scene-copy,
-	.beat.lens-copy {
+	.beat.lens-copy,
+	.beat.lens-copy.lens-view,
+	.beat.lens-copy.lens-view.on {
 		text-align: left;
 		transform: none;
 		max-height: none;

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import Beat from '$lib/components/Beat.svelte';
-	import JourneyColdOpen from '$lib/components/JourneyColdOpen.svelte';
 	import JourneyLoader from '$lib/components/JourneyLoader.svelte';
 	import JourneyNav from '$lib/components/JourneyNav.svelte';
 	import JourneyScene from '$lib/components/JourneyScene.svelte';
@@ -19,7 +18,6 @@
 		isPayoffBeatId,
 		isSceneBeatId,
 		isSceneTextActive,
-		loadBeatDefsForVideo,
 		navJumpsFromBeats,
 		nextBeatProgress,
 		nextVisibleBeatIndex,
@@ -28,25 +26,15 @@
 		type BeatDef,
 		type BeatId
 	} from '$lib/journey/beats';
-	import {
-		COLD_OPEN_STORAGE_KEY,
-		DEFAULT_THEME_ID,
-		getTheme,
-		isJourneyThemeId,
-		sceneSrcForBeat,
-		themeTimingKey,
-		VIDEO_STORAGE_KEY,
-		type JourneyTheme
-	} from '$lib/journey/videos';
+	import { DEFAULT_THEME_ID, getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
 	import { content, sceneClassName } from '$lib/journey/content';
 
 	const SCENES = content.scenes;
 	const PRINCIPLES = content.lens.principles;
 
+	const theme = getTheme(DEFAULT_THEME_ID);
 	let videoEl = $state<HTMLVideoElement | null>(null);
-	let themeId = $state(DEFAULT_THEME_ID);
-	let theme = $state<JourneyTheme>(getTheme(DEFAULT_THEME_ID));
-	let clipSrc = $state(sceneSrcForBeat(getTheme(DEFAULT_THEME_ID), 'beat-hero') ?? '');
+	let clipSrc = $state(sceneSrcForBeat(theme, 'beat-hero') ?? '');
 	let videoDuration = $state(0);
 	let beatDefs = $state<BeatDef[]>(cloneBeatDefs());
 	let missing = $state(false);
@@ -56,7 +44,6 @@
 	let loading = $state(true);
 	let loadProgress = $state(0);
 	let mounted = $state(false);
-	let coldOpen = $state(false);
 	let journeyStarted = $state(false);
 
 	const navJumps = $derived(navJumpsFromBeats(beatDefs));
@@ -76,16 +63,19 @@
 		return 0;
 	});
 	const sceneIndexVisible = $derived(
-		!loading && !coldOpen && journeyStarted && activeSceneNumber > 0
+		!loading && journeyStarted && activeSceneNumber > 0
 	);
+	/** Clip that follows the active one — warmed in the idle video layer. */
+	const nextClipSrc = $derived(nextSceneSrcAfterBeat(theme, activeBeatId) ?? '');
 
 	let heroShowMeOpen = $state(false);
 	const HERO_SHOW_ME_DELAY_MS = 1100;
-	const onHero = $derived(!loading && !coldOpen && activeBeatId === 'beat-hero');
+	const onHero = $derived(!loading && activeBeatId === 'beat-hero');
 
 	let lensCopyOpen = $state(false);
 	const LENS_COPY_DELAY_MS = (content.lens.textAfterSeconds ?? 3) * 1000;
-	const onLens = $derived(!loading && !coldOpen && activeBeatId === 'beat-lens');
+	// Reduced motion shows every beat at once, so the lens copy must count as "on" too.
+	const onLens = $derived(!loading && (reduced || activeBeatId === 'beat-lens'));
 
 	const playback = {
 		ready: false,
@@ -247,7 +237,7 @@
 	}
 
 	function jumpTo(p: number, opts: { instant?: boolean; keepPlayhead?: boolean } = {}) {
-		if (loading || coldOpen) return;
+		if (loading) return;
 		stopReverseNav();
 		if (!opts.keepPlayhead && !(p <= 0.02 && isHeroLoopBeat(activeBeatId))) {
 			stopNativePlay();
@@ -340,7 +330,7 @@
 	}
 
 	function advance() {
-		if (loading || coldOpen) return;
+		if (loading) return;
 		stopReverseNav();
 		journeyStarted = true;
 		const idx = currentBeatIndex(scrollProgress(), beatDefs);
@@ -364,7 +354,7 @@
 
 	/** Animate scroll backward so the active clip scrubs in reverse, like scrolling up. */
 	function retreat() {
-		if (loading || coldOpen) return;
+		if (loading) return;
 		stopNativePlay();
 		playback.clipFinished = false;
 		lastScenePlayed = null;
@@ -458,26 +448,6 @@
 		});
 	}
 
-	function markColdOpenSeen() {
-		try {
-			localStorage.setItem(COLD_OPEN_STORAGE_KEY, '1');
-		} catch {
-			/* ignore */
-		}
-	}
-
-	function dismissColdOpen(skipToPlatform: boolean) {
-		markColdOpenSeen();
-		coldOpen = false;
-		if (skipToPlatform) {
-			journeyStarted = true;
-			jumpTo(navJumps.platform);
-			return;
-		}
-		journeyStarted = false;
-		jumpTo(0);
-	}
-
 	function scrollProgress(): number {
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
@@ -486,12 +456,6 @@
 	function syncScrollState(progress = scrollProgress()) {
 		playback.localScrollP = progress;
 		scrollP = progress;
-		const next = {} as Record<BeatId, boolean>;
-		for (let i = 0; i < beatDefs.length; i++) {
-			const beat = beatDefs[i]!;
-			next[beat.id] = isBeatActive(progress, beatDefs, i);
-		}
-		activeBeats = next;
 		if (progress > 0.02) journeyStarted = true;
 	}
 
@@ -583,28 +547,12 @@
 
 	onMount(() => {
 		reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-		try {
-			const savedTheme = localStorage.getItem(VIDEO_STORAGE_KEY);
-			if (savedTheme && isJourneyThemeId(savedTheme)) {
-				themeId = savedTheme;
-				theme = getTheme(savedTheme);
-				beatDefs = loadBeatDefsForVideo(themeTimingKey(theme));
-				clipSrc = sceneSrcForBeat(theme, 'beat-hero') ?? theme.src ?? '';
-			}
-			const seenCold = localStorage.getItem(COLD_OPEN_STORAGE_KEY);
-			coldOpen = seenCold !== '1';
-		} catch {
-			coldOpen = true;
-		}
-
 		mounted = true;
 
 		if (reduced) {
 			activeBeats = initialActiveBeats(true, beatDefs);
 			loadProgress = 1;
 			setLoading(false);
-			coldOpen = false;
 			return;
 		}
 
@@ -617,7 +565,6 @@
 
 		const onScroll = () => {
 			if (loading && !playback.ready) return;
-			if (coldOpen) return;
 			const max = document.documentElement.scrollHeight - window.innerHeight;
 			playback.localScrollP = max > 0 ? window.scrollY / max : 0;
 			playback.localScrollP = Math.min(1, Math.max(0, playback.localScrollP));
@@ -631,13 +578,6 @@
 			lastScrollP = playback.localScrollP;
 
 			if (playback.localScrollP > 0.02) journeyStarted = true;
-
-			const next = {} as Record<BeatId, boolean>;
-			for (let i = 0; i < beatDefs.length; i++) {
-				const beat = beatDefs[i]!;
-				next[beat.id] = isBeatActive(playback.localScrollP, beatDefs, i);
-			}
-			activeBeats = next;
 		};
 
 		const frame = () => {
@@ -650,16 +590,17 @@
 				video.readyState >= 2
 			) {
 				if (playback.nativePlay) {
-					clipTime = video.currentTime;
-					playback.easedT = video.currentTime;
-					playback.lastSet = video.currentTime;
+					const t = video.currentTime;
+					// Throttle the reactive write: ~30 Hz is plenty for text-reveal thresholds
+					// and avoids re-evaluating every scene's visibility on each frame.
+					if (Math.abs(t - clipTime) > 1 / 30) clipTime = t;
+					playback.easedT = t;
+					playback.lastSet = t;
 				} else {
 					if (!video.paused) video.pause();
 
 					const dur = Math.max(0.001, video.duration - 0.05);
-					const local = theme.scenes?.length
-						? localClipProgress(playback.localScrollP, activeBeatId)
-						: playback.localScrollP;
+					const local = localClipProgress(playback.localScrollP, activeBeatId);
 					const target = local * dur;
 					if (reverseNavigating || playback.easedT < 0) {
 						playback.easedT = target;
@@ -722,7 +663,7 @@
 		if (!mounted || reduced) return;
 		// Finish reverse-scrub on the current clip, then swap (hero loop / next scene).
 		if (reverseNavigating) return;
-		const nextSrc = sceneSrcForBeat(theme, activeBeatId) ?? theme.src ?? '';
+		const nextSrc = sceneSrcForBeat(theme, activeBeatId) ?? '';
 		if (nextSrc && nextSrc !== clipSrc) {
 			clipSrc = nextSrc;
 			playback.easedT = 0;
@@ -773,7 +714,9 @@
 		}
 	});
 
+	// Single source of truth for which beats are on — derived from scroll progress.
 	$effect(() => {
+		if (reduced) return;
 		const next = {} as Record<BeatId, boolean>;
 		for (let i = 0; i < beatDefs.length; i++) {
 			const beat = beatDefs[i]!;
@@ -823,21 +766,18 @@
 		bind:ready={clipReady}
 		bind:loadProgress
 		src={clipSrc}
+		nextSrc={nextClipSrc}
 		onReady={handleClipReady}
 	/>
 {/if}
-<div id="scrim" class={onLens ? (lensCopyOpen ? 'scrim-payoff' : 'scrim-view') : ''}></div>
+<!-- Three scrims crossfade by opacity; gradient backgrounds cannot be transitioned. -->
+<div id="scrim" aria-hidden="true">
+	<div class={['scrim-layer scrim-base', !onLens && 'on']}></div>
+	<div class={['scrim-layer scrim-view', onLens && !lensCopyOpen && 'on']}></div>
+	<div class={['scrim-layer scrim-payoff', onLens && lensCopyOpen && 'on']}></div>
+</div>
 
-{#if mounted}
-	<JourneyColdOpen
-		visible={coldOpen && !loading}
-		copy={content.coldOpen}
-		onBegin={() => dismissColdOpen(false)}
-		onSkip={() => dismissColdOpen(true)}
-	/>
-{/if}
-
-{#if !loading && !coldOpen}
+{#if !loading}
 	<JourneyNav
 		onHome={() => jumpTo(navJumps.hero)}
 		onJump={jumpTo}
@@ -921,7 +861,7 @@
 			class={[
 				'transition-all duration-700',
 				lensCopyOpen
-					? 'mb-2 text-[10px] tracking-[0.28em] text-gold uppercase sm:text-[11px]'
+					? 'mb-3 text-[11px] tracking-[0.28em] text-gold uppercase [text-shadow:0_1px_12px_rgba(4,6,10,0.7)] sm:text-[12px]'
 					: 'text-[clamp(2.5rem,5.8vw,4.15rem)] leading-[1.08] font-bold tracking-tight text-bone'
 			]}
 		>
@@ -949,17 +889,17 @@
 		<div class={['lens-rest', lensCopyOpen && 'open']} inert={!lensCopyOpen}>
 			<div class="lens-rest-inner">
 				<p
-					class="text-[clamp(1.7rem,3.6vw,2.75rem)] leading-[1.08] font-bold tracking-tight text-bone"
+					class="text-[clamp(2.2rem,5vw,3.6rem)] leading-[1.04] font-bold tracking-tight text-bone"
 				>
 					{content.lens.title}
 				</p>
 				<p
-					class="mx-auto mt-3 max-w-[50ch] text-[14px] leading-relaxed font-light text-bone/85 [text-shadow:0_1px_18px_rgba(4,6,10,0.8)] sm:text-[15px]"
+					class="mx-auto mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-bone/90 [text-shadow:0_1px_18px_rgba(4,6,10,0.85)] sm:text-[16px]"
 				>
 					{content.lens.body}
 				</p>
 
-				<div class="mt-5 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+				<div class="mt-6 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
 					<a
 						id="demo"
 						href={content.lens.primaryCta.href}
@@ -986,24 +926,25 @@
 					{content.lens.secondaryCta.label}
 				</a>
 
-				<h3 class="mt-6 mb-3 text-[11px] tracking-[0.24em] text-bone/70 uppercase">
+				<h3 class="mt-8 mb-4 text-[11px] tracking-[0.24em] text-bone/80 uppercase [text-shadow:0_1px_12px_rgba(4,6,10,0.7)]">
 					{content.lens.principlesLabel}
 				</h3>
-				<ol class="grid grid-cols-1 gap-3 text-left sm:grid-cols-3">
+				<ol class="grid grid-cols-1 gap-4 text-left sm:grid-cols-3">
 					{#each PRINCIPLES as item, i (item.title)}
 						<li
-							class="rounded-2xl border border-gold/25 bg-ink/55 p-4 shadow-[0_12px_40px_rgba(4,6,10,0.35)] backdrop-blur-md"
+							class="relative overflow-hidden rounded-2xl border border-gold/40 bg-ink/80 p-5 shadow-[0_1px_0_rgba(255,255,255,0.08)_inset,0_16px_48px_rgba(4,6,10,0.5)] backdrop-blur-xl before:pointer-events-none before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-to-r before:from-transparent before:via-gold/70 before:to-transparent"
 						>
-							<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
+							<p class="flex items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
 								{String(i + 1).padStart(2, '0')}
+								<span class="h-px flex-1 bg-gold/30" aria-hidden="true"></span>
 							</p>
-							<p class="mt-1.5 text-[14px] leading-snug font-bold tracking-tight text-bone">
+							<p class="mt-3 text-[15px] leading-snug font-bold tracking-tight text-bone sm:text-[16px]">
 								{item.title}
 								{#if item.subtitle}
 									<span class="mt-0.5 block text-[12px] font-medium text-gold/90">{item.subtitle}</span>
 								{/if}
 							</p>
-							<p class="mt-1.5 text-[12px] leading-relaxed font-light text-bone-dim">
+							<p class="mt-2 text-[13px] leading-relaxed font-light text-bone/80">
 								{item.body}
 							</p>
 						</li>
