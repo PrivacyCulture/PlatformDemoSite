@@ -9,7 +9,7 @@
  * last good snapshot.
  */
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { timingSafeEqual } from 'node:crypto';
+import { createHash, timingSafeEqual } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import type { SiteContent } from '$lib/content';
 import { hasBundledAsset } from '$lib/content/assets';
@@ -26,6 +26,14 @@ export type ContentSnapshot = {
 };
 
 const fallback = database as unknown as SiteContent;
+
+/**
+ * The content file this build was deployed with, as the CMS reads it to sync. Serialised once:
+ * JSON.stringify of the parsed file, which is also exactly what the CMS hashes, so the two
+ * fingerprints compare equal whenever the content is the same regardless of the file's layout.
+ */
+export const sourceText = JSON.stringify(database);
+export const sourceSha256 = createHash('sha256').update(sourceText).digest('hex');
 
 const als = new AsyncLocalStorage<SiteContent>();
 installContentResolver(() => als.getStore());
@@ -175,7 +183,10 @@ function status() {
 		configured: cfg.configured,
 		fetchedAt: snapshot.fetchedAt,
 		lastError,
-		ttlSeconds: cfg.ttlSeconds
+		ttlSeconds: cfg.ttlSeconds,
+		// Fingerprint of the content file built into this deployment. Not a secret: the CMS
+		// compares it with what it last synced, to say "the site has a newer content file".
+		sourceSha256
 	};
 }
 

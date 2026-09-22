@@ -31,7 +31,8 @@ Both need `CONTENT_API_URL`, `CONTENT_API_TOKEN` and `ORIGIN` (their own public 
 Endpoints:
 
 - `POST /api/content/refresh` — the CMS calls this with `Authorization: Bearer <CONTENT_API_TOKEN>` and `{ channel, reason, docKey? }` when content changes; returns `{ ok, channel, fetchedAt, source }`. 401 on a bad token, 409 when `channel` is not the one this service serves.
-- `GET /api/content/status` — unauthenticated health read: `{ channel, source, configured, fetchedAt, lastError, ttlSeconds }`.
+- `GET /api/content/source` — the CMS calls this with the same Bearer token to **sync** the content file this build was deployed with (`data/database.json`), so a change made in this repository reaches Sorted without anyone downloading and uploading a file. Returns the file as JSON with an `x-content-sha256` header.
+- `GET /api/content/status` — unauthenticated health read: `{ channel, source, configured, fetchedAt, lastError, ttlSeconds, sourceSha256 }`. `sourceSha256` fingerprints the built-in content file (sha256 of `JSON.stringify` of it — the same rule Sorted uses), so Sorted can say when a deploy has brought a file it has not synced.
 
 ### Journey clips
 
