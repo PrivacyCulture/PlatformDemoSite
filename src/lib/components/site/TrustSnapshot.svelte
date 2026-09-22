@@ -1,16 +1,12 @@
 <script lang="ts">
 	import UiChrome from './UiChrome.svelte';
+	import { panels } from '$lib/content';
 
-	const rows = [
-		{ label: 'Certifications', value: 'Cyber Essentials (UK)' },
-		{ label: 'Penetration testing', value: 'Annual 3rd-party pen test (executive summary under NDA)' },
-		{ label: 'Data residency', value: 'United Kingdom (AWS UK Region)' },
-		{ label: 'Encryption', value: 'AES-256 at rest · TLS 1.3 in transit' },
-		{ label: 'Governance', value: 'Standard DPA · Published sub-processor list' }
-	];
+	const panel = panels.trustSnapshot;
+	const rows = panel.rows;
 </script>
 
-<UiChrome title="Trust & Security Overview" badge="Public">
+<UiChrome title={panel.title} badge={panel.badge}>
 	<dl class="divide-y divide-bone/10 border-y border-bone/10">
 		{#each rows as row (row.label)}
 			<div class="grid gap-1 py-3 sm:grid-cols-[12rem_minmax(0,1fr)] sm:gap-6">

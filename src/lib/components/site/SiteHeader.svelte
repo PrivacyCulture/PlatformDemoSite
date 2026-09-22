@@ -2,6 +2,9 @@
 	import { page } from '$app/state';
 	import { site } from '$lib/site/content';
 
+	const nav = site.nav;
+	const logo = site.logos.colour;
+
 	let open = $state(false);
 	const path = $derived(page.url.pathname);
 	const hash = $derived(page.url.hash);
@@ -28,44 +31,46 @@
 	<a
 		href="/"
 		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-		aria-label="PrivacyCulture — home"
+		aria-label={nav.homeAriaLabel}
 	>
 		<img
-			src="/brand/privacyculture-platform-colour.png"
-			alt="PrivacyCulture"
+			src={logo.src}
+			alt={logo.alt}
 			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
-			width="500"
-			height="50"
+			width={logo.width}
+			height={logo.height}
 			decoding="async"
 		/>
 	</a>
 
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label="Main" class="hidden translate-y-[5px] items-baseline gap-7 whitespace-nowrap lg:flex">
-			{#each site.nav.links as link (link.href)}
-				<a
-					href={link.href}
-					aria-current={isCurrent(link.href) ? 'page' : undefined}
-					class="-my-3 rounded py-3 text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
-						link.href
-					)
-						? 'text-lens'
-						: 'text-ink/75 hover:text-ink'}"
-				>
-					{link.label}
-				</a>
+		<nav aria-label={nav.ariaLabel} class="hidden translate-y-[5px] items-baseline gap-7 whitespace-nowrap lg:flex">
+			{#each nav.links as link (link.label)}
+				{#if link.href}
+					<a
+						href={link.href}
+						aria-current={isCurrent(link.href) ? 'page' : undefined}
+						class="-my-3 rounded py-3 text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
+							link.href
+						)
+							? 'text-lens'
+							: 'text-ink/75 hover:text-ink'}"
+					>
+						{link.label}
+					</a>
+				{/if}
 			{/each}
 		</nav>
 
 		<div class="flex items-center gap-2">
 			<a
-				href={site.nav.demo.href}
-				aria-current={isCurrent(site.nav.demo.href) ? 'page' : undefined}
+				href={nav.demo.href}
+				aria-current={isCurrent(nav.demo.href) ? 'page' : undefined}
 				class="hidden min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] sm:inline-flex transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
 			>
-				{site.nav.demo.label}
-				<span aria-hidden="true">→</span>
+				{nav.demo.label}
+				<span aria-hidden="true">{nav.arrow}</span>
 			</a>
 
 			<button
@@ -75,7 +80,7 @@
 				aria-controls="mobile-nav"
 				onclick={() => (open = !open)}
 			>
-				<span class="sr-only">{open ? 'Close menu' : 'Open menu'}</span>
+				<span class="sr-only">{open ? nav.closeMenu : nav.openMenu}</span>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
 					{#if open}
 						<path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.6" />
@@ -91,40 +96,44 @@
 {#if open}
 	<nav
 		id="mobile-nav"
-		aria-label="Mobile"
+		aria-label={nav.mobileAriaLabel}
 		class="border-b border-ink/10 bg-white/95 py-4 backdrop-blur-md lg:hidden"
 	>
 		<ul class="flex flex-col gap-1">
-			{#each site.nav.links as link (link.href)}
+			{#each nav.links as link (link.label)}
+				{#if link.href}
+					<li>
+						<a
+							href={link.href}
+							aria-current={isCurrent(link.href) ? 'page' : undefined}
+							class="block rounded-lg px-3 py-3 text-[15px] no-underline transition-colors {isCurrent(
+								link.href
+							)
+								? 'bg-ink/[0.04] text-lens'
+								: 'text-ink hover:bg-ink/[0.03]'}"
+						>
+							{link.label}
+						</a>
+					</li>
+				{/if}
+			{/each}
+			{#each nav.mobileOnlyLinks as link (link.href)}
 				<li>
 					<a
 						href={link.href}
-						aria-current={isCurrent(link.href) ? 'page' : undefined}
-						class="block rounded-lg px-3 py-3 text-[15px] no-underline transition-colors {isCurrent(
-							link.href
-						)
-							? 'bg-ink/[0.04] text-lens'
-							: 'text-ink hover:bg-ink/[0.03]'}"
+						class="block rounded-lg px-3 py-3 text-[15px] text-ink no-underline hover:bg-ink/[0.03]"
 					>
 						{link.label}
 					</a>
 				</li>
 			{/each}
-			<li>
-				<a
-					href="/platform#faq"
-					class="block rounded-lg px-3 py-3 text-[15px] text-ink no-underline hover:bg-ink/[0.03]"
-				>
-					FAQ
-				</a>
-			</li>
 			<li class="mt-2 px-3 sm:hidden">
 				<a
-					href={site.nav.demo.href}
+					href={nav.demo.href}
 					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 				>
-					{site.nav.demo.label}
-					<span aria-hidden="true">→</span>
+					{nav.demo.label}
+					<span aria-hidden="true">{nav.arrow}</span>
 				</a>
 			</li>
 		</ul>

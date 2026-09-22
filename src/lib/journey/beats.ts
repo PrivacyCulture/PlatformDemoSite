@@ -1,3 +1,5 @@
+import { live } from '$lib/content/runtime';
+
 export type BeatId =
 	| 'beat-hero'
 	| 'beat-scene-1'
@@ -18,18 +20,7 @@ export type BeatDef = {
 	hidden?: boolean;
 };
 
-export const BEAT_LABELS: Record<BeatId, string> = {
-	'beat-hero': 'Hero',
-	'beat-scene-1': 'Connected View',
-	'beat-scene-2': 'Living ROPA',
-	'beat-scene-3': 'DPIAs that land',
-	'beat-scene-4': 'Vendor risk',
-	'beat-scene-5': 'Shadow AI',
-	'beat-scene-6': 'Performance in numbers',
-	'beat-lens': 'The lens',
-	'beat-emergence': 'Emergence',
-	'beat-doors': 'Three doors'
-};
+export const BEAT_LABELS: Record<BeatId, string> = live((c) => c.journey.ui.beatLabels);
 
 /**
  * Default cue points as scroll progress (0–1).

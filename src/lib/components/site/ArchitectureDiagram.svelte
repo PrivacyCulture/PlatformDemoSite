@@ -1,22 +1,19 @@
 <script lang="ts">
 	import UiChrome from './UiChrome.svelte';
+	import { panels } from '$lib/content';
 
-	const modules = [
-		{ title: 'ROPA & Data Flows', href: '#visual-ropa' },
-		{ title: 'Vendors & Sub-processors', href: '#vendors' },
-		{ title: 'DPIAs & Risk Assessments', href: '#assessments' },
-		{ title: 'Incidents & DSARs', href: '#dsar-overload' }
-	];
+	const panel = panels.architecture;
+	const modules = panel.modules;
 </script>
 
-<UiChrome title="Module architecture" badge="Connected">
+<UiChrome title={panel.title} badge={panel.badge}>
 	<div class="space-y-4">
 		<div
 			class="rounded-xl border border-gold/35 bg-gradient-to-r from-gold/15 to-lens/10 px-4 py-4 text-center"
 		>
-			<p class="text-[11px] tracking-[0.22em] text-gold uppercase">Visual ROPA View</p>
+			<p class="text-[11px] tracking-[0.22em] text-gold uppercase">{panel.top.eyebrow}</p>
 			<p class="mt-1 text-[13px] font-light text-bone/70">
-				Live map of data flows, processing activities, and system dependencies
+				{panel.top.body}
 			</p>
 		</div>
 
@@ -40,8 +37,8 @@
 		</div>
 
 		<div class="rounded-xl border border-lens/30 bg-lens/10 px-4 py-4 text-center">
-			<p class="text-[11px] tracking-[0.22em] text-lens uppercase">Automated Task Routing</p>
-			<p class="mt-1 text-[13px] font-light text-bone/70">& Board Governance</p>
+			<p class="text-[11px] tracking-[0.22em] text-lens uppercase">{panel.bottom.eyebrow}</p>
+			<p class="mt-1 text-[13px] font-light text-bone/70">{panel.bottom.body}</p>
 		</div>
 	</div>
 </UiChrome>

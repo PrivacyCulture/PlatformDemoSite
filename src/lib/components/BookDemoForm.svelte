@@ -9,6 +9,9 @@
 		type DemoFormErrors,
 		type DemoFormValues
 	} from '$lib/demo/fields';
+	import { demoForm } from '$lib/content';
+
+	const L = demoForm.fields;
 
 	let {
 		seed = emptyDemoForm(),
@@ -62,7 +65,7 @@
 <form onsubmit={submit} class="flex flex-col gap-4" novalidate>
 	<div class="grid gap-4 sm:grid-cols-2">
 		<label class={labelClass}>
-			First name
+			{L.firstName}
 			<input
 				class={fieldClass}
 				autocomplete="given-name"
@@ -75,7 +78,7 @@
 			{/if}
 		</label>
 		<label class={labelClass}>
-			Last name
+			{L.lastName}
 			<input
 				class={fieldClass}
 				autocomplete="family-name"
@@ -90,7 +93,7 @@
 	</div>
 
 	<label class={labelClass}>
-		Work email
+		{L.email}
 		<input
 			class={fieldClass}
 			type="email"
@@ -105,7 +108,7 @@
 	</label>
 
 	<label class={labelClass}>
-		Organisation
+		{L.company}
 		<input
 			class={fieldClass}
 			autocomplete="organization"
@@ -119,14 +122,14 @@
 	</label>
 
 	<label class={labelClass}>
-		What do you do?
+		{L.role}
 		<select
 			class="{fieldClass} cursor-pointer"
 			bind:value={values.role}
 			onblur={() => blurValidate('role')}
 			aria-invalid={Boolean(errors.role)}
 		>
-			<option value="" disabled>Pick the closest fit</option>
+			<option value="" disabled>{L.rolePlaceholder}</option>
 			{#each DEMO_ROLES as role (role)}
 				<option value={role}>{role}</option>
 			{/each}
@@ -137,14 +140,14 @@
 	</label>
 
 	<label class={labelClass}>
-		Roughly how big is the organisation?
+		{L.employeeBand}
 		<select
 			class="{fieldClass} cursor-pointer"
 			bind:value={values.employeeBand}
 			onblur={() => blurValidate('employeeBand')}
 			aria-invalid={Boolean(errors.employeeBand)}
 		>
-			<option value="" disabled>Headcount band</option>
+			<option value="" disabled>{L.employeeBandPlaceholder}</option>
 			{#each EMPLOYEE_BANDS as band (band)}
 				<option value={band}>{band}</option>
 			{/each}
@@ -155,14 +158,14 @@
 	</label>
 
 	<label class={labelClass}>
-		How do you keep track of privacy today?
+		{L.tooling}
 		<select
 			class="{fieldClass} cursor-pointer"
 			bind:value={values.tooling}
 			onblur={() => blurValidate('tooling')}
 			aria-invalid={Boolean(errors.tooling)}
 		>
-			<option value="" disabled>Closest match</option>
+			<option value="" disabled>{L.toolingPlaceholder}</option>
 			{#each TOOLING_OPTIONS as option (option)}
 				<option value={option}>{option}</option>
 			{/each}
@@ -173,14 +176,14 @@
 	</label>
 
 	<label class={labelClass}>
-		When would you like to get started?
+		{L.timing}
 		<select
 			class="{fieldClass} cursor-pointer"
 			bind:value={values.timing}
 			onblur={() => blurValidate('timing')}
 			aria-invalid={Boolean(errors.timing)}
 		>
-			<option value="" disabled>A rough idea is enough</option>
+			<option value="" disabled>{L.timingPlaceholder}</option>
 			{#each TIMING_OPTIONS as option (option)}
 				<option value={option}>{option}</option>
 			{/each}
@@ -191,19 +194,19 @@
 	</label>
 
 	<label class={labelClass}>
-		What’s the one thing you’d most like to see more clearly?
-		<span class={hintClass}> (optional)</span>
+		{L.improve}
+		<span class={hintClass}> {L.optional}</span>
 		<textarea
 			class="{fieldClass} min-h-[5.5rem] py-2"
 			rows="3"
-			placeholder="A living ROPA. One story for the board. Vendors you can actually see…"
+			placeholder={L.improvePlaceholder}
 			bind:value={values.improve}
 		></textarea>
 	</label>
 
 	<label class={labelClass}>
-		Phone
-		<span class={hintClass}> (optional)</span>
+		{L.phone}
+		<span class={hintClass}> {L.optional}</span>
 		<input
 			class={fieldClass}
 			type="tel"
@@ -216,6 +219,6 @@
 		type="submit"
 		class="mt-1 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-gold px-7 py-3 text-[14px] font-semibold tracking-wide text-gold-ink transition-all hover:-translate-y-0.5 hover:bg-[#e0c07a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
 	>
-		Choose a time →
+		{L.submit}
 	</button>
 </form>

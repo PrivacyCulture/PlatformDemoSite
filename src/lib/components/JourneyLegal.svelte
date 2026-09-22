@@ -1,11 +1,13 @@
 <script lang="ts">
-	import type { JourneyContent } from '$lib/journey/content';
+	import type { LinkRef } from '$lib/content';
 
 	let {
 		links,
+		ariaLabel,
 		visible = true
 	}: {
-		links: JourneyContent['legal']['links'];
+		links: LinkRef[];
+		ariaLabel: string;
 		visible?: boolean;
 	} = $props();
 </script>
@@ -16,7 +18,7 @@
 		aria-hidden="true"
 	></div>
 	<nav
-		aria-label="Legal"
+		aria-label={ariaLabel}
 		class="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(0.85rem,env(safe-area-inset-bottom))] pt-8"
 	>
 		<ul

@@ -5,6 +5,9 @@
 	import { emptyDemoForm, type DemoFormValues } from '$lib/demo/fields';
 	import { captureUtmsFromLocation } from '$lib/demo/utm';
 	import { site } from '$lib/site/content';
+	import { pages, pageTitle } from '$lib/content';
+
+	const copy = pages.demo;
 
 	type Step = 'qualify' | 'calendar' | 'confirm';
 
@@ -34,17 +37,12 @@
 		}).format(new Date(iso));
 	}
 
-	const stepLabel = $derived(
-		step === 'qualify' ? 'A few details' : step === 'calendar' ? 'Pick a time' : 'You’re booked'
-	);
+	const stepCopy = $derived(copy.steps[step]);
 </script>
 
 <svelte:head>
-	<title>Book a conversation — {site.brand}</title>
-	<meta
-		name="description"
-		content="Twenty-five minutes to see how privacy work can look when everything’s connected. Book a time that suits you."
-	/>
+	<title>{pageTitle(copy.meta.title)}</title>
+	<meta name="description" content={copy.meta.description} />
 </svelte:head>
 
 <!-- One composition: brand + one idea + one sentence. Form is the action below. -->
@@ -59,14 +57,13 @@
 		class="demo-reveal max-w-[14ch] text-[clamp(2.4rem,6vw,4.25rem)] leading-[1.02] font-bold tracking-tight text-heading"
 		style="animation-delay: 80ms"
 	>
-		Let’s look at the view together.
+		{copy.hero.title}
 	</h1>
 	<p
 		class="demo-reveal mt-6 max-w-[38ch] text-[17px] leading-relaxed font-light text-ink/70 sm:text-[18px]"
 		style="animation-delay: 160ms"
 	>
-		Not a product tour. A short conversation about how privacy work can feel when everything tells
-		one story — and you can show the whole picture.
+		{copy.hero.body}
 	</p>
 </section>
 
@@ -81,14 +78,14 @@
 			class="rounded-2xl border border-ink/10 bg-white/80 p-5 shadow-[0_20px_60px_rgba(11,18,32,0.06)] backdrop-blur-sm sm:p-8"
 		>
 			<p class="text-[11px] tracking-[0.2em] text-lens uppercase">
-				{step === 'confirm' ? 'Done' : step === 'qualify' ? 'Step 1 of 2' : 'Step 2 of 2'}
+				{stepCopy.eyebrow}
 			</p>
 			<h2 id="book-step-title" class="mt-2 text-[1.35rem] font-bold tracking-tight text-heading">
-				{stepLabel}
+				{stepCopy.title}
 			</h2>
 			{#if step === 'qualify'}
 				<p class="mt-2 mb-6 max-w-[42ch] text-[14px] leading-relaxed font-light text-ink/60">
-					A little context helps us talk about your world, not a generic tour.
+					{copy.steps.qualify.intro}
 				</p>
 				{#key formEpoch}
 					<BookDemoForm
@@ -102,7 +99,7 @@
 				{/key}
 			{:else if step === 'calendar'}
 				<p class="mt-2 mb-6 max-w-[42ch] text-[14px] leading-relaxed font-light text-ink/60">
-					Choose a slot that works. We’ll send the invite straight away.
+					{copy.steps.calendar.intro}
 				</p>
 				<BookDemoCalendar
 					{form}
@@ -118,48 +115,37 @@
 				/>
 			{:else if confirmation}
 				<div class="mt-6 rounded-2xl border border-gold/35 bg-gold/10 p-6">
-					<p class="text-[12px] tracking-[0.18em] text-gold uppercase">In the diary</p>
+					<p class="text-[12px] tracking-[0.18em] text-gold uppercase">{copy.confirmation.eyebrow}</p>
 					<p class="mt-3 text-[1.35rem] leading-snug font-semibold text-heading">
 						{formatWhen(confirmation.start, confirmation.timezone)}
 					</p>
 					<p class="mt-3 max-w-[42ch] text-[15px] leading-relaxed font-light text-ink/70">
 						{#if confirmation.isOffline}
-							We’ve got your time. If the calendar invite needs a human nudge, we’ll follow up
-							shortly.
+							{copy.confirmation.offline}
 						{:else}
-							A calendar invite is on its way to
-							<span class="font-medium text-ink">{form.email}</span>. Come as you are —
-							curiosity beats preparation.
+							{copy.confirmation.onlineBefore}
+							<span class="font-medium text-ink">{form.email}</span>{copy.confirmation.onlineAfter}
 						{/if}
 					</p>
 					<a
-						href="/"
+						href={copy.confirmation.backHref}
 						class="mt-6 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-gold px-7 py-3 text-[14px] font-semibold tracking-wide text-gold-ink no-underline transition-all hover:-translate-y-0.5 hover:bg-[#e0c07a]"
 					>
-						Back to the story
+						{copy.confirmation.backLabel}
 					</a>
 				</div>
 			{/if}
 		</div>
 
 		<aside class="lg:pt-2">
-			<p class="text-[11px] tracking-[0.2em] text-gold uppercase">What you’ll walk away with</p>
+			<p class="text-[11px] tracking-[0.2em] text-gold uppercase">{copy.aside.eyebrow}</p>
 			<ul class="mt-5 space-y-5 text-[15px] leading-relaxed font-light text-ink/70">
-				<li>
-					<span class="block font-semibold text-heading">Clarity you can feel.</span>
-					How privacy work looks when everything tells one story — a living ROPA, one answer for
-					the board, vendors you can actually see.
-				</li>
-				<li>
-					<span class="block font-semibold text-heading">A picture you can point at.</span>
-					We’ll open a live view of how privacy looks when everything’s connected — using sample
-					data, not your secrets.
-				</li>
-				<li>
-					<span class="block font-semibold text-heading">Time well spent.</span>
-					Twenty-five minutes. You’ll leave knowing whether this is the view you’ve been looking
-					for.
-				</li>
+				{#each copy.aside.items as item (item.title)}
+					<li>
+						<span class="block font-semibold text-heading">{item.title}</span>
+						{item.body}
+					</li>
+				{/each}
 			</ul>
 		</aside>
 	</div>

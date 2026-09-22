@@ -1,17 +1,14 @@
 <script lang="ts">
 	import UiChrome from './UiChrome.svelte';
+	import { panels } from '$lib/content';
 
-	const cells = [
-		{ x: 'High confidence', y: 'Low operational risk', note: 'Healthy', tone: 'ok' },
-		{ x: 'High confidence', y: 'High operational risk', note: 'Blind spot', tone: 'alert' },
-		{ x: 'Low confidence', y: 'Low operational risk', note: 'Over-anxious', tone: 'mid' },
-		{ x: 'Low confidence', y: 'High operational risk', note: 'Priority', tone: 'warn' }
-	];
+	const panel = panels.cultureMatrix;
+	const cells = panel.cells;
 </script>
 
-<UiChrome title="CultureLens × operational risk" badge="Matrix">
+<UiChrome title={panel.title} badge={panel.badge}>
 	<p class="mb-4 max-w-[46ch] text-[13px] font-light text-bone/65">
-		Employee privacy sentiment against actual risk markers from data activities and incident logs.
+		{panel.intro}
 	</p>
 	<div class="grid gap-3 sm:grid-cols-2">
 		{#each cells as cell (cell.note)}

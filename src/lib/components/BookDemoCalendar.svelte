@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { DemoFormValues } from '$lib/demo/fields';
 	import { readStoredUtms } from '$lib/demo/utm';
+	import { demoForm } from '$lib/content';
+
+	const C = demoForm.calendar;
 
 	type Slot = { start: number; end: number };
 
@@ -66,8 +69,8 @@
 
 	let timezone = $state(
 		typeof Intl !== 'undefined'
-			? Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/London'
-			: 'Europe/London'
+			? Intl.DateTimeFormat().resolvedOptions().timeZone || C.defaultTimezone
+			: C.defaultTimezone
 	);
 	let monthOffset = $state(0);
 	let durationMs = $state(1_800_000);
@@ -79,20 +82,7 @@
 	let booking = $state(false);
 	let bookError = $state<string | null>(null);
 
-	const timezones = [
-		'Europe/London',
-		'Europe/Dublin',
-		'Europe/Amsterdam',
-		'Europe/Berlin',
-		'Europe/Paris',
-		'America/New_York',
-		'America/Chicago',
-		'America/Denver',
-		'America/Los_Angeles',
-		'America/Toronto',
-		'Australia/Sydney',
-		'Asia/Singapore'
-	];
+	const timezones: string[] = [...C.timezones];
 
 	const tzOptions = $derived(
 		timezones.includes(timezone) ? timezones : [timezone, ...timezones]
@@ -168,7 +158,7 @@
 				};
 				if (cancelled) return;
 				if (!res.ok) {
-					loadError = data.error ?? 'Could not load availability.';
+					loadError = data.error ?? C.loadError;
 					slots = [];
 					selectedDayKey = null;
 					return;
@@ -186,7 +176,7 @@
 				}
 			} catch {
 				if (!cancelled) {
-					loadError = 'Could not load availability. Check your connection and try again.';
+					loadError = C.loadErrorNetwork;
 					slots = [];
 					selectedDayKey = null;
 				}
@@ -224,7 +214,7 @@
 				isOffline?: boolean;
 			};
 			if (!res.ok) {
-				bookError = data.error ?? 'Booking failed. Please try another time.';
+				bookError = data.error ?? C.bookError;
 				return;
 			}
 			onBooked({
@@ -234,7 +224,7 @@
 				isOffline: Boolean(data.isOffline)
 			});
 		} catch {
-			bookError = 'Booking failed. Please try again.';
+			bookError = C.bookErrorNetwork;
 		} finally {
 			booking = false;
 		}
@@ -244,7 +234,7 @@
 <div class="flex flex-col gap-4">
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<label class={labelCls}>
-			Your timezone
+			{C.timezoneLabel}
 			<select class={selectCls} bind:value={timezone}>
 				{#each tzOptions as tz (tz)}
 					<option value={tz}>{tz.replace(/_/g, ' ')}</option>
@@ -258,7 +248,7 @@
 				disabled={monthOffset <= 0 || loading}
 				onclick={() => (monthOffset -= 1)}
 			>
-				Earlier
+				{C.earlier}
 			</button>
 			<button
 				type="button"
@@ -266,24 +256,24 @@
 				disabled={monthOffset >= 3 || loading}
 				onclick={() => (monthOffset += 1)}
 			>
-				Later
+				{C.later}
 			</button>
 		</div>
 	</div>
 
 	<p class={muted}>
 		{#if !loading && !loadError && durationMs}
-			About {Math.round(durationMs / 60_000)} minutes.
+			{C.durationBefore} {Math.round(durationMs / 60_000)} {C.durationAfter}
 		{/if}
 	</p>
 
 	{#if loading}
-		<p class={status} role="status">Finding open times…</p>
+		<p class={status} role="status">{C.finding}</p>
 	{:else if loadError}
 		<div class={alertCls} role="alert">{loadError}</div>
 	{:else if !days.length}
 		<p class={status} role="status">
-			Nothing free in this window. Try another month or timezone.
+			{C.nothingFree}
 		</p>
 	{:else}
 		<div class="flex gap-2 overflow-x-auto pb-1">
@@ -300,7 +290,7 @@
 					}}
 				>
 					<span class="block text-[12px] font-medium tracking-wide">{day.label}</span>
-					<span class="mt-0.5 block text-[11px] opacity-55">{day.slots.length} open</span>
+					<span class="mt-0.5 block text-[11px] opacity-55">{day.slots.length} {C.openSuffix}</span>
 				</button>
 			{/each}
 		</div>
@@ -327,7 +317,7 @@
 
 	<div class="mt-1 flex flex-wrap gap-3">
 		<button type="button" class={backBtn} onclick={onBack} disabled={booking}>
-			Back
+			{C.back}
 		</button>
 		<button
 			type="button"
@@ -335,7 +325,7 @@
 			disabled={selectedStart == null || booking || loading}
 			onclick={confirmBooking}
 		>
-			{booking ? 'Booking…' : 'Confirm this time'}
+			{booking ? C.booking : C.confirm}
 		</button>
 	</div>
 </div>

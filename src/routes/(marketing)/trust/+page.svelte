@@ -3,50 +3,27 @@
 	import LensCta from '$lib/components/site/LensCta.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import TrustSnapshot from '$lib/components/site/TrustSnapshot.svelte';
-	import { site } from '$lib/site/content';
+	import { pages, pageTitle } from '$lib/content';
 
-	const pillars = [
-		{
-			id: 'cyber-essentials',
-			title: 'Cyber Essentials Certified',
-			body: 'Fully compliant with UK Government-backed cybersecurity practices to safeguard against common online threats.'
-		},
-		{
-			id: 'pen-test',
-			title: 'Independent Penetration Testing',
-			body: 'The Platform undergoes regular third-party penetration testing. Executive summaries and remediation logs are available to prospective customers under NDA.'
-		},
-		{
-			id: 'residency',
-			title: 'UK Data Residency & Encryption',
-			body: 'Customer data is hosted strictly within tier-3 UK data centres, protected by AES-256 encryption at rest and TLS 1.3 in transit.'
-		},
-		{
-			id: 'contracts',
-			title: 'Contractual Transparency',
-			body: 'Standard Data Processing Addendums (DPA), sub-processor registers, and security contact protocols are published openly without gating behind sales calls.'
-		}
-	];
+	const copy = pages.trust;
+	const pillars = copy.pillars;
 </script>
 
 <svelte:head>
-	<title>Security & Trust Center — {site.brand}</title>
-	<meta
-		name="description"
-		content="Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency."
-	/>
+	<title>{pageTitle(copy.meta.title)}</title>
+	<meta name="description" content={copy.meta.description} />
 </svelte:head>
 
 <PageHero
-	eyebrow="Trust & Security"
-	title="Security & Trust Center"
-	body="Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency."
-	primary={{ label: 'Download standard DPA', href: '/dpa' }}
-	secondary={{ label: 'Book a demo', href: site.demoHref }}
+	eyebrow={copy.hero.eyebrow}
+	title={copy.hero.title}
+	body={copy.hero.body}
+	primary={copy.hero.primary}
+	secondary={copy.hero.secondary}
 />
 
 <section class="mt-14 w-full sm:mt-20">
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Security pillars</p>
+	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{copy.pillarsEyebrow}</p>
 	<ul class="grid gap-4 sm:grid-cols-2">
 		{#each pillars as item, i (item.id)}
 			<li
@@ -66,7 +43,7 @@
 <section class="mt-16 w-full sm:mt-24">
 	<TrustSnapshot />
 	<div class="mt-6 flex flex-wrap gap-3">
-		<GoldCta href="/dpa" label="Read the standard DPA" />
-		<LensCta href="/sub-processors" label="Sub-processor list" />
+		<GoldCta href={copy.ctas.dpa.href} label={copy.ctas.dpa.label} />
+		<LensCta href={copy.ctas.subProcessors.href} label={copy.ctas.subProcessors.label} />
 	</div>
 </section>

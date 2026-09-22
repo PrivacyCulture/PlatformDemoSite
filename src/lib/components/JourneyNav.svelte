@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { NAV_JUMPS } from '$lib/journey/beats';
-	import type { JourneyContent } from '$lib/journey/content';
+	import type { SiteContent } from '$lib/content';
+	import { site } from '$lib/content';
+
+	const logo = site.logos.colourWhite;
 
 	let {
 		onHome,
@@ -11,12 +14,12 @@
 		onHome: () => void;
 		onJump: (progress: number) => void;
 		jumps?: { hero: number; platform: number };
-		copy: JourneyContent['nav'];
+		copy: SiteContent['site']['nav'];
 	} = $props();
 
 	let menuOpen = $state(false);
 
-	function handleLink(link: JourneyContent['nav']['links'][number]) {
+	function handleLink(link: SiteContent['site']['nav']['links'][number]) {
 		if (link.jump === 'platform') onJump(jumps.platform);
 		else if (link.jump === 'hero') onHome();
 		menuOpen = false;
@@ -29,7 +32,7 @@
 	<a
 		href="/"
 		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-		aria-label="PrivacyCulture — home"
+		aria-label={copy.homeAriaLabel}
 		onclick={(e) => {
 			if (!e.metaKey && !e.ctrlKey && !e.shiftKey) {
 				e.preventDefault();
@@ -39,18 +42,18 @@
 		}}
 	>
 		<img
-			src="/brand/privacyculture-platform-colour-white.png"
-			alt="PrivacyCulture"
+			src={logo.src}
+			alt={logo.alt}
 			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
-			width="500"
-			height="50"
+			width={logo.width}
+			height={logo.height}
 			decoding="async"
 		/>
 	</a>
 
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label="Main" class="hidden translate-y-[5px] items-center gap-7 whitespace-nowrap lg:flex">
+		<nav aria-label={copy.ariaLabel} class="hidden translate-y-[5px] items-center gap-7 whitespace-nowrap lg:flex">
 			{#each copy.links as link (link.label)}
 				{#if link.href}
 					<a
@@ -80,7 +83,7 @@
 				class="hidden min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] sm:inline-flex transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
 			>
 				{copy.demo.label}
-				<span aria-hidden="true">→</span>
+				<span aria-hidden="true">{copy.arrow}</span>
 			</a>
 
 			<button
@@ -90,7 +93,7 @@
 				aria-controls="journey-mobile-nav"
 				onclick={() => (menuOpen = !menuOpen)}
 			>
-				<span class="sr-only">{menuOpen ? 'Close menu' : 'Open menu'}</span>
+				<span class="sr-only">{menuOpen ? copy.closeMenu : copy.openMenu}</span>
 				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
 					{#if menuOpen}
 						<path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.6" />
@@ -106,7 +109,7 @@
 {#if menuOpen}
 	<nav
 		id="journey-mobile-nav"
-		aria-label="Mobile"
+		aria-label={copy.mobileAriaLabel}
 		class="fixed inset-x-0 top-[4.25rem] z-40 border-b border-bone/10 bg-ink/95 px-5 py-4 backdrop-blur-md lg:hidden sm:top-[4.75rem]"
 	>
 		<ul class="flex flex-col gap-1">
@@ -137,7 +140,7 @@
 					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 				>
 					{copy.demo.label}
-					<span aria-hidden="true">→</span>
+					<span aria-hidden="true">{copy.arrow}</span>
 				</a>
 			</li>
 		</ul>

@@ -4,6 +4,8 @@
 	 * the browser rather than the page column. `left` uses the path that fades out
 	 * to the right; `right` uses the one that fades out to the left.
 	 */
+	import { site } from '$lib/site/content';
+
 	let {
 		side = 'left',
 		class: className = '',
@@ -13,9 +15,16 @@
 		class?: string;
 		children: import('svelte').Snippet;
 	} = $props();
+
+	const image = $derived(
+		`url('${side === 'left' ? site.backgrounds.mountainLeft : site.backgrounds.mountainRight}')`
+	);
 </script>
 
-<div class={['mountain-scene relative w-full py-10 sm:py-14', `scene-${side}`, className]}>
+<div
+	class={['mountain-scene relative w-full py-10 sm:py-14', `scene-${side}`, className]}
+	style:--scene-image={image}
+>
 	<div class="relative z-10">
 		{@render children()}
 	</div>
@@ -49,13 +58,13 @@
 	}
 
 	.scene-left::before {
-		background-image: url('/Images/mountainPath.webp');
+		background-image: var(--scene-image);
 		background-position: left top;
 		filter: saturate(0.55) brightness(1.22);
 	}
 
 	.scene-right::before {
-		background-image: url('/Images/LeftMountainPath.webp');
+		background-image: var(--scene-image);
 		background-position: right top;
 		filter: saturate(0.9) brightness(1.05);
 	}

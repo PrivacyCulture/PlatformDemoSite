@@ -1,5 +1,7 @@
 <script lang="ts">
-	import { problemNeighbours } from '$lib/site/problems';
+	import { problemCommon, problemNeighbours } from '$lib/site/problems';
+
+	const labels = problemCommon.pager;
 
 	let { current }: { current: string } = $props();
 
@@ -12,13 +14,13 @@
 		'text-[15px] font-bold tracking-tight text-heading transition-colors group-hover:text-lens sm:text-[1.05rem]';
 </script>
 
-<nav class="mt-8 flex items-start justify-between gap-6" aria-label="Other problems this solves">
+<nav class="mt-8 flex items-start justify-between gap-6" aria-label={labels.ariaLabel}>
 	<a href={previous.href} class={linkClass} rel="prev">
-		<span class={eyebrowClass}>← Previous</span>
+		<span class={eyebrowClass}>{labels.previous}</span>
 		<span class={titleClass}>{previous.title}</span>
 	</a>
 	<a href={next.href} class="{linkClass} items-end text-right" rel="next">
-		<span class={eyebrowClass}>Next →</span>
+		<span class={eyebrowClass}>{labels.next}</span>
 		<span class={titleClass}>{next.title}</span>
 	</a>
 </nav>

@@ -1,6 +1,9 @@
 <script lang="ts">
 	import type { BeatId } from '$lib/journey/beats';
 	import type { JourneyShowMe } from '$lib/journey/content';
+	import { journey } from '$lib/content';
+
+	const UI = journey.ui;
 	import Beat from '$lib/components/Beat.svelte';
 	import ShowMeFlash from '$lib/components/ShowMeFlash.svelte';
 
@@ -131,7 +134,7 @@
 				fromRight && 'ml-auto'
 			]}
 		>
-			<span class="text-lens">What if</span>
+			<span class="text-lens">{UI.whatIf}</span>
 			{' '}{whatIfRest}
 		</p>
 	</div>
@@ -166,7 +169,7 @@
 		<button
 			type="button"
 			onclick={onRetreat}
-			aria-label="Previous scene"
+			aria-label={UI.previousScene}
 			class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/35 bg-ink/50 text-bone shadow-[0_6px_22px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:border-bone/55 hover:bg-ink/70 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		>
 			<svg
@@ -186,7 +189,7 @@
 		<button
 			type="button"
 			onclick={onAdvance}
-			aria-label="Next scene"
+			aria-label={UI.nextScene}
 			class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-lens text-white shadow-[0_6px_22px_rgba(0,0,0,0.45)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		>
 			<svg
@@ -229,7 +232,7 @@
 					type="button"
 					onclick={() => (previewOpen = false)}
 					class="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-bone/20 text-bone/70 transition-colors hover:border-bone/40 hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lens"
-					aria-label="Close preview"
+					aria-label={UI.closePreview}
 				>
 					<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
 						<path d="M18 6L6 18M6 6l12 12" stroke-linecap="round" />
@@ -266,7 +269,7 @@
 					class="block h-auto w-full"
 					viewBox="0 0 640 400"
 					role="img"
-					aria-label="Preview of {label}"
+					aria-label="{UI.previewOf} {label}"
 				>
 					<rect width="640" height="400" fill="#0b1220" />
 					<rect x="0" y="0" width="640" height="44" fill="#103389" opacity="0.55" />
@@ -322,8 +325,8 @@
 						href={showMe.exploreHref ?? showMe.href}
 						class="inline-flex items-center gap-1.5 text-[13px] font-medium text-lens no-underline transition-colors hover:text-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lens"
 					>
-						Explore {label}
-						<span aria-hidden="true">→</span>
+						{UI.explorePrefix} {label}
+						<span aria-hidden="true">{UI.arrow}</span>
 					</a>
 				</div>
 			{/if}

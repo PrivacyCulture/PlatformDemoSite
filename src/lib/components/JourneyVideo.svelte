@@ -1,4 +1,8 @@
 <script lang="ts">
+	import { journey } from '$lib/content';
+
+	const MISSING = journey.ui.footageMissing;
+
 	const CROSSFADE_MS = 320;
 
 	let {
@@ -295,12 +299,11 @@
 			<div
 				class="max-w-[520px] rounded-2xl border border-dashed border-bone/30 p-7 text-sm leading-relaxed font-light text-bone-dim"
 			>
-				<strong class="text-bone">Journey footage failed to load.</strong><br /><br />
-				Scene clips live under
-				<code class="font-mono text-[13px] text-lens">src/lib/assets/clips/Mountain/</code>
-				and are listed in
-				<code class="font-mono text-[13px] text-lens">src/lib/journey/videos.ts</code>. Encode
-				recipe is in the README.
+				<strong class="text-bone">{MISSING.title}</strong><br /><br />
+				{MISSING.before}
+				<code class="font-mono text-[13px] text-lens">{MISSING.clipsPath}</code>
+				{MISSING.between}
+				<code class="font-mono text-[13px] text-lens">{MISSING.listPath}</code>{MISSING.after}
 			</div>
 		</div>
 	{/if}

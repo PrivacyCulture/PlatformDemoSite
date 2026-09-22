@@ -1,77 +1,25 @@
-import { content as journey } from '$lib/journey/content';
+import { live } from '$lib/content/runtime';
 
-// The footer links mirror the journey (front-end) legal bar so both stay in sync.
-export const site = {
-	brand: 'Privacy Culture Platform',
-	legalName: 'Privacy Culture Ltd',
-	demoHref: '/demo',
-	overviewHref: 'https://www.privacyculture.com/software',
-	nav: {
-		links: [
-			{ label: 'The Platform', href: '/platform' },
-			{ label: 'Pricing', href: '/platform#pricing' }
-		],
-		demo: { label: 'Book a demo', href: '/demo' }
-	},
+/**
+ * Site-wide copy and asset URLs for the marketing pages. Everything here is
+ * read from the site content under `site`; this module only adds the footer's
+ * link columns, which are composed from the legal links so the journey's legal
+ * bar and the footer stay in sync.
+ */
+export const site = live(({ site: raw }) => ({
+	...raw,
 	footer: {
+		...raw.footer,
 		logo: {
-			src: '/brand/privacyculture-logo-white.svg',
-			alt: 'PrivacyCulture',
-			href: 'https://www.privacyculture.com/'
+			src: raw.logos.white.src,
+			alt: raw.logos.white.alt,
+			width: raw.logos.white.width,
+			height: raw.logos.white.height,
+			href: raw.footer.logoHref
 		},
-		links: journey.legal.links,
-		secondaryLinks: [
-			{ label: 'Book a demo', href: '/demo' },
-			{ label: 'Privacy Culture Services', href: 'https://www.privacyculture.com/' }
-		],
-		address: ['Bouverie House,', '154-160 Fleet Street, London, EC4A 2DQ'],
-		phone: '+44 (0) 20 7112 9360',
-		phoneHref: 'tel:+442071129360',
-		email: 'hello@privacyculture.com',
-		linkedin: 'https://www.linkedin.com/company/privacy-culture/'
-	},
-	pricing: {
-		title: 'Clear pricing for mid-market privacy teams.',
-		micro: 'From £800/month · 12-month agreement · All launch modules included',
-		footnote:
-			'12-month agreement. All launch modules included. Assisted onboarding included. Billing terms confirmed in the order form.',
-		tiers: [
-			{
-				band: '1,001–2,500 employees',
-				rate: '£800',
-				period: '/month',
-				cta: 'Book a demo',
-				href: '/demo',
-				featured: true
-			},
-			{
-				band: '2,501–5,000',
-				rate: '£1,600',
-				period: '/month',
-				cta: 'Book a demo',
-				href: '/demo',
-				featured: false
-			},
-			{
-				band: 'Above 5,000',
-				rate: 'Talk to us',
-				period: '',
-				cta: 'Talk to us',
-				href: '/demo',
-				featured: false
-			}
-		]
-	},
-	video: {
-		src: '/clips/ExplainerTest.mp4',
-		label: 'Watch the 2-minute overview',
-		caption: 'A short walk-through of the Visual ROPA View and connected workflows.'
-	},
-	logos: {
-		label: 'Trusted by privacy teams at',
-		names: ['Schroders', 'SWIFT', 'Square Enix', 'Save the Children', 'Iron Mountain']
+		links: raw.legal.links
 	}
-} as const;
+}));
 
 export {
 	FREE_EMAIL_DOMAINS as consumerEmailDomains,
@@ -81,4 +29,3 @@ export {
 	TIMING_OPTIONS as timelines,
 	ISO_GATE_OPTIONS as isoGates
 } from '$lib/demo/fields';
-

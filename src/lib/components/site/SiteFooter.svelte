@@ -5,7 +5,7 @@
 	const colB = site.footer.secondaryLinks;
 </script>
 
-<footer class="relative z-10 w-full bg-horizon pt-8 pb-5 text-white" aria-label="Site footer">
+<footer class="relative z-10 w-full bg-horizon pt-8 pb-5 text-white" aria-label={site.footer.ariaLabel}>
 	<div class="m-auto flex w-full flex-col flex-wrap sm:flex-row md:w-2/3">
 		<div class="mb-4 w-full px-8 md:w-1/3">
 			<a
@@ -16,8 +16,8 @@
 					src={site.footer.logo.src}
 					alt={site.footer.logo.alt}
 					class="mx-0 block h-auto w-auto max-w-[11rem] sm:max-w-[50%] md:max-w-[9rem] lg:max-w-[12vw]"
-					width="420"
-					height="72"
+					width={site.footer.logo.width}
+					height={site.footer.logo.height}
 					decoding="async"
 				/>
 			</a>
@@ -25,7 +25,7 @@
 
 		<div class="w-full px-8 md:w-2/3 md:px-0">
 			<div class="flex flex-col sm:flex-row">
-				<nav class="w-full sm:w-1/2" aria-label="Footer">
+				<nav class="w-full sm:w-1/2" aria-label={site.footer.navAriaLabel}>
 					<div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
 						<ul>
 							{#each colA as link (link.href)}
@@ -82,7 +82,7 @@
 							target="_blank"
 							rel="noopener noreferrer"
 							class="-m-3 inline-flex p-3 text-white hover:opacity-80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
-							aria-label="Privacy Culture on LinkedIn"
+							aria-label={site.footer.linkedinAriaLabel}
 						>
 							<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32" fill="none" aria-hidden="true">
 								<g clip-path="url(#pc-linkedin-clip)">

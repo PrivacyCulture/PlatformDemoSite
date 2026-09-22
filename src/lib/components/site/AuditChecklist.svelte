@@ -1,19 +1,14 @@
 <script lang="ts">
 	import UiChrome from './UiChrome.svelte';
+	import { panels } from '$lib/content';
 
-	const rows = [
-		{ label: 'Record of processing', status: 'Live', tone: 'live' },
-		{ label: 'Lawful basis map', status: 'Live', tone: 'live' },
-		{ label: 'Vendor re-attestation', status: 'Stale', tone: 'stale' },
-		{ label: 'DPIA register', status: 'Live', tone: 'live' },
-		{ label: 'Incident log linkage', status: 'Live', tone: 'live' },
-		{ label: 'Training evidence pack', status: 'Fail', tone: 'fail' }
-	] as const;
+	const panel = panels.auditChecklist;
+	const rows = panel.rows;
 </script>
 
-<UiChrome title="Audit readiness" badge="Live log">
+<UiChrome title={panel.title} badge={panel.badge}>
 	<p class="mb-4 text-[13px] font-light text-bone/65">
-		Continuous, time-stamped evidence across key GDPR accountability criteria.
+		{panel.intro}
 	</p>
 	<ul class="divide-y divide-bone/10 border-y border-bone/10">
 		{#each rows as row (row.label)}

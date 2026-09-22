@@ -7,7 +7,7 @@
 </script>
 
 <section id="pricing" class={['w-full scroll-mt-24', asPage && 'pt-6 sm:pt-10']}>
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Clear pricing</p>
+	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{site.pricing.eyebrow}</p>
 	<svelte:element
 		this={asPage ? 'h1' : 'h2'}
 		class={[
@@ -31,7 +31,7 @@
 				]}
 			>
 				{#if tier.featured}
-					<p class="text-[11px] tracking-[0.2em] text-gold uppercase">Most teams start here</p>
+					<p class="text-[11px] tracking-[0.2em] text-gold uppercase">{site.pricing.featuredLabel}</p>
 				{/if}
 				<h3
 					class={[

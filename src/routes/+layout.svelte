@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';
+	import { asset } from '$lib/content/assets';
 	import { captureUtmsFromLocation } from '$lib/demo/utm';
-	import { content } from '$lib/journey/content';
+	import { site } from '$lib/content';
+
+	const favicon = asset(site.favicon);
 
 	let { children } = $props();
 
@@ -14,8 +16,8 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
-	<title>{content.meta.title}</title>
-	<meta name="description" content={content.meta.description} />
+	<title>{site.meta.title}</title>
+	<meta name="description" content={site.meta.description} />
 </svelte:head>
 
 {@render children()}

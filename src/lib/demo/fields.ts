@@ -1,36 +1,20 @@
-/** Shared qualification fields, options, and validators for book-a-demo. */
+/**
+ * Shared qualification fields, options, and validators for book-a-demo.
+ * Option lists and error messages are read from the site content under
+ * `demoForm`.
+ */
+import { live } from '$lib/content/runtime';
 
-export const DEMO_ROLES = [
-	'DPO',
-	'Head of Privacy',
-	'Privacy Manager',
-	'Legal/Compliance',
-	'Security/GRC',
-	'Other'
-] as const;
+export const DEMO_ROLES: readonly string[] = live((c) => c.demoForm.options.roles, 'array');
+export const EMPLOYEE_BANDS: readonly string[] = live(
+	(c) => c.demoForm.options.employeeBands,
+	'array'
+);
+export const TOOLING_OPTIONS: readonly string[] = live((c) => c.demoForm.options.tooling, 'array');
+export const TIMING_OPTIONS: readonly string[] = live((c) => c.demoForm.options.timing, 'array');
+export const ISO_GATE_OPTIONS: readonly string[] = live((c) => c.demoForm.options.isoGate, 'array');
 
-export const EMPLOYEE_BANDS = [
-	'under 1,000',
-	'1,000–2,500',
-	'2,501–5,000',
-	'above 5,000'
-] as const;
-
-export const TOOLING_OPTIONS = [
-	'spreadsheet/manual',
-	'specialist privacy tool',
-	'enterprise privacy-GRC platform',
-	'other'
-] as const;
-
-export const TIMING_OPTIONS = [
-	'actively evaluating now',
-	'next 3 months',
-	'3–6 months',
-	'exploring'
-] as const;
-
-export const ISO_GATE_OPTIONS = ['Yes', 'No', 'Not sure'] as const;
+const messages = live((c) => c.demoForm.errors);
 
 export const FREE_EMAIL_DOMAINS = new Set([
 	'gmail.com',
@@ -53,11 +37,11 @@ export const FREE_EMAIL_DOMAINS = new Set([
 	'mail.com'
 ]);
 
-export type DemoRole = (typeof DEMO_ROLES)[number];
-export type EmployeeBand = (typeof EMPLOYEE_BANDS)[number];
-export type ToolingOption = (typeof TOOLING_OPTIONS)[number];
-export type TimingOption = (typeof TIMING_OPTIONS)[number];
-export type IsoGateOption = (typeof ISO_GATE_OPTIONS)[number];
+export type DemoRole = string;
+export type EmployeeBand = string;
+export type ToolingOption = string;
+export type TimingOption = string;
+export type IsoGateOption = string;
 
 export type DemoFormValues = {
 	firstName: string;
@@ -100,42 +84,42 @@ export function isWorkEmail(email: string): boolean {
 	return !FREE_EMAIL_DOMAINS.has(domain);
 }
 
-function inList<T extends string>(value: string, list: readonly T[]): value is T {
-	return (list as readonly string[]).includes(value);
+function inList(value: string, list: readonly string[]): boolean {
+	return list.includes(value);
 }
 
 export function validateDemoForm(values: DemoFormValues): DemoFormErrors {
 	const errors: DemoFormErrors = {};
 
-	if (!values.firstName.trim()) errors.firstName = 'First name is required.';
-	if (!values.lastName.trim()) errors.lastName = 'Last name is required.';
+	if (!values.firstName.trim()) errors.firstName = messages.firstNameRequired;
+	if (!values.lastName.trim()) errors.lastName = messages.lastNameRequired;
 
 	const email = values.email.trim();
-	if (!email) errors.email = 'Work email is required.';
-	else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter a valid email.';
-	else if (!isWorkEmail(email)) errors.email = 'Use a work email — personal domains are not accepted.';
+	if (!email) errors.email = messages.emailRequired;
+	else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = messages.emailInvalid;
+	else if (!isWorkEmail(email)) errors.email = messages.emailNotWork;
 
-	if (!values.company.trim()) errors.company = 'Company is required.';
+	if (!values.company.trim()) errors.company = messages.companyRequired;
 
-	if (!values.role) errors.role = 'Role is required.';
-	else if (!inList(values.role, DEMO_ROLES)) errors.role = 'Choose a role from the list.';
+	if (!values.role) errors.role = messages.roleRequired;
+	else if (!inList(values.role, DEMO_ROLES)) errors.role = messages.roleInvalid;
 
-	if (!values.employeeBand) errors.employeeBand = 'Employee band is required.';
+	if (!values.employeeBand) errors.employeeBand = messages.employeeBandRequired;
 	else if (!inList(values.employeeBand, EMPLOYEE_BANDS)) {
-		errors.employeeBand = 'Choose an employee band.';
+		errors.employeeBand = messages.employeeBandInvalid;
 	}
 
-	if (!values.tooling) errors.tooling = 'Current tooling is required.';
+	if (!values.tooling) errors.tooling = messages.toolingRequired;
 	else if (!inList(values.tooling, TOOLING_OPTIONS)) {
-		errors.tooling = 'Choose current tooling.';
+		errors.tooling = messages.toolingInvalid;
 	}
 
-	if (!values.timing) errors.timing = 'Timing is required.';
-	else if (!inList(values.timing, TIMING_OPTIONS)) errors.timing = 'Choose a timing option.';
+	if (!values.timing) errors.timing = messages.timingRequired;
+	else if (!inList(values.timing, TIMING_OPTIONS)) errors.timing = messages.timingInvalid;
 
 	// ISO/SOC gate hidden for now — keep optional if a value is present
 	if (values.isoGate && !inList(values.isoGate, ISO_GATE_OPTIONS)) {
-		errors.isoGate = 'Choose an option.';
+		errors.isoGate = messages.isoGateInvalid;
 	}
 
 	return errors;

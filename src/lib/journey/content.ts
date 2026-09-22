@@ -1,103 +1,13 @@
-import type { BeatId } from '$lib/journey/beats';
-import raw from '$lib/journey/content.json';
+import { journey } from '$lib/content';
 
-export type JourneyShowMe = {
-	label: string;
-	/** Platform spec page; also drives the generated /platform/[slug] routes. */
-	href: string;
-	/** Where the preview panel's Explore link goes. Defaults to href. */
-	exploreHref?: string;
-	/** Real product screenshot for the preview panel; the placeholder mock is used when absent. */
-	image?: {
-		src: string;
-		webp?: string;
-		alt: string;
-		width: number;
-		height: number;
-	};
-	/** Short explanation shown under the screenshot. */
-	caption?: string;
-};
+export type {
+	JourneyContent,
+	JourneySceneContent,
+	JourneyShowMe
+} from '$lib/content';
 
-export type JourneySceneContent = {
-	id: BeatId;
-	label: string;
-	pain: string;
-	whatIfRest: string;
-	align?: 'left' | 'right';
-	/** Seconds after clip start when scene copy appears. */
-	textAfterSeconds?: number;
-	showMe?: JourneyShowMe;
-};
-
-export type JourneyContent = {
-	meta: {
-		title: string;
-		description: string;
-	};
-	nav: {
-		links: {
-			label: string;
-			href?: string;
-			jump?: 'platform' | 'hero';
-		}[];
-		demo: {
-			label: string;
-			href: string;
-		};
-	};
-	legal: {
-		links: { label: string; href: string }[];
-	};
-	hero: {
-		strapline: string;
-		titleLines: string[];
-		cta: string;
-		subline: string;
-		showMe: JourneyShowMe;
-	};
-	scenes: JourneySceneContent[];
-	lens: {
-		eyebrow: string;
-		eyebrowLines?: string[];
-		/** Seconds the vista line sits alone before the conversion copy fades in. */
-		textAfterSeconds?: number;
-		title: string;
-		body: string;
-		showMe: JourneyShowMe;
-		principlesLabel: string;
-		principles: { title: string; subtitle?: string; body: string }[];
-		primaryCta: { label: string; href: string };
-		secondaryCta: { label: string; href: string };
-	};
-	emergence: {
-		eyebrow: string;
-		line1: string;
-		line2Before: string;
-		line2Em: string;
-		line2After: string;
-		differentiators: { title: string; body: string }[];
-		closing: string;
-		closingEm: string;
-	};
-	doors: {
-		eyebrow: string;
-		lineBefore: string;
-		lineEm: string;
-		subline: string;
-		items: {
-			status: 'live' | 'soon';
-			statusLabel: string;
-			title: string;
-			body: string;
-			cta?: string;
-			href?: string;
-		}[];
-	};
-};
-
-/** All editable journey copy — edit `content.json`. */
-export const content = raw as JourneyContent;
+/** All editable journey copy lives in the site content under `journey` (see `$lib/content`). */
+export const content = journey;
 
 export type PlatformSpec = {
 	slug: string;
@@ -129,6 +39,6 @@ export function platformSpecBySlug(slug: string): PlatformSpec | undefined {
 	return platformSpecs().find((spec) => spec.slug === slug);
 }
 
-export function sceneClassName(scene: JourneySceneContent): string {
+export function sceneClassName(scene: (typeof content.scenes)[number]): string {
 	return scene.align === 'right' ? 'scene-copy from-right' : 'scene-copy';
 }

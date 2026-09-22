@@ -1,36 +1,10 @@
 <script lang="ts">
 	import UiChrome from './UiChrome.svelte';
+	import { panels } from '$lib/content';
 
 	// Headline measures only: value, the target the board agreed, and the move since last quarter.
-	const measures = [
-		{
-			label: 'ROPA records confirmed',
-			value: 83,
-			unit: '%',
-			target: 90,
-			previous: 74,
-			source: '34 of 41 activities',
-			higherIsBetter: true
-		},
-		{
-			label: 'Processors re-attested in window',
-			value: 76,
-			unit: '%',
-			target: 95,
-			previous: 72,
-			source: '19 of 25 processors',
-			higherIsBetter: true
-		},
-		{
-			label: 'Open high risks',
-			value: 4,
-			unit: '',
-			target: 0,
-			previous: 7,
-			source: 'Across 3 DPIAs',
-			higherIsBetter: false
-		}
-	];
+	const panel = panels.boardDashboard;
+	const measures = panel.measures;
 
 	function fill(m: (typeof measures)[number]) {
 		// Share of the way to target, so every bar reads the same direction.
@@ -43,22 +17,22 @@
 		const improving = m.higherIsBetter ? delta > 0 : delta < 0;
 		const magnitude = Math.abs(delta);
 		return {
-			text: `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${magnitude}${m.unit || ''} vs Q2`,
-			word: improving ? 'Improving' : delta === 0 ? 'Flat' : 'Slipping',
+			text: `${delta > 0 ? '+' : delta < 0 ? '−' : ''}${magnitude}${m.unit || ''} ${panel.vsLabel}`,
+			word: improving ? panel.improving : delta === 0 ? panel.flat : panel.slipping,
 			improving
 		};
 	}
 
 	function gap(m: (typeof measures)[number]) {
 		const g = Math.abs(m.target - m.value);
-		return g === 0 ? 'On target' : `${g}${m.unit || ''} to target`;
+		return g === 0 ? panel.onTarget : `${g}${m.unit || ''} ${panel.toTarget}`;
 	}
 </script>
 
-<UiChrome title="Privacy posture · Q3 2026" badge="Board view">
+<UiChrome title={panel.title} badge={panel.badge}>
 	<div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
-		<p class="text-[13px] font-light text-bone/65">The trend, the target and the gap. Nothing assembled by hand.</p>
-		<p class="text-[12px] text-bone/45">Every figure drills to its records</p>
+		<p class="text-[13px] font-light text-bone/65">{panel.intro}</p>
+		<p class="text-[12px] text-bone/45">{panel.note}</p>
 	</div>
 
 	<dl class="mt-4 grid gap-3 sm:grid-cols-3">
@@ -70,7 +44,7 @@
 					<span class="text-[2rem] leading-none font-bold tracking-tight text-bone tabular-nums">
 						{m.value}{m.unit}
 					</span>
-					<span class="text-[12px] text-bone/45">target {m.target}{m.unit}</span>
+					<span class="text-[12px] text-bone/45">{panel.targetLabel} {m.target}{m.unit}</span>
 				</dd>
 				<dd class="mt-3">
 					<div

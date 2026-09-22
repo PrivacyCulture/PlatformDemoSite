@@ -4,43 +4,27 @@
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
-	import { site } from '$lib/site/content';
+	import { pages, pageTitle } from '$lib/content';
 	import { problems } from '$lib/site/problems';
 
-	let explainerOpen = $state(false);
+	const copy = pages.platform;
 
-	const pillars = [
-		{
-			title: 'Simple',
-			body: 'No twelve-month rollout. Clear workflows, transparent pricing, no enterprise implementation programme.'
-		},
-		{
-			title: 'Visual',
-			body: "See your processing as a map, not a spreadsheet. The whole estate at a glance, a record's reach when needed."
-		},
-		{
-			title: 'Federated',
-			body: 'Owners in the business confirm their own records are right. You keep the central view.'
-		}
-	];
+	let explainerOpen = $state(false);
 </script>
 
 <svelte:head>
-	<title>The Platform — {site.brand}</title>
-	<meta
-		name="description"
-		content="The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the Visual ROPA View, then dive into operational detail when you need it."
-	/>
+	<title>{pageTitle(copy.meta.title)}</title>
+	<meta name="description" content={copy.meta.description} />
 </svelte:head>
 
 <PageHero
-	eyebrow="The Platform"
-	title="Total visibility across your privacy estate."
-	titleLines={['Total visibility', 'across your privacy estate.']}
-	body="The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the big picture in the Visual ROPA View, then dive into operational detail when you need it."
-	primary={{ label: 'Book a demo', href: site.demoHref }}
+	eyebrow={copy.hero.eyebrow}
+	title={copy.hero.title}
+	titleLines={copy.hero.titleLines}
+	body={copy.hero.body}
+	primary={copy.hero.primary}
 	secondary={{
-		label: 'Watch the 2-minute overview',
+		label: copy.hero.secondary.label,
 		onSelect: () => (explainerOpen = true)
 	}}
 >
@@ -51,33 +35,33 @@
 	<div class="rounded-3xl bg-silver/45 p-6 ring-1 ring-ink/5 sm:p-10">
 		<div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
 			<div class="min-w-0">
-				<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">How it fits together</p>
+				<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{copy.fit.eyebrow}</p>
 				<h2
 					class="max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
 				>
-					One live privacy estate.<br />Not five spreadsheets and a guess.
+					{#each copy.fit.titleLines as line, i (line)}
+						{#if i > 0}<br />{/if}{line}
+					{/each}
 				</h2>
 				<p class="mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">
-					Bring the records and workflows you already keep, scattered across tools and tabs, into one
-					place. The privacy team sees the whole estate, hands ownership out to the people who do
-					the processing, and everyone works from the same picture.
+					{copy.fit.body}
 				</p>
 			</div>
 			<div class="rounded-2xl bg-white p-4 sm:p-6 lg:p-8">
 				<img
 					class="aspect-video w-full object-contain"
-					src="/Images/FromExcelToTeams.png"
-					width="2048"
-					height="1152"
+					src={copy.fit.image.src}
+					width={copy.fit.image.width}
+					height={copy.fit.image.height}
 					loading="lazy"
 					decoding="async"
-					alt="Scattered spreadsheets resolving into one connected privacy estate shared across teams"
+					alt={copy.fit.image.alt}
 				/>
 			</div>
 		</div>
 
 		<ul class="mt-8 grid gap-4 sm:grid-cols-3 sm:mt-10">
-			{#each pillars as pillar (pillar.title)}
+			{#each copy.fit.pillars as pillar (pillar.title)}
 				<li class="rounded-2xl bg-white/80 p-5 ring-1 ring-ink/5">
 					<p class="flex items-center gap-2.5">
 						<span class="size-2.5 shrink-0 bg-gold" aria-hidden="true"></span>
@@ -92,11 +76,11 @@
 
 <MountainScene side="left" class="mt-16 sm:mt-24">
 	<section class="w-full">
-			<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Problems this solves</p>
+			<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{copy.problems.eyebrow}</p>
 			<h2
 				class="max-w-[22ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
 			>
-				Clarity where the work actually breaks.
+				{copy.problems.title}
 			</h2>
 
 			<ul class="mt-10 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16">
@@ -117,7 +101,7 @@
 									{item.title}
 								</span>
 								<span class="mt-1.5 block max-w-[40ch] text-[14px] leading-relaxed font-light text-ink/70">
-									{item.body}
+									{item.summary}
 								</span>
 							</span>
 							<span
@@ -138,4 +122,3 @@
 <div class="mt-10 w-full">
 	<DemoCtaBlock />
 </div>
-

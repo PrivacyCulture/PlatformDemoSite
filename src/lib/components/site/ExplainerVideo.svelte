@@ -31,7 +31,7 @@
 
 <div class="w-full" id={compact ? 'overview' : undefined}>
 	{#if !compact}
-		<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">Explainer</p>
+		<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{site.video.eyebrow}</p>
 	{/if}
 
 	<div
@@ -58,7 +58,7 @@
 				if (videoEl) videoEl.currentTime = 0;
 			}}
 		>
-			<track kind="captions" src="/clips/overview-captions.vtt" srclang="en" label="English" />
+			<track kind="captions" src={site.video.captions} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
 		</video>
 
 		{#if !started}

@@ -1,15 +1,11 @@
 import type { BeatId } from '$lib/journey/beats';
-// Imported (not served from /static) so Vite fingerprints the URLs and adapter-node
-// sends them with `cache-control: immutable`. Drop re-rendered clips into
-// src/lib/assets/clips/Mountain/ under the same names.
-import startClip from '$lib/assets/clips/Mountain/start.mp4';
-import shot2 from '$lib/assets/clips/Mountain/shot-2.mp4';
-import shot3 from '$lib/assets/clips/Mountain/shot-3.mp4';
-import shot4 from '$lib/assets/clips/Mountain/shot-4.mp4';
-import shot5 from '$lib/assets/clips/Mountain/shot-5.mp4';
-import shot6 from '$lib/assets/clips/Mountain/shot-6.mp4';
-import shot7 from '$lib/assets/clips/Mountain/shot-7.mp4';
-import shot8 from '$lib/assets/clips/Mountain/shot-8.mp4';
+import { asset } from '$lib/content/assets';
+import { live } from '$lib/content/runtime';
+
+// Clip paths are recorded in the site content under `journey.clips`. They point at
+// bundled files under src/lib/assets (not /static) so Vite fingerprints the
+// URLs and adapter-node sends them with `cache-control: immutable`. Drop
+// re-rendered clips into src/lib/assets/clips/Mountain/ under the same names.
 
 export type JourneyTheme = {
 	id: string;
@@ -23,14 +19,17 @@ export type JourneyTheme = {
 	scenes: string[];
 };
 
-export const JOURNEY_THEMES: JourneyTheme[] = [
-	{
-		id: 'mountains',
-		label: 'Mountains',
-		hero: startClip,
-		scenes: [shot2, shot3, shot4, shot5, shot6, shot7, shot8]
-	}
-];
+export const JOURNEY_THEMES: JourneyTheme[] = live(
+	({ journey }) => [
+		{
+			id: journey.clips.themeId,
+			label: journey.clips.themeLabel,
+			hero: asset(journey.clips.hero),
+			scenes: journey.clips.scenes.map(asset)
+		}
+	],
+	'array'
+);
 
 /**
  * Beat → scene index. Hero uses `theme.hero`.
@@ -49,9 +48,8 @@ export const BEAT_SCENE_INDEX: Record<BeatId, number> = {
 	'beat-doors': 6
 };
 
-export const DEFAULT_THEME_ID = JOURNEY_THEMES[0]!.id;
-
-export function getTheme(id: string): JourneyTheme {
+/** The theme with `id`, or the first (default) theme when absent or unknown. */
+export function getTheme(id?: string): JourneyTheme {
 	return JOURNEY_THEMES.find((t) => t.id === id) ?? JOURNEY_THEMES[0]!;
 }
 

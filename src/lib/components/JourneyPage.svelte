@@ -26,13 +26,15 @@
 		type BeatDef,
 		type BeatId
 	} from '$lib/journey/beats';
-	import { DEFAULT_THEME_ID, getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
+	import { getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
 	import { content, sceneClassName } from '$lib/journey/content';
+	import { site } from '$lib/content';
 
 	const SCENES = content.scenes;
+	const UI = content.ui;
 	const PRINCIPLES = content.lens.principles;
 
-	const theme = getTheme(DEFAULT_THEME_ID);
+	const theme = getTheme();
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let clipSrc = $state(sceneSrcForBeat(theme, 'beat-hero') ?? '');
 	let videoDuration = $state(0);
@@ -782,16 +784,16 @@
 		onHome={() => jumpTo(navJumps.hero)}
 		onJump={jumpTo}
 		jumps={navJumps}
-		copy={content.nav}
+		copy={site.nav}
 	/>
 	<JourneySceneIndex
 		current={activeSceneNumber}
 		visible={sceneIndexVisible}
 		onSelect={jumpToScene}
 	/>
-	<JourneyLegal links={content.legal.links} />
+	<JourneyLegal links={site.legal.links} ariaLabel={site.legal.ariaLabel} />
 
-	<Beat id="beat-hero" active={activeBeats['beat-hero']} label="Hero" class="hero-copy">
+	<Beat id="beat-hero" active={activeBeats['beat-hero']} label={UI.heroBeatLabel} class="hero-copy">
 		<div class="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
 			<div class="hero-main w-full min-w-0">
 				<p
@@ -854,7 +856,7 @@
 	<Beat
 		id="beat-lens"
 		active={activeBeats['beat-lens']}
-		label="The view"
+		label={UI.lensBeatLabel}
 		class="lens-copy px-5 sm:px-8 {lensCopyOpen ? '' : 'lens-view'}"
 	>
 		<h2

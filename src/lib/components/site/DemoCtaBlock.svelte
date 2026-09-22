@@ -3,10 +3,10 @@
 	import { site } from '$lib/site/content';
 
 	let {
-		eyebrow = 'Next step',
-		title = 'See your privacy estate differently.',
-		body = 'Book a 25-minute demo to see the Visual ROPA View and connected workflows in action.',
-		micro = '25 minutes · Live walkthrough of the platform'
+		eyebrow = site.demoCta.eyebrow,
+		title = site.demoCta.title,
+		body = site.demoCta.body,
+		micro = site.demoCta.micro
 	}: {
 		eyebrow?: string;
 		title?: string;
@@ -55,7 +55,7 @@
 			</h2>
 			<p class="mt-4 max-w-[46ch] text-[16px] leading-relaxed font-light text-bone/75">{body}</p>
 			<div class="mt-8 flex flex-wrap items-center gap-5">
-				<GoldCta href={site.demoHref} label="Book a demo" />
+				<GoldCta href={site.demoHref} label={site.demoCta.primaryLabel} />
 				<a
 					href={site.overviewHref}
 					target="_blank"

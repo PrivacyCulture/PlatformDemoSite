@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { journey } from '$lib/content';
+
 	let {
 		progress = 0,
 		visible = true
@@ -7,6 +9,7 @@
 		visible?: boolean;
 	} = $props();
 
+	const copy = journey.ui.loader;
 	const pct = $derived(Math.min(100, Math.max(0, Math.round(progress * 100))));
 </script>
 
@@ -24,8 +27,8 @@
 				aria-hidden="true"
 			></span>
 			<div>
-				<div class="text-xs tracking-[0.28em] text-lens uppercase">Privacy Platform</div>
-				<p class="mt-3 text-sm font-light tracking-wide text-bone-dim">Preparing your journey…</p>
+				<div class="text-xs tracking-[0.28em] text-lens uppercase">{copy.brand}</div>
+				<p class="mt-3 text-sm font-light tracking-wide text-bone-dim">{copy.message}</p>
 			</div>
 		</div>
 

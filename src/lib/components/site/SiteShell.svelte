@@ -1,13 +1,17 @@
 <script lang="ts">
 	import SiteFooter from './SiteFooter.svelte';
 	import SiteHeader from './SiteHeader.svelte';
-	import poster from '$lib/assets/clips/Mountain/startmountain.webp';
-	import loopSrc from '$lib/assets/clips/Mountain/endmountain.mp4';
+	import { asset } from '$lib/content/assets';
+	import { site } from '$lib/site/content';
+
+	const poster = asset(site.shell.poster);
+	const loopSrc = asset(site.shell.loop);
+	const grain = `url('${site.shell.grain}')`;
 
 	let { children }: { children: import('svelte').Snippet } = $props();
 </script>
 
-<div class="site-shell relative min-h-dvh overflow-x-hidden bg-white text-ink">
+<div class="site-shell relative min-h-dvh overflow-x-hidden bg-white text-ink" style:--site-grain={grain}>
 	<div class="site-mountain pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
 		<img src={poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
 		<video
@@ -27,7 +31,7 @@
 		href="#main"
 		class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-full focus:bg-gold focus:px-4 focus:py-2 focus:text-gold-ink"
 	>
-		Skip to content
+		{site.shell.skipToContent}
 	</a>
 
 	<div class="relative z-10 px-page">
@@ -92,7 +96,7 @@
 
 	.site-grain {
 		opacity: 0.08;
-		background-image: url('/textures/grain.svg');
+		background-image: var(--site-grain);
 		background-size: 180px 180px;
 		mix-blend-mode: multiply;
 	}

@@ -1,0 +1,1493 @@
+{
+	"site": {
+		"brand": "Privacy Culture Platform",
+		"shortName": "PrivacyCulture",
+		"legalName": "Privacy Culture Ltd",
+		"titleSeparator": " — ",
+		"meta": {
+			"title": "PrivacyCulture — Know thyself",
+			"description": "Know thyself. Most privacy teams don’t. Privacy Culture Platform is GDPR software for mid-market UK teams — living ROPA, DSARs, DPIAs, vendor risk, and shadow AI in one connected view."
+		},
+		"favicon": "/src/lib/assets/favicon.svg",
+		"demoHref": "/demo",
+		"overviewHref": "https://www.privacyculture.com/software",
+		"companyHref": "https://www.privacyculture.com/",
+		"nav": {
+			"ariaLabel": "Main",
+			"mobileAriaLabel": "Mobile",
+			"homeAriaLabel": "PrivacyCulture — home",
+			"openMenu": "Open menu",
+			"closeMenu": "Close menu",
+			"arrow": "→",
+			"links": [
+				{ "label": "The Platform", "href": "/platform" },
+				{ "label": "Pricing", "href": "/platform#pricing" }
+			],
+			"mobileOnlyLinks": [{ "label": "FAQ", "href": "/platform#faq" }],
+			"demo": { "label": "Book a demo", "href": "/demo" }
+		},
+		"logos": {
+			"colour": {
+				"src": "/brand/privacyculture-platform-colour.png",
+				"alt": "PrivacyCulture",
+				"width": 500,
+				"height": 50
+			},
+			"colourWhite": {
+				"src": "/brand/privacyculture-platform-colour-white.png",
+				"alt": "PrivacyCulture",
+				"width": 500,
+				"height": 50
+			},
+			"white": {
+				"src": "/brand/privacyculture-logo-white.svg",
+				"alt": "PrivacyCulture",
+				"width": 420,
+				"height": 72
+			}
+		},
+		"legal": {
+			"ariaLabel": "Legal",
+			"links": [
+				{ "label": "Privacy Policy", "href": "https://www.privacyculture.com/privacy-policy" },
+				{ "label": "Cookie Notice", "href": "https://www.privacyculture.com/cookie-notice" },
+				{ "label": "Terms of Use", "href": "https://www.privacyculture.com/terms-of-use" },
+				{ "label": "Trust & Security", "href": "/trust" }
+			]
+		},
+		"footer": {
+			"ariaLabel": "Site footer",
+			"navAriaLabel": "Footer",
+			"logoHref": "https://www.privacyculture.com/",
+			"secondaryLinks": [
+				{ "label": "Book a demo", "href": "/demo" },
+				{ "label": "Privacy Culture Services", "href": "https://www.privacyculture.com/" }
+			],
+			"address": ["Bouverie House,", "154-160 Fleet Street, London, EC4A 2DQ"],
+			"postalAddress": {
+				"streetAddress": "Bouverie House, 154-160 Fleet Street",
+				"addressLocality": "London",
+				"postalCode": "EC4A 2DQ",
+				"addressCountry": "GB"
+			},
+			"phone": "+44 (0) 20 7112 9360",
+			"phoneHref": "tel:+442071129360",
+			"email": "hello@privacyculture.com",
+			"linkedin": "https://www.linkedin.com/company/privacy-culture/",
+			"linkedinAriaLabel": "Privacy Culture on LinkedIn"
+		},
+		"shell": {
+			"skipToContent": "Skip to content",
+			"poster": "/src/lib/assets/clips/Mountain/startmountain.webp",
+			"loop": "/src/lib/assets/clips/Mountain/endmountain.mp4",
+			"grain": "/textures/grain.svg"
+		},
+		"backgrounds": {
+			"mountainLeft": "/Images/mountainPath.webp",
+			"mountainRight": "/Images/LeftMountainPath.webp"
+		},
+		"trusted": {
+			"label": "Trusted by privacy teams at",
+			"ariaLabel": "Organisations we work with",
+			"names": ["Schroders", "SWIFT", "Square Enix", "Save the Children", "Iron Mountain"]
+		},
+		"pricing": {
+			"eyebrow": "Clear pricing",
+			"title": "Clear pricing for mid-market privacy teams.",
+			"micro": "From £800/month · 12-month agreement · All launch modules included",
+			"footnote": "12-month agreement. All launch modules included. Assisted onboarding included. Billing terms confirmed in the order form.",
+			"featuredLabel": "Most teams start here",
+			"offerDescriptionSuffix": "12-month agreement · all launch modules included",
+			"tiers": [
+				{
+					"band": "1,001–2,500 employees",
+					"rate": "£800",
+					"period": "/month",
+					"cta": "Book a demo",
+					"href": "/demo",
+					"featured": true
+				},
+				{
+					"band": "2,501–5,000",
+					"rate": "£1,600",
+					"period": "/month",
+					"cta": "Book a demo",
+					"href": "/demo",
+					"featured": false
+				},
+				{
+					"band": "Above 5,000",
+					"rate": "Talk to us",
+					"period": "",
+					"cta": "Talk to us",
+					"href": "/demo",
+					"featured": false
+				}
+			]
+		},
+		"video": {
+			"eyebrow": "Explainer",
+			"src": "/clips/ExplainerTest.mp4",
+			"captions": "/clips/overview-captions.vtt",
+			"captionsLang": "en",
+			"captionsLabel": "English",
+			"label": "Watch the 2-minute overview",
+			"caption": "A short walk-through of the Visual ROPA View and connected workflows."
+		},
+		"demoCta": {
+			"eyebrow": "Next step",
+			"title": "See your privacy estate differently.",
+			"body": "Book a 25-minute demo to see the Visual ROPA View and connected workflows in action.",
+			"micro": "25 minutes · Live walkthrough of the platform",
+			"primaryLabel": "Book a demo"
+		}
+	},
+	"journey": {
+		"clips": {
+			"themeId": "mountains",
+			"themeLabel": "Mountains",
+			"hero": "/src/lib/assets/clips/Mountain/start.mp4",
+			"scenes": [
+				"/src/lib/assets/clips/Mountain/shot-2.mp4",
+				"/src/lib/assets/clips/Mountain/shot-3.mp4",
+				"/src/lib/assets/clips/Mountain/shot-4.mp4",
+				"/src/lib/assets/clips/Mountain/shot-5.mp4",
+				"/src/lib/assets/clips/Mountain/shot-6.mp4",
+				"/src/lib/assets/clips/Mountain/shot-7.mp4",
+				"/src/lib/assets/clips/Mountain/shot-8.mp4"
+			]
+		},
+		"ui": {
+			"loader": {
+				"brand": "Privacy Platform",
+				"message": "Preparing your journey…"
+			},
+			"sceneIndexAriaLabel": "Journey scenes",
+			"scenePrefix": "Scene",
+			"whatIf": "What if",
+			"previousScene": "Previous scene",
+			"nextScene": "Next scene",
+			"closePreview": "Close preview",
+			"previewOf": "Preview of",
+			"explorePrefix": "Explore",
+			"arrow": "→",
+			"heroBeatLabel": "Hero",
+			"lensBeatLabel": "The view",
+			"beatLabels": {
+				"beat-hero": "Hero",
+				"beat-scene-1": "Connected View",
+				"beat-scene-2": "Living ROPA",
+				"beat-scene-3": "DPIAs that land",
+				"beat-scene-4": "Vendor risk",
+				"beat-scene-5": "Shadow AI",
+				"beat-scene-6": "Performance in numbers",
+				"beat-lens": "The lens",
+				"beat-emergence": "Emergence",
+				"beat-doors": "Three doors"
+			},
+			"footageMissing": {
+				"title": "Journey footage failed to load.",
+				"before": "Scene clips live under",
+				"clipsPath": "src/lib/assets/clips/Mountain/",
+				"between": "and are listed in",
+				"listPath": "src/lib/journey/videos.ts",
+				"after": ". Encode recipe is in the README."
+			}
+		},
+		"hero": {
+			"strapline": "From clutter to clarity to control",
+			"titleLines": ["Know thyself.", "Most privacy teams don’t."],
+			"cta": "Start here to take the journey from clutter to clarity →",
+			"subline": "Your privacy truth is scattered across too many tools — and too many assumptions.",
+			"showMe": {
+				"label": "Just take me to the specs!",
+				"href": "/platform"
+			}
+		},
+		"scenes": [
+			{
+				"id": "beat-scene-1",
+				"label": "Connected View",
+				"pain": "You’ve got five tools, and five different answers…",
+				"whatIfRest": "it all told one story?",
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/connected-view",
+					"exploreHref": "/conflicting-sources",
+					"image": {
+						"src": "/Images/front/dashboard-view.png",
+						"webp": "/Images/front/dashboard-view.webp",
+						"alt": "The platform dashboard, showing overdue and upcoming item counts above a programme at a glance panel with tiles for assessments, third parties, ROPA, risk, incidents, subject rights and tasks.",
+						"width": 1024,
+						"height": 838
+					},
+					"caption": "Programme at a glance, with every register reporting into one screen: operational assessments, third parties, the ROPA, risk, incidents, subject rights and tasks. The counts are drawn from one estate rather than eight spreadsheets, so they agree with each other. The line under the greeting is the one that matters on a Monday: six items overdue, three of them carrying a statutory deadline."
+				}
+			},
+			{
+				"id": "beat-scene-2",
+				"label": "Living ROPA",
+				"pain": "Your ROPA was accurate once, a few reorgs ago…",
+				"whatIfRest": "it was always true?",
+				"align": "right",
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/living-ropa",
+					"exploreHref": "/stale-ropa",
+					"image": {
+						"src": "/Images/front/ropa-view.png",
+						"webp": "/Images/front/ropa-view.webp",
+						"alt": "The Visual ROPA View with review status switched on, showing processing activities as coloured nodes on a map.",
+						"width": 1024,
+						"height": 777
+					},
+					"caption": "The Visual ROPA View with review status switched on. Every processing activity is a node, coloured by whether its owner has confirmed it: green complete, purple under review, red not started. The filters on the left cut the estate by vendor, asset, risk or legal basis."
+				}
+			},
+			{
+				"id": "beat-scene-3",
+				"label": "DPIAs that land",
+				"pain": "You filed the assessment, and never opened it again…",
+				"whatIfRest": "nothing ever got forgotten?",
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/dpias",
+					"exploreHref": "/dpia-follow-through",
+					"image": {
+						"src": "/Images/front/dpia-review.png",
+						"webp": "/Images/front/dpia-review.webp",
+						"alt": "The DPIA Review board, showing assessments as cards in Not started, In progress, Under review and Complete columns.",
+						"width": 1024,
+						"height": 744
+					},
+					"caption": "The DPIA Review board with every assessment on one wall. Cards sit in Not started, In progress, Under review or Complete, each carrying its owner, when it was created and when it last moved, so an assessment nobody has touched since spring is visible rather than filed away. The counters above split the estate into active and archived."
+				}
+			},
+			{
+				"id": "beat-scene-4",
+				"label": "Vendor risk",
+				"pain": "You vetted them once, then trust took over…",
+				"whatIfRest": "you never stopped watching?",
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/vendor-risk",
+					"exploreHref": "/vendor-drift",
+					"image": {
+						"src": "/Images/front/vendor-view.png",
+						"webp": "/Images/front/vendor-view.webp",
+						"alt": "A table of third parties requiring attention, listing each vendor's category, business unit, risk rating, DPA status, last assessment, next review date and the reason it needs attention.",
+						"width": 1012,
+						"height": 694
+					},
+					"caption": "Third parties requiring attention, ten of forty-eight. Every row is on the list for a reason, held in the last column: a high risk rating, a DPIA that is due, a DPA still pending or never signed. A last assessment reading never, and a review date already past, are what turn a vendor you once trusted into a vendor you look at again."
+				}
+			},
+			{
+				"id": "beat-scene-5",
+				"label": "Shadow AI",
+				"pain": "Something went live with AI, and nobody checked…",
+				"whatIfRest": "nothing could hide?",
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/shadow-ai",
+					"exploreHref": "/shadow-ai",
+					"image": {
+						"src": "/Images/front/shadowai-view.png",
+						"webp": "/Images/front/shadowai-view.webp",
+						"alt": "The ROPA view filtered by AI capability, showing eight processing activities as linked node clusters beside a panel of active filters.",
+						"width": 1024,
+						"height": 773
+					},
+					"caption": "The ROPA view filtered by AI capability, showing eight of forty-two processing activities. Each cluster carries the vendors, assets and risks already attached to it, so a tool somebody signed up for arrives with its hallucination and data leakage risks on the record. The panel on the right holds the filters that produced it."
+				}
+			},
+			{
+				"id": "beat-scene-6",
+				"label": "Performance in numbers",
+				"pain": "The board asked if you’re compliant, and you shrugged…",
+				"whatIfRest": "you could just show them?",
+				"align": "right",
+				"textAfterSeconds": 1.25,
+				"showMe": {
+					"label": "See what it looks like!",
+					"href": "/platform/benchmark",
+					"exploreHref": "/board-reporting",
+					"image": {
+						"src": "/Images/front/poc-view.png",
+						"webp": "/Images/front/poc-view.webp",
+						"alt": "The Privacy Operations Centre dashboard, showing open, overdue and unassigned task counts above charts for status, monthly volume, category and priority.",
+						"width": 989,
+						"height": 760
+					},
+					"caption": "The Privacy Operations Centre. The row across the top is the answer to the board's question: tasks open, how many are past their target date, how many are still waiting on an owner, and the share closed within SLA this year. Created against resolved over twelve months shows whether the team is keeping up, and every tile drills back to the tasks behind it."
+				}
+			}
+		],
+		"lens": {
+			"eyebrow": "Come and see the view from here",
+			"eyebrowLines": ["Come and see", "the view from here"],
+			"textAfterSeconds": 5,
+			"title": "This is what solved looks like.",
+			"body": "Every data flow, vendor and risk on one interactive map. Day-to-day tasks sit with the teams who own the data, while full visibility and sign-off stay with you.",
+			"showMe": {
+				"label": "See it working",
+				"href": "/platform"
+			},
+			"principlesLabel": "What changes",
+			"principles": [
+				{
+					"title": "You start seeing it in the first session",
+					"body": "Load your real data and the map builds in front of you. No configuration project, no months of setup before anything is visible."
+				},
+				{
+					"title": "One map instead of a thousand rows",
+					"body": "Data flows, vendor ecosystem and risk all render as a single interactive view. Gaps show up as gaps, so you spot the problem instead of hunting for it."
+				},
+				{
+					"title": "Everyone owns their part",
+					"body": "Tasks route to the leads in HR, Marketing and Product who already know that data best. You keep central control and see everything from one dashboard."
+				}
+			],
+			"primaryCta": {
+				"label": "Book a 25-minute walk-through",
+				"href": "/demo"
+			},
+			"secondaryCta": {
+				"label": "Watch the 2-minute overview video",
+				"href": "/platform"
+			}
+		},
+		"emergence": {
+			"eyebrow": "Where clarity meets control",
+			"line1": "One story. Always true. Nothing forgotten.",
+			"line2Before": "Nothing hidden. And when they ask — you can",
+			"line2Em": "show them",
+			"line2After": "all of it.",
+			"differentiators": [
+				{
+					"title": "See where the risk really is.",
+					"body": "We start from your people, not a checklist — the ground reveals the weak spots audits miss."
+				},
+				{
+					"title": "See a risk, and the plan writes itself.",
+					"body": "Surfaced risks become prioritised tasks automatically."
+				},
+				{
+					"title": "Watch a record’s reach light up.",
+					"body": "Visual ROPA — see a processing activity’s blast radius, not read it."
+				},
+				{
+					"title": "See exactly how you compare to your peers.",
+					"body": "The benchmark — the thing no one else can offer."
+				}
+			],
+			"closing": "This is the rethink.",
+			"closingEm": "Which way in?"
+		},
+		"doors": {
+			"eyebrow": "Three doors",
+			"lineBefore": "Which way",
+			"lineEm": "in",
+			"subline": "Warts and all. Nothing hidden.",
+			"items": [
+				{
+					"status": "live",
+					"statusLabel": "Live",
+					"title": "See it in action",
+					"body": "Watch it work, then let us walk you through it. No card, no pressure.",
+					"cta": "Watch film + book a demo →",
+					"href": "/demo"
+				},
+				{
+					"status": "soon",
+					"statusLabel": "Coming soon",
+					"title": "See it for free",
+					"body": "Your privacy position, exactly as it is. No card, no call."
+				},
+				{
+					"status": "soon",
+					"statusLabel": "Coming soon",
+					"title": "Enter the sandbox",
+					"body": "A data-filled demo to open and play with freely."
+				}
+			]
+		}
+	},
+	"pages": {
+		"platform": {
+			"meta": {
+				"title": "The Platform",
+				"description": "The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the Visual ROPA View, then dive into operational detail when you need it."
+			},
+			"hero": {
+				"eyebrow": "The Platform",
+				"title": "Total visibility across your privacy estate.",
+				"titleLines": ["Total visibility", "across your privacy estate."],
+				"body": "The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the big picture in the Visual ROPA View, then dive into operational detail when you need it.",
+				"primary": { "label": "Book a demo", "href": "/demo" },
+				"secondary": { "label": "Watch the 2-minute overview" }
+			},
+			"fit": {
+				"eyebrow": "How it fits together",
+				"titleLines": ["One live privacy estate.", "Not five spreadsheets and a guess."],
+				"body": "Bring the records and workflows you already keep, scattered across tools and tabs, into one place. The privacy team sees the whole estate, hands ownership out to the people who do the processing, and everyone works from the same picture.",
+				"image": {
+					"src": "/Images/FromExcelToTeams.png",
+					"alt": "Scattered spreadsheets resolving into one connected privacy estate shared across teams",
+					"width": 2048,
+					"height": 1152
+				},
+				"pillars": [
+					{
+						"title": "Simple",
+						"body": "No twelve-month rollout. Clear workflows, transparent pricing, no enterprise implementation programme."
+					},
+					{
+						"title": "Visual",
+						"body": "See your processing as a map, not a spreadsheet. The whole estate at a glance, a record's reach when needed."
+					},
+					{
+						"title": "Federated",
+						"body": "Owners in the business confirm their own records are right. You keep the central view."
+					}
+				]
+			},
+			"problems": {
+				"eyebrow": "Problems this solves",
+				"title": "Clarity where the work actually breaks."
+			}
+		},
+		"platformSpec": {
+			"backLabel": "← The Platform",
+			"backHref": "/platform",
+			"eyebrow": "The Platform",
+			"whatIf": "What if",
+			"primary": { "label": "Book a demo", "href": "/demo" },
+			"secondary": { "label": "Or take the journey →", "href": "/" },
+			"othersAriaLabel": "Other specs",
+			"othersLabel": "Also in the platform"
+		},
+		"demo": {
+			"meta": {
+				"title": "Book a conversation",
+				"description": "Twenty-five minutes to see how privacy work can look when everything’s connected. Book a time that suits you."
+			},
+			"hero": {
+				"title": "Let’s look at the view together.",
+				"body": "Not a product tour. A short conversation about how privacy work can feel when everything tells one story — and you can show the whole picture."
+			},
+			"steps": {
+				"qualify": { "eyebrow": "Step 1 of 2", "title": "A few details", "intro": "A little context helps us talk about your world, not a generic tour." },
+				"calendar": { "eyebrow": "Step 2 of 2", "title": "Pick a time", "intro": "Choose a slot that works. We’ll send the invite straight away." },
+				"confirm": { "eyebrow": "Done", "title": "You’re booked" }
+			},
+			"confirmation": {
+				"eyebrow": "In the diary",
+				"offline": "We’ve got your time. If the calendar invite needs a human nudge, we’ll follow up shortly.",
+				"onlineBefore": "A calendar invite is on its way to",
+				"onlineAfter": ". Come as you are — curiosity beats preparation.",
+				"backLabel": "Back to the story",
+				"backHref": "/"
+			},
+			"aside": {
+				"eyebrow": "What you’ll walk away with",
+				"items": [
+					{
+						"title": "Clarity you can feel.",
+						"body": "How privacy work looks when everything tells one story — a living ROPA, one answer for the board, vendors you can actually see."
+					},
+					{
+						"title": "A picture you can point at.",
+						"body": "We’ll open a live view of how privacy looks when everything’s connected — using sample data, not your secrets."
+					},
+					{
+						"title": "Time well spent.",
+						"body": "Twenty-five minutes. You’ll leave knowing whether this is the view you’ve been looking for."
+					}
+				]
+			}
+		},
+		"faq": {
+			"meta": {
+				"title": "FAQ",
+				"description": "Answers on who the platform is for, what is included at launch, onboarding, pricing, and security assurances."
+			},
+			"eyebrow": "FAQ",
+			"title": "Questions, answered plainly.",
+			"items": [
+				{
+					"q": "Who is the Privacy Culture Platform designed for?",
+					"a": "It is designed for mid-market privacy teams that need stronger oversight than spreadsheets provide, without taking on an enterprise-scale privacy platform implementation. Our focus is UK organisations with roughly 1,000 to 5,000 employees."
+				},
+				{
+					"q": "What is included at launch?",
+					"a": "At launch, the platform includes Tasks, ROPA, Incidents, Vendors, Operational Assessments, and Risks. All modules are fully connected and included together rather than sold as separate feature-gated tiers."
+				},
+				{
+					"q": "Can you import our existing ROPA?",
+					"a": "Yes. We import existing ROPA data from Excel as part of our assisted onboarding process to ensure your Visual ROPA View is live quickly."
+				},
+				{
+					"q": "How quickly can we get live?",
+					"a": "Our launch commitment is to get your Visual ROPA View live within 30 days, subject to standard data availability, agreed scope, and customer participation."
+				},
+				{
+					"q": "Do you offer a free trial?",
+					"a": "We do not offer an anonymous, self-serve trial at this time. Following a brief demo, controlled product access can be arranged once we understand your operational context and data structures."
+				},
+				{
+					"q": "How much does it cost?",
+					"a": "Pricing starts at £800 per month for organisations with up to 2,500 employees and £1,600 per month for 2,501 to 5,000 employees. Pricing is based on a 12-month agreement and includes all launch modules."
+				},
+				{
+					"q": "What security assurances are available?",
+					"a": "Privacy Culture holds Cyber Essentials certification, and the Platform undergoes independent penetration testing. Detailed security collateral, including our standard DPA and sub-processor list, is accessible directly on our dedicated Trust & Security page."
+				}
+			],
+			"securityPack": {
+				"lead": "Need the security pack?",
+				"trustLabel": "Open the Trust & Security page",
+				"trustHref": "/trust",
+				"or": "or",
+				"demoLabel": "book a demo",
+				"demoHref": "/demo"
+			}
+		},
+		"pricing": {
+			"meta": {
+				"title": "Pricing",
+				"description": "Transparent rates scaled to organisation size. 12-month agreement. All launch modules included. Assisted onboarding included."
+			}
+		},
+		"trust": {
+			"meta": {
+				"title": "Security & Trust Center",
+				"description": "Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency."
+			},
+			"hero": {
+				"eyebrow": "Trust & Security",
+				"title": "Security & Trust Center",
+				"body": "Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency.",
+				"primary": { "label": "Download standard DPA", "href": "/dpa" },
+				"secondary": { "label": "Book a demo", "href": "/demo" }
+			},
+			"pillarsEyebrow": "Security pillars",
+			"pillars": [
+				{
+					"id": "cyber-essentials",
+					"title": "Cyber Essentials Certified",
+					"body": "Fully compliant with UK Government-backed cybersecurity practices to safeguard against common online threats."
+				},
+				{
+					"id": "pen-test",
+					"title": "Independent Penetration Testing",
+					"body": "The Platform undergoes regular third-party penetration testing. Executive summaries and remediation logs are available to prospective customers under NDA."
+				},
+				{
+					"id": "residency",
+					"title": "UK Data Residency & Encryption",
+					"body": "Customer data is hosted strictly within tier-3 UK data centres, protected by AES-256 encryption at rest and TLS 1.3 in transit."
+				},
+				{
+					"id": "contracts",
+					"title": "Contractual Transparency",
+					"body": "Standard Data Processing Addendums (DPA), sub-processor registers, and security contact protocols are published openly without gating behind sales calls."
+				}
+			],
+			"ctas": {
+				"dpa": { "label": "Read the standard DPA", "href": "/dpa" },
+				"subProcessors": { "label": "Sub-processor list", "href": "/sub-processors" }
+			}
+		},
+		"dpa": {
+			"meta": {
+				"title": "Standard DPA",
+				"description": "Public summary of the Privacy Culture Platform standard Data Processing Addendum, including UK residency, encryption, and sub-processor transparency."
+			},
+			"backLabel": "← Trust & Security",
+			"backHref": "/trust",
+			"eyebrow": "Standard DPA",
+			"title": "Data Processing Addendum",
+			"dateline": "Public terms summary · Privacy Culture Ltd · September 2026",
+			"intro": "This page is the openly published summary of our standard Data Processing Addendum. The executable DPA is issued with the order form. Use your browser’s print dialog to save a PDF copy.",
+			"sections": [
+				{
+					"title": "Processor",
+					"body": "Privacy Culture Ltd, registered in England & Wales, acts as processor for customer personal data hosted in the Privacy Culture Platform."
+				},
+				{
+					"title": "Nature of processing",
+					"body": "Records and workflows that support privacy operations, including tasks, ROPA, incidents, vendors, operational assessments, and risks."
+				},
+				{
+					"title": "Location and security",
+					"body": "Customer data is hosted in the United Kingdom (AWS UK Region), in tier-3 data centres, with AES-256 encryption at rest and TLS 1.3 in transit. Privacy Culture holds Cyber Essentials certification. The Platform undergoes independent penetration testing."
+				}
+			],
+			"subProcessors": {
+				"title": "Sub-processors",
+				"before": "Sub-processors are published on the",
+				"linkLabel": "sub-processor list",
+				"linkHref": "/sub-processors",
+				"after": "."
+			},
+			"printLabel": "Print or save as PDF"
+		},
+		"subProcessors": {
+			"meta": {
+				"title": "Sub-processor List",
+				"description": "Published sub-processor register for the Privacy Culture Platform. Customer data is hosted in the AWS UK Region."
+			},
+			"backLabel": "← Trust & Security",
+			"backHref": "/trust",
+			"eyebrow": "Trust & Governance",
+			"title": "Sub-processor list",
+			"intro": "Customer data is hosted strictly within the United Kingdom. This register is published without a sales gate.",
+			"columns": { "name": "Name", "role": "Role", "location": "Location" },
+			"processors": [
+				{
+					"name": "Amazon Web Services EMEA SARL (UK Region)",
+					"role": "Infrastructure hosting",
+					"location": "United Kingdom"
+				}
+			]
+		}
+	},
+	"problems": {
+		"common": {
+			"eyebrow": "Problem",
+			"primary": { "label": "Book a demo", "href": "/demo" },
+			"secondary": { "label": "See the platform", "href": "/platform" },
+			"inPlatformEyebrow": "In the platform",
+			"functionalityEyebrow": "Functionality",
+			"pager": {
+				"ariaLabel": "Other problems this solves",
+				"previous": "← Previous",
+				"next": "Next →"
+			}
+		},
+		"items": [
+			{
+				"slug": "conflicting-sources",
+				"href": "/conflicting-sources",
+				"title": "Conflicting sources of truth",
+				"summary": "One connected estate, not five tools telling you five different things.",
+				"meta": {
+					"title": "Conflicting Sources of Truth",
+					"description": "Stop reconciling spreadsheets, registers and trackers that disagree. One connected privacy estate gives every processing activity a single, current record."
+				},
+				"hero": {
+					"title": "Five tools, five answers. Which one does the regulator get?",
+					"body": "When the ROPA lives in one spreadsheet, the vendor list in another and the DPIA register on a shared drive, every question about a processing activity has several answers. Connect them into one estate so a record has one owner, one status and one story."
+				},
+				"quote": "“A privacy programme is never more accurate than the least-maintained spreadsheet it depends on.”",
+				"inPlatform": {
+					"title": "Every register reporting into one screen.",
+					"body": "This is the screen the morning starts on. Programme at a glance holds each register as a tile, operational assessments, third parties, the ROPA, risks, incidents, subject rights and tasks, giving the counts a stack of spreadsheets would give you, except they are drawn from one estate rather than eight and they agree with each other. The line under the greeting is the one that matters on a Monday: how many items are overdue, and how many of those carry a statutory deadline. Scope it to your own work, your team's, or everything you can see.",
+					"image": {
+						"src": "/Images/screenshots/dashboard-screen.png",
+						"webp": "/Images/screenshots/dashboard-screen.webp",
+						"alt": "The platform dashboard, showing overdue and upcoming item counts above a programme at a glance panel with tiles for assessments, third parties, ROPA, risk, incidents, subject rights, tasks and the operations centre.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "One record, every angle.",
+					"items": [
+						{
+							"title": "One processing record",
+							"body": "Each activity holds its systems, vendors, lawful basis and retention in one place. The ROPA, vendor register and DPIA log become views of the same data, not rivals to it."
+						},
+						{
+							"title": "Change once, reflect everywhere",
+							"body": "Update a retention period on the record and every export, register and dashboard picks it up. There is no second copy to forget."
+						},
+						{
+							"title": "Provenance you can show",
+							"body": "Every field carries who set it and when, so a challenged value has an answer rather than a shrug."
+						}
+					]
+				},
+				"cta": {
+					"title": "One record, one answer. Bring a real example.",
+					"body": "Book a 25-minute demo and bring a processing activity that lives in more than one place. We will show you what it looks like as a single connected record."
+				}
+			},
+			{
+				"slug": "stale-ropa",
+				"href": "/stale-ropa",
+				"title": "The stale ROPA",
+				"summary": "Records the business re-confirms as they change, not a register rebuilt at audit.",
+				"meta": {
+					"title": "The Stale ROPA",
+					"description": "Keep the record of processing current between audits. Owners in the business re-confirm their activities as they change, so the ROPA never needs rebuilding."
+				},
+				"hero": {
+					"title": "When did the business last confirm your Article 30 record was true?",
+					"body": "A ROPA rebuilt in the fortnight before an audit is a snapshot of a rush, not a record of processing. Put confirmation in the hands of the people who own each activity, on a schedule, so the register stays current between audits rather than being reconstructed for them."
+				},
+				"inPlatform": {
+					"title": "See at a glance which records are still true.",
+					"body": "This is the Visual ROPA View in review status mode. Every processing activity is a node, coloured by where its owner's confirmation stands: green when it is complete, purple while it is under review, red when it has not started. Filter by vendor, asset, risk or legal basis, and the register shows you where to chase next instead of leaving you to hunt through a spreadsheet.",
+					"image": {
+						"src": "/Images/screenshots/ropa-freshness-screen.png",
+						"webp": "/Images/screenshots/ropa-freshness-screen.webp",
+						"alt": "The Visual ROPA View in review status mode, showing every processing activity as a node with complete, in progress and not started records picked out by colour.",
+						"width": 1920,
+						"height": 1024
+					}
+				},
+				"functionality": {
+					"title": "A register that keeps itself honest.",
+					"items": [
+						{
+							"title": "Owner attestation on a cadence",
+							"body": "Each activity has a named owner who confirms it on a schedule you set. Quarterly for high-risk processing, annually for the rest."
+						},
+						{
+							"title": "Change-triggered review",
+							"body": "A new system, vendor or purpose flags the record for re-confirmation instead of waiting for the next cycle to come round."
+						},
+						{
+							"title": "Freshness at a glance",
+							"body": "See which records are current, due and overdue across the estate, and chase by exception rather than by spreadsheet."
+						}
+					]
+				},
+				"cta": {
+					"title": "See a ROPA that confirms itself.",
+					"body": "Book a demo to see owner attestation in action: the schedule, the reminders and the freshness view that shows what is current, due and overdue."
+				}
+			},
+			{
+				"slug": "dpia-follow-through",
+				"href": "/dpia-follow-through",
+				"title": "Assessments that land",
+				"summary": "Every DPIA tied to the live risk it flagged, not filed and forgotten.",
+				"meta": {
+					"title": "Assessments That Land",
+					"description": "Connect every DPIA to the live risk it identified. Mitigations get owners and deadlines, and the assessment stays attached to the processing it covers."
+				},
+				"hero": {
+					"title": "Your DPIA found the risk. Did anything happen next?",
+					"body": "Too many assessments end as a signed PDF in a folder. Tie each DPIA to the processing activity it assessed and the risks it raised, so mitigations have owners, deadlines and a live status that someone is accountable for."
+				},
+				"inPlatform": {
+					"title": "Every assessment, and where it has got to.",
+					"body": "This is the DPIA Review board. Every assessment sits in a column for not started, in progress, under review or complete, with the total, active and archived counts across the top. Each card carries who raised it, when it was last touched and whether the processing it covers is still live, so you can see which risks have someone working on them and which have stalled since sign-off. Search, filter or export the lot to Excel when the auditor asks.",
+					"image": {
+						"src": "/Images/screenshots/dpia-status-screen.png",
+						"webp": "/Images/screenshots/dpia-status-screen.webp",
+						"alt": "The DPIA Review board showing assessments as cards in columns for not started, in progress, under review and complete, with total, active and archived counts above.",
+						"width": 1920,
+						"height": 1024
+					}
+				},
+				"functionality": {
+					"title": "From finding to fix.",
+					"items": [
+						{
+							"title": "Risks become tasks",
+							"body": "Each identified risk turns into a mitigation with an owner and a date, routed to the person who can actually close it."
+						},
+						{
+							"title": "Attached to the record",
+							"body": "The DPIA sits on the processing activity it assessed. Open the record and the assessment, its risks and their status are right there."
+						},
+						{
+							"title": "Re-assessment triggers",
+							"body": "When the activity changes materially, the platform flags the DPIA for review rather than leaving it to memory."
+						}
+					]
+				},
+				"cta": {
+					"title": "Turn your last DPIA into tasks with owners.",
+					"body": "Book a demo and bring an assessment you have already signed off. We will show how its risks become tracked mitigations attached to the live record."
+				}
+			},
+			{
+				"slug": "vendor-drift",
+				"href": "/vendor-drift",
+				"title": "Vendor risk that goes quiet",
+				"summary": "Vendors watched continuously, not vetted once and trusted.",
+				"meta": {
+					"title": "Vendor Risk That Goes Quiet",
+					"description": "Vendors watched continuously, not vetted once. Re-attestation schedules, sub-processor tracking and a live link from every processor to the activities it supports."
+				},
+				"hero": {
+					"title": "You vetted the vendor two years ago. Who has checked since?",
+					"body": "Due diligence at onboarding is a moment. Vendors change sub-processors, move data, get acquired and let certifications lapse. Keep processors on a re-attestation schedule and tie them to the activities they serve, so a change on their side becomes a task on yours."
+				},
+				"inPlatform": {
+					"title": "The vendors that need you this week.",
+					"body": "This is the third parties requiring attention list. Every processor on it has a reason to be there: a high risk rating, a DPA that is still pending or was never signed, or an assessment that has never happened. Each row shows the business unit that owns the relationship, the current DPA status, when the vendor was last assessed and when the next review falls due, with overdue dates picked out in red. Export it to CSV when procurement or the auditor wants the list.",
+					"image": {
+						"src": "/Images/screenshots/vendor-overview-status-screen.png",
+						"webp": "/Images/screenshots/vendor-overview-status-screen.webp",
+						"alt": "A table of third parties requiring attention, listing each vendor's category, business unit, risk rating, DPA status, last assessment, next review date and the reason it needs attention.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "Onboarding is where it starts, not where it ends.",
+					"items": [
+						{
+							"title": "Re-attestation on a clock",
+							"body": "Every processor carries a review date. Terms, certifications and sub-processor lists are re-confirmed before they go stale, not after."
+						},
+						{
+							"title": "Sub-processor changes tracked",
+							"body": "Log each sub-processor a vendor uses and keep the change history, so a quiet move of data to a new region is visible when it happens."
+						},
+						{
+							"title": "Impact you can trace",
+							"body": "A vendor issue shows every processing activity, system and data subject group it touches, so the response is proportionate rather than guessed."
+						}
+					]
+				},
+				"cta": {
+					"title": "Put your processors on a clock.",
+					"body": "Book a demo to see re-attestation schedules, sub-processor change tracking and the trace from a vendor issue to every activity it touches."
+				}
+			},
+			{
+				"slug": "shadow-ai",
+				"href": "/shadow-ai",
+				"title": "Shadow AI",
+				"summary": "Every AI tool surfaced and tied to its record, not found after it ships.",
+				"meta": {
+					"title": "Shadow AI",
+					"description": "Find every AI tool in use across the business, tie it to a processing record and govern it before it ships, not after."
+				},
+				"hero": {
+					"title": "How many AI tools is your business using that privacy has never seen?",
+					"body": "Teams adopt assistants, transcription tools and copilots faster than any intake form can catch them. Surface every AI tool in use, record what data it touches and attach it to a processing activity, so it is governed before it ships rather than discovered after."
+				},
+				"inPlatform": {
+					"title": "Eight of your forty-two activities are running AI.",
+					"body": "This is the ROPA view filtered by AI capability. Eight processing activities come back, each drawn with the vendors, assets, risks and legal bases already attached to it, so an assistant somebody signed up for in Marketing arrives with its hallucination and data leakage risks on the record rather than in a conversation months later. The panel on the right stacks the conditions: generative AI as the capability, the named vendors behind it, the department functions that own them. The counts on the left tell you what the filter left standing.",
+					"image": {
+						"src": "/Images/screenshots/shadowai-screen.png",
+						"webp": "/Images/screenshots/shadowai-screen.webp",
+						"alt": "The ROPA view filtered by AI capability, showing eight processing activities as linked node clusters with a filter panel for vendors, assets, risks and legal bases.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "Governed before it ships.",
+					"items": [
+						{
+							"title": "An AI tool register",
+							"body": "A dedicated register of AI tools, models and their vendors, each tied to the activity it serves and the personal data it processes."
+						},
+						{
+							"title": "Intake that fits how teams work",
+							"body": "A short, plain-English intake that owners will actually complete, routed to privacy for review before the tool goes live."
+						},
+						{
+							"title": "Risk flags that follow the tool",
+							"body": "Training on personal data, third-country transfers and automated decisions are flagged on the record, ready for the DPIA."
+						}
+					]
+				},
+				"cta": {
+					"title": "Find the AI tools nobody told privacy about.",
+					"body": "Book a demo to see the AI register, the intake teams will actually complete, and the risk flags that carry through to the DPIA."
+				}
+			},
+			{
+				"slug": "board-reporting",
+				"href": "/board-reporting",
+				"title": "Show the board",
+				"summary": "The trend, the target and the gap on one screen, not a shrug and a spreadsheet.",
+				"meta": {
+					"title": "Show the Board",
+					"description": "Board-ready privacy reporting drawn from the live estate: the trend, the target and the gap on one screen, with every number traceable to a record."
+				},
+				"hero": {
+					"title": "Can you show the board where privacy stands, on one screen?",
+					"body": "Boards do not want a walkthrough of a spreadsheet. They want the trend, the target and the gap. Pull those from the live estate rather than assembling them by hand each quarter, so the story is current and every number can be traced."
+				},
+				"inPlatform": {
+					"title": "The whole operation on one screen.",
+					"body": "This is the Privacy Operations Centre. The row across the top is the state of play: tasks open, how many are past their target date, how many are still waiting on an owner, the average days to close and the share closed within SLA this year. Underneath, created against resolved over twelve months answers the question a board actually asks, whether the team is keeping up or falling behind, and the category breakdown shows where the work lands, from vendor assessments to subject rights requests. Every tile exports, and every number traces back to the tasks behind it.",
+					"image": {
+						"src": "/Images/screenshots/poc-screen.png",
+						"webp": "/Images/screenshots/poc-screen.webp",
+						"alt": "The Privacy Operations Centre dashboard, showing open, overdue and unassigned task counts above charts for status, monthly created against resolved volume, tasks by category and priority.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "Numbers with a trail.",
+					"items": [
+						{
+							"title": "Live posture, not a quarterly build",
+							"body": "ROPA confirmation, vendor currency, open risks and overdue tasks are read from the estate, so the report is as current as the records behind it."
+						},
+						{
+							"title": "Target and gap on every measure",
+							"body": "Set the target the board agreed and show the distance to it, with the trend since last quarter alongside."
+						},
+						{
+							"title": "Drill from the number to the record",
+							"body": "Every figure links back to the activities, vendors or tasks behind it, so a challenge in the room has an answer."
+						}
+					]
+				},
+				"cta": {
+					"title": "Show your board the trend, the target and the gap.",
+					"body": "Book a demo to see the board view built from live records, and how every number drills to the activity, vendor or task behind it."
+				}
+			},
+			{
+				"slug": "dsar-overload",
+				"href": "/dsar-overload",
+				"title": "DSAR overload",
+				"summary": "Locate data subject records in minutes instead of weeks.",
+				"meta": {
+					"title": "DSAR Overload",
+					"description": "Stop manually chasing department leads for data locations. When your estate is connected, locating data subject records takes minutes instead of weeks."
+				},
+				"hero": {
+					"title": "More than five DSARs a month, and you can't keep up?",
+					"body": "Stop manually chasing department leads for data locations. When your estate is connected to operational systems, locating data subject records takes minutes instead of weeks."
+				},
+				"quote": "“Regulators don't measure good intentions; they measure statutory deadlines.”",
+				"inPlatform": {
+					"title": "Every open request against its statutory clock.",
+					"body": "This is the DSAR Overview. Across the top sit the numbers that matter on a Monday morning: how many requests are open, how many arrived this month, how many are past their statutory deadline or due within seven days, which have extensions running and the share closed inside 30 days. Below that the requests break down by the right being exercised, the channel they came in through, the volume month by month and where identity verification has got to, so you can see the pattern behind the backlog rather than one request at a time.",
+					"image": {
+						"src": "/Images/screenshots/dsr-overview-screen.png",
+						"webp": "/Images/screenshots/dsr-overview-screen.webp",
+						"alt": "The DSAR Overview dashboard with counts of open, new, overdue and due-soon requests, the SLA met rate, and charts breaking requests down by right type, monthly volume, intake channel and identity verification status.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "The map does the chasing.",
+					"items": [
+						{
+							"title": "Connected estate lookup",
+							"body": "Subject records resolve against live processing activities, systems, and owners — not a scavenger hunt through inboxes."
+						},
+						{
+							"title": "Routed collection tasks",
+							"body": "Department leads get a precise request for the systems they own, with a timestamped trail back to privacy."
+						},
+						{
+							"title": "Incident linkage",
+							"body": "If a breach or lost device is in play, the same map shows which processing activities and vendors sit in the blast radius."
+						}
+					]
+				},
+				"cta": {
+					"title": "See a DSAR resolved against the map.",
+					"body": "Book a 25-minute demo and watch a subject request go from inbox to located records in less time than it takes to draft the first chase email."
+				}
+			},
+			{
+				"slug": "training-budget",
+				"href": "/training-budget",
+				"title": "Training that misses the risk",
+				"summary": "Point education at operational weak spots, not generic tick-boxes.",
+				"meta": {
+					"title": "Culture & Training Alignment",
+					"description": "Align educational initiatives with actual operational risk markers derived from data activities and incident logs."
+				},
+				"hero": {
+					"title": "Stop guessing where your risk actually sits.",
+					"body": "Generic annual privacy training tick-boxes don't prevent data breaches. Align your educational initiatives with actual operational risk markers derived from data activities and incident logs."
+				},
+				"inPlatform": {
+					"title": "The teams that need more than a module.",
+					"body": "This is the culture hot spots grid. Every business function sits against every location, and each cell carries two numbers: the culture score in bold and the participation rate beneath it. Colour runs from green where the score holds up to red where it does not, so a team that looks fine on the company average stops looking fine here. Overlay any two metrics, including incidents and training hours, and the confidence slider drops cells with too few responses to trust. Empty rows and columns hide themselves, so you are reading signal rather than grid.",
+					"image": {
+						"src": "/Images/screenshots/culture-screen.png",
+						"webp": "/Images/screenshots/culture-screen.webp",
+						"alt": "A colour-coded grid of culture scores and participation rates by business function and location, with metric tabs, a two-metric overlay and a confidence slider.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "Train the gap, not the average.",
+					"items": [
+						{
+							"title": "CultureLens sentiment",
+							"body": "See where people believe they are strong, and where confidence is running ahead of the evidence."
+						},
+						{
+							"title": "Operational risk markers",
+							"body": "Incident logs, stale processing, and high-risk activities mark the teams that need more than an annual course."
+						},
+						{
+							"title": "Education that follows the gap",
+							"body": "Point budget at the cells where high confidence meets high operational risk, not at another generic module."
+						}
+					]
+				},
+				"cta": {
+					"title": "Point the training budget where the risk actually is.",
+					"body": "Book a demo to see CultureLens sentiment set against operational risk markers, and where the blind spots sit in your business."
+				}
+			},
+			{
+				"slug": "breach-response",
+				"href": "/breach-response",
+				"title": "Breach response readiness",
+				"summary": "A breach on a Friday, handled – roles, clock, and an evidenced 72 hours.",
+				"meta": {
+					"title": "Breach Response Readiness",
+					"description": "Breach response with roles, a running 72-hour clock and an evidence log built as decisions are made, tied to the systems and activities involved."
+				},
+				"hero": {
+					"title": "It is 5pm on a Friday and someone has lost a laptop. Now what?",
+					"body": "Seventy-two hours is not long when the first six are spent working out who is in charge and which systems were involved. Predefine the roles, start the clock at detection and log every decision as it is made, so the notification is evidenced rather than reconstructed."
+				},
+				"quote": "“The regulator will ask what you knew, when you knew it, and what you did in between.”",
+				"inPlatform": {
+					"title": "The shape of your incidents, before the next one.",
+					"body": "This is the breach readiness view. The top row is the current position: incidents open, how many are still awaiting triage, how many have been confirmed and how many have crossed the threshold for notifying a regulator. Below it, the pipeline shows where cases are stacked up and how long each stage is taking in practice, from triage through investigation and containment to closure. Severity and root cause sit alongside, so the pattern behind the incidents is something you can point at rather than something you suspect.",
+					"image": {
+						"src": "/Images/screenshots/breach-readiness-screen.png",
+						"webp": "/Images/screenshots/breach-readiness-screen.webp",
+						"alt": "The Breach Readiness dashboard, showing incident counts and notifications required above charts for incidents over time, stage pipeline and duration, severity distribution and root causes.",
+						"width": 2048,
+						"height": 1152
+					}
+				},
+				"functionality": {
+					"title": "Rehearsed, not improvised.",
+					"items": [
+						{
+							"title": "Roles set before the incident",
+							"body": "Triage lead, DPO, comms and legal are named in advance, each with a fallback, so nobody is deciding who decides at 5pm on a Friday."
+						},
+						{
+							"title": "The clock starts at detection",
+							"body": "Every action is timestamped against the 72-hour deadline, so you always know how much runway is left and can show how you used it."
+						},
+						{
+							"title": "Blast radius from the map",
+							"body": "Link the incident to the systems involved and the estate shows the processing activities, vendors and data subjects affected."
+						}
+					]
+				},
+				"cta": {
+					"title": "Rehearse the Friday breach before it happens.",
+					"body": "Book a demo to see the roles, the 72-hour clock and the evidence log working together on a live incident walkthrough."
+				}
+			},
+			{
+				"slug": "audit-readiness",
+				"href": "/audit-readiness",
+				"title": "Audit & regulator readiness",
+				"summary": "A continuous evidence log, not a scramble before review.",
+				"meta": {
+					"title": "Audit Readiness",
+					"description": "Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically."
+				},
+				"hero": {
+					"title": "Can you evidence your accountability programme today?",
+					"body": "Scrambling before an audit or insurer assessment creates friction and reveals gaps. Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically."
+				},
+				"panel": "auditChecklist",
+				"functionality": {
+					"title": "Accountability that stays current.",
+					"items": [
+						{
+							"title": "Time-stamped inventory reviews",
+							"body": "Every ROPA attestation is dated, owned, and still visible when the auditor asks who last confirmed it."
+						},
+						{
+							"title": "Vendor re-attestation on a clock",
+							"body": "Stale processing terms surface before the assessment, not during it."
+						},
+						{
+							"title": "Evidence without the scramble",
+							"body": "Pass, fail, and stale states sit on one card so you can see the gaps while there is still time to close them."
+						}
+					]
+				},
+				"cta": {
+					"title": "Walk into the next audit with the log already written.",
+					"body": "Book a demo to see the continuous evidence log, and what a time-stamped attestation history looks like when the auditor asks who last confirmed a record."
+				}
+			}
+		]
+	},
+	"panels": {
+		"auditChecklist": {
+			"title": "Audit readiness",
+			"badge": "Live log",
+			"intro": "Continuous, time-stamped evidence across key GDPR accountability criteria.",
+			"rows": [
+				{ "label": "Record of processing", "status": "Live", "tone": "live" },
+				{ "label": "Lawful basis map", "status": "Live", "tone": "live" },
+				{ "label": "Vendor re-attestation", "status": "Stale", "tone": "stale" },
+				{ "label": "DPIA register", "status": "Live", "tone": "live" },
+				{ "label": "Incident log linkage", "status": "Live", "tone": "live" },
+				{ "label": "Training evidence pack", "status": "Fail", "tone": "fail" }
+			]
+		},
+		"trustSnapshot": {
+			"title": "Trust & Security Overview",
+			"badge": "Public",
+			"rows": [
+				{ "label": "Certifications", "value": "Cyber Essentials (UK)" },
+				{ "label": "Penetration testing", "value": "Annual 3rd-party pen test (executive summary under NDA)" },
+				{ "label": "Data residency", "value": "United Kingdom (AWS UK Region)" },
+				{ "label": "Encryption", "value": "AES-256 at rest · TLS 1.3 in transit" },
+				{ "label": "Governance", "value": "Standard DPA · Published sub-processor list" }
+			]
+		},
+		"aiInventory": {
+			"title": "AI tools in use",
+			"badge": "Register",
+			"intro": "Every tool tied to the activity and data it touches.",
+			"count": "5",
+			"countLabel": "found ·",
+			"unrecordedLabel": "1 unrecorded",
+			"tools": [
+				{ "tool": "Meeting transcription assistant", "team": "Sales", "data": "Call audio, customer names", "status": "Recorded", "tone": "live" },
+				{ "tool": "Chat assistant, browser plug-in", "team": "Support", "data": "Ticket text including customer details", "status": "Unrecorded", "tone": "fail" },
+				{ "tool": "CV screening model", "team": "People", "data": "Applicant CVs", "status": "Under review", "tone": "stale", "note": "Automated decision flag" },
+				{ "tool": "Code copilot", "team": "Engineering", "data": "Source and config, no personal data", "status": "Recorded", "tone": "live" },
+				{ "tool": "Campaign copy generator", "team": "Growth", "data": "Segment names, campaign text", "status": "Recorded", "tone": "live" }
+			]
+		},
+		"architecture": {
+			"title": "Module architecture",
+			"badge": "Connected",
+			"top": {
+				"eyebrow": "Visual ROPA View",
+				"body": "Live map of data flows, processing activities, and system dependencies"
+			},
+			"modules": [
+				{ "title": "ROPA & Data Flows", "href": "#visual-ropa" },
+				{ "title": "Vendors & Sub-processors", "href": "#vendors" },
+				{ "title": "DPIAs & Risk Assessments", "href": "#assessments" },
+				{ "title": "Incidents & DSARs", "href": "#dsar-overload" }
+			],
+			"bottom": {
+				"eyebrow": "Automated Task Routing",
+				"body": "& Board Governance"
+			}
+		},
+		"boardDashboard": {
+			"title": "Privacy posture · Q3 2026",
+			"badge": "Board view",
+			"intro": "The trend, the target and the gap. Nothing assembled by hand.",
+			"note": "Every figure drills to its records",
+			"targetLabel": "target",
+			"onTarget": "On target",
+			"toTarget": "to target",
+			"vsLabel": "vs Q2",
+			"improving": "Improving",
+			"flat": "Flat",
+			"slipping": "Slipping",
+			"measures": [
+				{
+					"label": "ROPA records confirmed",
+					"value": 83,
+					"unit": "%",
+					"target": 90,
+					"previous": 74,
+					"source": "34 of 41 activities",
+					"higherIsBetter": true
+				},
+				{
+					"label": "Processors re-attested in window",
+					"value": 76,
+					"unit": "%",
+					"target": 95,
+					"previous": 72,
+					"source": "19 of 25 processors",
+					"higherIsBetter": true
+				},
+				{
+					"label": "Open high risks",
+					"value": 4,
+					"unit": "",
+					"target": 0,
+					"previous": 7,
+					"source": "Across 3 DPIAs",
+					"higherIsBetter": false
+				}
+			]
+		},
+		"breachClock": {
+			"title": "Incident 0231 · lost device",
+			"badge": "72-hour clock",
+			"closedAt": "Closed at",
+			"of": "of",
+			"note": "Every entry timestamped against detection",
+			"hoursUsed": "hours used",
+			"rolesLabel": "Roles, set in advance",
+			"logLabel": "Evidence log",
+			"elapsedHours": 64,
+			"windowHours": 72,
+			"roles": [
+				{ "role": "Triage lead", "who": "Named, fallback set" },
+				{ "role": "DPO", "who": "Named, fallback set" },
+				{ "role": "Comms", "who": "Named" },
+				{ "role": "Legal", "who": "External counsel on call" }
+			],
+			"steps": [
+				{ "at": "Fri 17:04", "elapsed": "T+0h", "who": "Reporter", "label": "Laptop reported lost. Incident opened, clock started." },
+				{ "at": "Fri 17:20", "elapsed": "T+16m", "who": "Triage lead", "label": "Lead assigned from the roster, first call held." },
+				{ "at": "Fri 18:05", "elapsed": "T+1h", "who": "IT", "label": "Device linked to systems: two processing activities and one processor in scope." },
+				{ "at": "Fri 21:30", "elapsed": "T+4h", "who": "DPO", "label": "Risk assessed. Disk encrypted, remote wipe confirmed at 19:40." },
+				{ "at": "Sat 10:00", "elapsed": "T+17h", "who": "DPO", "label": "Decision recorded with rationale: no notification required." },
+				{ "at": "Mon 09:00", "elapsed": "T+64h", "who": "Privacy", "label": "Closed. Evidence pack exported to the incident register." }
+			]
+		},
+		"cultureMatrix": {
+			"title": "CultureLens × operational risk",
+			"badge": "Matrix",
+			"intro": "Employee privacy sentiment against actual risk markers from data activities and incident logs.",
+			"cells": [
+				{ "x": "High confidence", "y": "Low operational risk", "note": "Healthy", "tone": "ok" },
+				{ "x": "High confidence", "y": "High operational risk", "note": "Blind spot", "tone": "alert" },
+				{ "x": "Low confidence", "y": "Low operational risk", "note": "Over-anxious", "tone": "mid" },
+				{ "x": "Low confidence", "y": "High operational risk", "note": "Priority", "tone": "warn" }
+			]
+		},
+		"ropaMap": {
+			"title": "Visual ROPA View",
+			"badge": "Live",
+			"ariaLabel": "Node map of a connected privacy estate",
+			"hub": { "line1": "Privacy", "line2": "oversight" },
+			"nodes": [
+				{ "title": "HR", "detail": "12 activities" },
+				{ "title": "Marketing", "detail": "3 stale" },
+				{ "title": "Sales", "detail": "9 vendors" },
+				{ "title": "Product", "detail": "DPIA due" }
+			],
+			"footer": "Task badges live"
+		},
+		"sourceReconciliation": {
+			"title": "Payroll processing · sources compared",
+			"badge": "Reconciled",
+			"beforeEyebrow": "Before · three tools",
+			"beforeTitle": "Four fields, no agreement",
+			"fieldColumn": "Field",
+			"tools": ["ROPA sheet", "Vendor tracker", "DPIA register"],
+			"missingValues": ["Not recorded", "Blank"],
+			"rows": [
+				{ "field": "Retention", "values": ["6 years", "Not recorded", "7 years"] },
+				{ "field": "Processor", "values": ["PayCo Ltd", "PayCo (via reseller)", "PayCo Ltd"] },
+				{ "field": "Lawful basis", "values": ["Contract", "Not recorded", "Legal obligation"] },
+				{ "field": "Owner", "values": ["HR", "Finance", "Blank"] }
+			],
+			"afterEyebrow": "After · one record",
+			"afterTitle": "One answer per field",
+			"resolved": [
+				{ "field": "Retention", "value": "6 years after employment ends" },
+				{ "field": "Processor", "value": "PayCo Ltd (UK), sub-processors listed" },
+				{ "field": "Lawful basis", "value": "Contract, legal obligation" },
+				{ "field": "Owner", "value": "Head of People, confirmed 3 Sep" }
+			]
+		}
+	},
+	"demoForm": {
+		"fields": {
+			"firstName": "First name",
+			"lastName": "Last name",
+			"email": "Work email",
+			"company": "Organisation",
+			"role": "What do you do?",
+			"rolePlaceholder": "Pick the closest fit",
+			"employeeBand": "Roughly how big is the organisation?",
+			"employeeBandPlaceholder": "Headcount band",
+			"tooling": "How do you keep track of privacy today?",
+			"toolingPlaceholder": "Closest match",
+			"timing": "When would you like to get started?",
+			"timingPlaceholder": "A rough idea is enough",
+			"improve": "What’s the one thing you’d most like to see more clearly?",
+			"improvePlaceholder": "A living ROPA. One story for the board. Vendors you can actually see…",
+			"phone": "Phone",
+			"optional": "(optional)",
+			"submit": "Choose a time →"
+		},
+		"options": {
+			"roles": ["DPO", "Head of Privacy", "Privacy Manager", "Legal/Compliance", "Security/GRC", "Other"],
+			"employeeBands": ["under 1,000", "1,000–2,500", "2,501–5,000", "above 5,000"],
+			"tooling": ["spreadsheet/manual", "specialist privacy tool", "enterprise privacy-GRC platform", "other"],
+			"timing": ["actively evaluating now", "next 3 months", "3–6 months", "exploring"],
+			"isoGate": ["Yes", "No", "Not sure"]
+		},
+		"errors": {
+			"firstNameRequired": "First name is required.",
+			"lastNameRequired": "Last name is required.",
+			"emailRequired": "Work email is required.",
+			"emailInvalid": "Enter a valid email.",
+			"emailNotWork": "Use a work email — personal domains are not accepted.",
+			"companyRequired": "Company is required.",
+			"roleRequired": "Role is required.",
+			"roleInvalid": "Choose a role from the list.",
+			"employeeBandRequired": "Employee band is required.",
+			"employeeBandInvalid": "Choose an employee band.",
+			"toolingRequired": "Current tooling is required.",
+			"toolingInvalid": "Choose current tooling.",
+			"timingRequired": "Timing is required.",
+			"timingInvalid": "Choose a timing option.",
+			"isoGateInvalid": "Choose an option."
+		},
+		"calendar": {
+			"timezoneLabel": "Your timezone",
+			"earlier": "Earlier",
+			"later": "Later",
+			"durationBefore": "About",
+			"durationAfter": "minutes.",
+			"finding": "Finding open times…",
+			"nothingFree": "Nothing free in this window. Try another month or timezone.",
+			"openSuffix": "open",
+			"back": "Back",
+			"confirm": "Confirm this time",
+			"booking": "Booking…",
+			"loadError": "Could not load availability.",
+			"loadErrorNetwork": "Could not load availability. Check your connection and try again.",
+			"bookError": "Booking failed. Please try another time.",
+			"bookErrorNetwork": "Booking failed. Please try again.",
+			"defaultTimezone": "Europe/London",
+			"timezones": [
+				"Europe/London",
+				"Europe/Dublin",
+				"Europe/Amsterdam",
+				"Europe/Berlin",
+				"Europe/Paris",
+				"America/New_York",
+				"America/Chicago",
+				"America/Denver",
+				"America/Los_Angeles",
+				"America/Toronto",
+				"Australia/Sydney",
+				"Asia/Singapore"
+			]
+		}
+	},
+	"aeo": {
+		"headings": {
+			"questions": "Questions people ask AI when looking for privacy software",
+			"searchTerms": "Search terms"
+		},
+		"searchTerms": [
+			"GDPR software UK",
+			"privacy management software",
+			"privacy operations platform",
+			"mid-market privacy software",
+			"OneTrust alternative",
+			"ROPA software",
+			"Record of Processing Activities software",
+			"living ROPA",
+			"visual ROPA",
+			"Article 30 records software",
+			"data mapping software GDPR",
+			"DSAR software",
+			"data subject access request software",
+			"DPIA software",
+			"vendor risk privacy software",
+			"third-party privacy risk",
+			"shadow AI governance",
+			"ICO audit software",
+			"UK hosted privacy software",
+			"privacy compliance software for mid-market",
+			"GDPR platform 1000 to 5000 employees",
+			"import Excel ROPA",
+			"privacy software pricing UK"
+		],
+		"featureList": [
+			"Visual ROPA View",
+			"Living Record of Processing Activities",
+			"Connected privacy estate",
+			"Automated task routing",
+			"DPIAs with follow-up",
+			"Vendor and third-party risk",
+			"Shadow AI visibility",
+			"Incident logging",
+			"DSAR logging and routing",
+			"Board-ready privacy performance",
+			"Excel ROPA import",
+			"Assisted onboarding"
+		],
+		"audienceType": "Mid-market privacy teams in UK organisations with about 1,000 to 5,000 employees",
+		"applicationSubCategory": "Privacy management software",
+		"termSet": {
+			"name": "Privacy software search terms",
+			"description": "Search phrases and AI prompts used when looking for GDPR, ROPA, DSAR, and privacy operations software."
+		},
+		"questions": [
+			{
+				"question": "What is the Privacy Culture Platform?",
+				"answer": "The Privacy Culture Platform is UK-hosted privacy operations software for mid-market teams. It connects Tasks, ROPA, Incidents, Vendors, Operational Assessments, and Risks in one Visual ROPA View, so privacy work is a live map of the estate rather than disconnected spreadsheets and modules."
+			},
+			{
+				"question": "Who is Privacy Culture privacy software designed for?",
+				"answer": "It is designed for mid-market privacy teams that need more oversight than spreadsheets provide, without an enterprise-scale implementation. The focus is UK organisations with roughly 1,000 to 5,000 employees."
+			},
+			{
+				"question": "What is the best GDPR compliance software for mid-market UK companies?",
+				"answer": "The right fit depends on size and operating model. Privacy Culture Platform is built for mid-market UK privacy teams that have outgrown spreadsheets but do not want a heavyweight enterprise suite. All launch modules are included together, data is hosted in the AWS UK Region, and pricing starts at £800 per month for 1,001–2,500 employees."
+			},
+			{
+				"question": "What is a good OneTrust alternative for a mid-sized company?",
+				"answer": "Mid-market teams often look for a OneTrust alternative because enterprise privacy suites can take months to implement and sell features as gated modules. Privacy Culture Platform is a UK-hosted alternative for organisations of about 1,000–5,000 employees, with Tasks, ROPA, Incidents, Vendors, Operational Assessments, and Risks included on a 12-month agreement."
+			},
+			{
+				"question": "How much does privacy management software cost in the UK?",
+				"answer": "Privacy Culture Platform pricing starts at £800 per month for organisations with 1,001–2,500 employees and £1,600 per month for 2,501–5,000 employees. Above 5,000 employees, pricing is quoted. Rates are a 12-month agreement and include all launch modules plus assisted onboarding."
+			},
+			{
+				"question": "What software keeps a Record of Processing Activities (ROPA) up to date?",
+				"answer": "A living ROPA stays true after reorganisations, new vendors, and system changes — unlike a spreadsheet that was accurate once. Privacy Culture Platform’s Visual ROPA View maps data flows, processing activities, and system dependencies, and existing Excel ROPA data can be imported during assisted onboarding."
+			},
+			{
+				"question": "Can I import an existing Excel ROPA into privacy software?",
+				"answer": "Yes. Privacy Culture imports existing ROPA data from Excel as part of assisted onboarding so the Visual ROPA View can go live quickly, rather than asking teams to re-key Article 30 records by hand."
+			},
+			{
+				"question": "How do privacy teams handle DSARs without chasing every department?",
+				"answer": "When processing activities, systems, and owners are connected, subject records resolve against the live estate instead of a scavenger hunt through inboxes. Privacy Culture Platform logs DSARs against the underlying systems and routes collection tasks to the department leads who own those systems, with a timestamped trail back to privacy."
+			},
+			{
+				"question": "What software helps with DPIAs after they are filed?",
+				"answer": "A DPIA only helps if the actions in it are owned and followed up. Privacy Culture Platform treats assessments as connected operational records: risks and tasks stay attached to the processing activity, so assessments are not filed once and forgotten."
+			},
+			{
+				"question": "How do I manage vendor privacy risk after onboarding?",
+				"answer": "One-off vendor due diligence goes stale. Privacy Culture Platform tracks vendor processing terms, calculates risk scores, monitors third-party sub-processors, and surfaces stale attestations so third-party privacy risk stays in view after the contract is signed."
+			},
+			{
+				"question": "How can I find shadow AI tools being used in my organisation?",
+				"answer": "Shadow AI is software or a model that went live without a privacy check. Privacy Culture Platform is built to surface hidden AI use against the connected processing map, so new tools cannot sit outside the ROPA, vendor, and risk record."
+			},
+			{
+				"question": "How do I show the board that we are GDPR compliant?",
+				"answer": "Boards need evidence, not a shrug. Privacy Culture Platform includes a performance view so privacy leads can show how the programme compares, alongside a continuous, time-stamped log of inventory reviews, vendor re-attestations, incidents, and tasks — rather than assembling a pack the week before an audit."
+			},
+			{
+				"question": "Is there UK-hosted privacy management software?",
+				"answer": "Yes. Privacy Culture Ltd hosts customer data in the AWS UK Region, with AES-256 encryption at rest and TLS 1.3 in transit. The company holds Cyber Essentials certification, publishes a standard DPA and sub-processor list, and the platform undergoes independent penetration testing."
+			},
+			{
+				"question": "How long does it take to implement privacy software?",
+				"answer": "Privacy Culture’s launch commitment is to get the Visual ROPA View live within 30 days, subject to standard data availability, agreed scope, and customer participation. Assisted onboarding and Excel ROPA import are included, without months of complex configuration."
+			},
+			{
+				"question": "Does Privacy Culture offer a free trial of its privacy software?",
+				"answer": "There is no anonymous self-serve trial. After a short demo, controlled product access can be arranged once Privacy Culture understands the operational context and data structures. A 25-minute walk-through of the Visual ROPA View uses real sample data."
+			},
+			{
+				"question": "What is included in Privacy Culture Platform at launch?",
+				"answer": "Launch modules are Tasks, ROPA, Incidents, Vendors, Operational Assessments, and Risks. They are fully connected and included together rather than sold as separate feature-gated tiers. Visual ROPA, automated task routing, vendor risk, DSAR and incident logging, DPIAs, and shadow AI visibility sit on that same estate."
+			}
+		]
+	}
+}

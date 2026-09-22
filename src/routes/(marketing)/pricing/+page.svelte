@@ -1,15 +1,14 @@
 <script lang="ts">
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
-	import { site } from '$lib/site/content';
+	import { pages, pageTitle } from '$lib/content';
+
+	const copy = pages.pricing;
 </script>
 
 <svelte:head>
-	<title>Pricing — {site.brand}</title>
-	<meta
-		name="description"
-		content="Transparent rates scaled to organisation size. 12-month agreement. All launch modules included. Assisted onboarding included."
-	/>
+	<title>{pageTitle(copy.meta.title)}</title>
+	<meta name="description" content={copy.meta.description} />
 </svelte:head>
 
 <PricingStrip asPage />

@@ -1,71 +1,50 @@
 <script lang="ts">
-	import { site } from '$lib/site/content';
+	import { pages, pageTitle } from '$lib/content';
+
+	const copy = pages.dpa;
 </script>
 
 <svelte:head>
-	<title>Standard DPA — {site.brand}</title>
-	<meta
-		name="description"
-		content="Public summary of the Privacy Culture Platform standard Data Processing Addendum, including UK residency, encryption, and sub-processor transparency."
-	/>
+	<title>{pageTitle(copy.meta.title)}</title>
+	<meta name="description" content={copy.meta.description} />
 </svelte:head>
 
 <article class="w-full max-w-3xl pt-6 sm:pt-10">
 	<p class="mb-6">
 		<a
-			href="/trust"
+			href={copy.backHref}
 			class="text-[13px] tracking-wide text-bone/70 no-underline transition-colors hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 		>
-			← Trust & Security
+			{copy.backLabel}
 		</a>
 	</p>
 
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">Standard DPA</p>
+	<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{copy.eyebrow}</p>
 	<h1 class="text-[clamp(2rem,5vw,3.4rem)] leading-[1.04] font-bold tracking-tight">
-		Data Processing Addendum
+		{copy.title}
 	</h1>
 	<p class="mt-4 text-[14px] font-light text-bone/55">
-		Public terms summary · Privacy Culture Ltd · September 2026
+		{copy.dateline}
 	</p>
 
 	<div class="mt-8 space-y-6 text-[15px] leading-relaxed font-light text-bone/80">
-		<p>
-			This page is the openly published summary of our standard Data Processing Addendum. The
-			executable DPA is issued with the order form. Use your browser’s print dialog to save a PDF
-			copy.
-		</p>
+		<p>{copy.intro}</p>
+		{#each copy.sections as section (section.title)}
+			<section>
+				<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">{section.title}</h2>
+				<p class="mt-2">{section.body}</p>
+			</section>
+		{/each}
 		<section>
-			<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">Processor</h2>
+			<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">{copy.subProcessors.title}</h2>
 			<p class="mt-2">
-				Privacy Culture Ltd, registered in England & Wales, acts as processor for customer personal
-				data hosted in the Privacy Culture Platform.
-			</p>
-		</section>
-		<section>
-			<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">Nature of processing</h2>
-			<p class="mt-2">
-				Records and workflows that support privacy operations, including tasks, ROPA, incidents,
-				vendors, operational assessments, and risks.
-			</p>
-		</section>
-		<section>
-			<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">Location and security</h2>
-			<p class="mt-2">
-				Customer data is hosted in the United Kingdom (AWS UK Region), in tier-3 data centres, with
-				AES-256 encryption at rest and TLS 1.3 in transit. Privacy Culture holds Cyber Essentials
-				certification. The Platform undergoes independent penetration testing.
-			</p>
-		</section>
-		<section>
-			<h2 class="text-[1.15rem] font-bold tracking-tight text-bone">Sub-processors</h2>
-			<p class="mt-2">
-				Sub-processors are published on the
+				{copy.subProcessors.before}
 				<a
-					href="/sub-processors"
+					href={copy.subProcessors.linkHref}
 					class="text-lens no-underline underline-offset-4 hover:underline"
 				>
-					sub-processor list
-				</a>.
+					{copy.subProcessors.linkLabel}
+				</a>{copy.subProcessors.after}
 			</p>
 		</section>
 	</div>
@@ -75,6 +54,6 @@
 		onclick={() => window.print()}
 		class="mt-10 inline-flex min-h-11 cursor-pointer items-center justify-center rounded-full bg-gold px-7 py-3 text-[14px] font-semibold tracking-wide text-gold-ink transition-all hover:-translate-y-0.5 hover:bg-[#e0c07a] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
 	>
-		Print or save as PDF
+		{copy.printLabel}
 	</button>
 </article>
