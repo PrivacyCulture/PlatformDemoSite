@@ -8,7 +8,6 @@
 			"title": "PrivacyCulture — Know thyself",
 			"description": "Know thyself. Most privacy teams don’t. Privacy Culture Platform is GDPR software for mid-market UK teams — living ROPA, DSARs, DPIAs, vendor risk, and shadow AI in one connected view."
 		},
-		"favicon": "/src/lib/assets/favicon.svg",
 		"demoHref": "/demo",
 		"overviewHref": "https://www.privacyculture.com/software",
 		"companyHref": "https://www.privacyculture.com/",
