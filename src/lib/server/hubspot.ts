@@ -1,5 +1,10 @@
 import { env } from '$env/dynamic/private';
 import { normaliseLeadDays } from '../booking-lead-time';
+import {
+	selectMeetingFormFields,
+	type MeetingFieldValues,
+	type MeetingFormField
+} from '../demo/meeting-form-fields';
 
 const API_BASE = 'https://api.hubapi.com';
 const SCHEDULER_BASE = `${API_BASE}/scheduler/2026-03/meetings/meeting-links`;
@@ -222,7 +227,7 @@ export type MeetingLinkBookInfo = {
 		durations?: number[];
 		startTimeIncrementMinutes?: string;
 		weeksToAdvertise?: number;
-		formFields?: { name: string; required?: boolean }[];
+		formFields?: MeetingFormField[];
 	};
 	linkAvailability?: {
 		linkAvailabilityByDuration?: Record<
@@ -258,6 +263,39 @@ export async function getAvailabilityPage(
 	);
 }
 
+/**
+ * The fields the meeting link declares. Cached briefly rather than fetched per booking: it is a
+ * whole extra round trip on the one request a visitor is waiting on, and this configuration is
+ * changed by hand in HubSpot perhaps once a year. It carries no secret and no availability.
+ *
+ * Returns null when it could not be read — see selectMeetingFormFields for what that means.
+ */
+let meetingFields: { slug: string; fields: MeetingFormField[]; fetchedAtMs: number } | null = null;
+const MEETING_FIELDS_TTL_MS = 10 * 60_000;
+
+export async function getMeetingFormFields(
+	slug: string,
+	timezone: string
+): Promise<MeetingFormField[] | null> {
+	if (
+		meetingFields &&
+		meetingFields.slug === slug &&
+		Date.now() - meetingFields.fetchedAtMs < MEETING_FIELDS_TTL_MS
+	) {
+		return meetingFields.fields;
+	}
+
+	try {
+		const info = await getMeetingBookInfo(slug, timezone);
+		const fields = info.customParams?.formFields ?? [];
+		meetingFields = { slug, fields, fetchedAtMs: Date.now() };
+		return fields;
+	} catch (err) {
+		console.error('[demo] could not read the meeting link\'s form fields; booking without them', err);
+		return null;
+	}
+}
+
 export type BookMeetingInput = {
 	slug: string;
 	firstName: string;
@@ -267,7 +305,8 @@ export type BookMeetingInput = {
 	duration: number;
 	timezone: string;
 	locale?: string;
-	formFields?: { name: string; value: string }[];
+	/** Everything we could send, keyed by HubSpot name; filtered to what the link declares. */
+	fieldValues?: MeetingFieldValues;
 	guestEmails?: string[];
 	likelyAvailableUserIds?: string[];
 };
@@ -290,6 +329,12 @@ export async function bookMeeting(
 	timezone: string
 ): Promise<BookMeetingResponse> {
 	const params = new URLSearchParams({ timezone });
+	// Filtered here rather than at the call site so no caller can send a name the link does not
+	// declare — one unknown name rejects the whole booking.
+	const formFields = selectMeetingFormFields(
+		await getMeetingFormFields(input.slug, timezone),
+		input.fieldValues ?? {}
+	);
 	return hubspotFetch<BookMeetingResponse>(
 		`/scheduler/2026-03/meetings/meeting-links/book?${params}`,
 		{
@@ -305,7 +350,7 @@ export async function bookMeeting(
 				locale: input.locale ?? 'en-gb',
 				guestEmails: input.guestEmails ?? [],
 				likelyAvailableUserIds: input.likelyAvailableUserIds ?? [],
-				...(input.formFields?.length ? { formFields: input.formFields } : {})
+				...(formFields.length ? { formFields } : {})
 			})
 		}
 	);

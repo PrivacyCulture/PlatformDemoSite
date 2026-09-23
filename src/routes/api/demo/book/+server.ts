@@ -111,15 +111,20 @@ export const POST: RequestHandler = async ({ request }) => {
 				startTime,
 				duration,
 				timezone,
-				formFields: [
-					{ name: 'company', value: form.company },
-					{ name: 'phone', value: form.phone || '' },
-					{ name: 'role', value: form.role },
-					{ name: 'employee_band', value: form.employeeBand },
-					{ name: 'tooling', value: form.tooling },
-					{ name: 'timing', value: form.timing },
-					{ name: 'improve', value: form.improve || '' }
-				]
+				// Everything we COULD attach to the meeting, under the same internal names the
+				// contact patch below uses, so the two can never drift. bookMeeting keeps only
+				// the ones this meeting link actually declares.
+				fieldValues: {
+					[HUBSPOT_CONTACT_PROPS.company]: form.company,
+					[HUBSPOT_CONTACT_PROPS.phone]: form.phone,
+					// "What do you do?" is the question HubSpot's own jobtitle field asks.
+					jobtitle: form.role,
+					[HUBSPOT_CONTACT_PROPS.role]: form.role,
+					[HUBSPOT_CONTACT_PROPS.employeeBand]: form.employeeBand,
+					[HUBSPOT_CONTACT_PROPS.tooling]: form.tooling,
+					[HUBSPOT_CONTACT_PROPS.timing]: form.timing,
+					[HUBSPOT_CONTACT_PROPS.improve]: form.improve
+				}
 			},
 			timezone
 		);
