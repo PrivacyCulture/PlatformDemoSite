@@ -355,3 +355,53 @@ html.loading body {
 		transition: none;
 	}
 }
+
+/*
+	Copy the CMS can format: bold, italic, a line break and a link, and nothing else.
+	`rt` is on any element rendered with rich() — a binding that is given the class but no
+	markup is unaffected, and one that forgets the class leaves its link unstyled but still
+	followable. The sanitiser never emits a class of its own; coupling the grammar to Tailwind's
+	class scanning would make the two repos share a build.
+*/
+.rt a {
+	color: var(--color-lens);
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+	text-decoration-thickness: 1px;
+	transition: color 200ms ease;
+}
+
+.rt a:hover {
+	color: var(--color-heading);
+}
+
+.rt a:focus-visible {
+	outline: 2px solid var(--color-lens);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+/* On the ink-dark blocks the lens blue is too dark to read; gold is the accent there. */
+.on-ink .rt a,
+.rt.on-ink a {
+	color: var(--color-gold);
+}
+
+.on-ink .rt a:hover,
+.rt.on-ink a:hover {
+	color: var(--color-bone);
+}
+
+.rt strong {
+	font-weight: 700;
+}
+
+.rt em {
+	font-style: italic;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.rt a {
+		transition: none;
+	}
+}

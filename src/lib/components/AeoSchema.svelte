@@ -2,6 +2,7 @@
 	import { page } from '$app/state';
 	import { aeoKeywords, aeoQuestions, homepageJsonLd, jsonLdScript, searchTerms } from '$lib/site/aeo';
 	import { aeo, site } from '$lib/content';
+	import { plain } from '$lib/site/rich';
 
 	const schema = $derived(homepageJsonLd(page.url.origin));
 </script>
@@ -17,12 +18,12 @@
 	kept in the DOM (not display:none) so answer engines can extract Q&A and terms.
 -->
 <section class="sr-only" aria-hidden="true" data-aeo>
-	<p data-aeo-answer>{site.meta.description}</p>
+	<p data-aeo-answer>{plain(site.meta.description)}</p>
 	<h2>{aeo.headings.questions}</h2>
 	<dl>
 		{#each aeoQuestions as item (item.question)}
-			<dt>{item.question}</dt>
-			<dd data-aeo-answer>{item.answer}</dd>
+			<dt>{plain(item.question)}</dt>
+			<dd data-aeo-answer>{plain(item.answer)}</dd>
 		{/each}
 	</dl>
 	<h2>{aeo.headings.searchTerms}</h2>

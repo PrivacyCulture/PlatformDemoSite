@@ -1,4 +1,5 @@
 import { env } from '$env/dynamic/private';
+import { normaliseLeadDays } from '../booking-lead-time';
 
 const API_BASE = 'https://api.hubapi.com';
 const SCHEDULER_BASE = `${API_BASE}/scheduler/2026-03/meetings/meeting-links`;
@@ -22,14 +23,127 @@ export class HubSpotApiError extends Error {
 	}
 }
 
-function requireToken(): string {
-	const token = env.HUBSPOT_ACCESS_TOKEN?.trim();
-	if (!token) {
+/**
+ * This site has no HubSpot connection of its own — no client secret, no refresh token and no
+ * OAuth callback route — so by default it BORROWS Sorted's, over the same CONTENT_API_URL /
+ * CONTENT_API_TOKEN pair it already uses for content. Sorted keeps that connection refreshed;
+ * we only ever receive a short-lived access token.
+ *
+ * A HUBSPOT_ACCESS_TOKEN in the environment still wins, so a private app token can be dropped
+ * in later with no code change and no network hop.
+ */
+let borrowed: { token: string; expiresAtMs: number } | null = null;
+
+/** Cached to just short of expiry — the booking form would otherwise ask Sorted per request. */
+const TOKEN_SAFETY_MARGIN_MS = 60_000;
+
+/** Called when HubSpot rejects a borrowed token, so the next call fetches a fresh one. */
+function forgetBorrowedToken(): void {
+	borrowed = null;
+}
+
+async function borrowTokenFromSorted(): Promise<string> {
+	if (borrowed && borrowed.expiresAtMs - Date.now() > TOKEN_SAFETY_MARGIN_MS) {
+		return borrowed.token;
+	}
+
+	// SORTED_API_URL first so a site still serving content from its own data/database.json can
+	// borrow a token without being forced onto the CMS as a side effect — CONTENT_API_URL being
+	// set is what switches the content source over.
+	const base = (env.SORTED_API_URL || env.CONTENT_API_URL)?.trim().replace(/\/$/, '');
+	const secret = env.CONTENT_API_TOKEN?.trim();
+	if (!base || !secret) {
 		throw new HubSpotConfigError(
-			'HubSpot is not configured. Set HUBSPOT_ACCESS_TOKEN in the environment.'
+			'HubSpot is not configured. Set SORTED_API_URL (or CONTENT_API_URL) and CONTENT_API_TOKEN ' +
+				'so this site can borrow Sorted\'s HubSpot connection, or set HUBSPOT_ACCESS_TOKEN directly.'
 		);
 	}
+
+	let res: Response;
+	try {
+		res = await fetch(`${base}/api/platform-hubspot-token`, {
+			headers: { Authorization: `Bearer ${secret}` }
+		});
+	} catch (cause) {
+		// Unreachable Sorted is not a misconfiguration, so it must not read as one — say which
+		// address failed, or this is indistinguishable from a wrong token.
+		throw new HubSpotApiError(502, `Could not reach Sorted at ${base} for a HubSpot token.`, cause);
+	}
+
+	const body = await res.json().catch(() => null);
+	if (!res.ok) {
+		const message =
+			body && typeof body === 'object' && 'error' in body
+				? String((body as { error: unknown }).error)
+				: `Sorted refused to lend a HubSpot token (${res.status}).`;
+		// Pass Sorted's own wording through, but name WHICH thing is wrong — "Missing or wrong
+		// platform token" alone leaves a reader guessing which of two systems to look in.
+		if (res.status === 401) {
+			throw new HubSpotConfigError(
+				`Sorted rejected this site's platform token (${message}). CONTENT_API_TOKEN here must ` +
+					'match the token in Sorted under Settings → APIs → Platform site.'
+			);
+		}
+		// Sorted itself has no HubSpot connected — its wording already says so.
+		if (res.status === 503) throw new HubSpotConfigError(message);
+		throw new HubSpotApiError(res.status, message, body);
+	}
+
+	const token = (body as { accessToken?: unknown })?.accessToken;
+	if (typeof token !== 'string' || !token) {
+		throw new HubSpotApiError(502, 'Sorted returned no HubSpot access token.', body);
+	}
+
+	const expiresAtRaw = (body as { expiresAt?: unknown })?.expiresAt;
+	const parsed = typeof expiresAtRaw === 'string' ? Date.parse(expiresAtRaw) : NaN;
+	// An unreadable expiry is treated as nearly-expired rather than long-lived: asking again too
+	// soon costs one request, whereas caching a dead token breaks the form until a restart.
+	borrowed = {
+		token,
+		expiresAtMs: Number.isFinite(parsed) ? parsed : Date.now() + TOKEN_SAFETY_MARGIN_MS * 2
+	};
 	return token;
+}
+
+/**
+ * The booking settings Sorted owns. Cached briefly rather than for the life of a token: this
+ * carries no secret, and a notice period changed in Settings should take effect in minutes.
+ *
+ * A failure returns 0 — no restriction — on purpose. The alternative, refusing every slot when
+ * Sorted is briefly unreachable, turns a settings outage into a form that shows nothing and
+ * says nothing; showing the calendar HubSpot itself is willing to book is the safer failure.
+ */
+let demoConfig: { leadDays: number; fetchedAtMs: number } | null = null;
+const DEMO_CONFIG_TTL_MS = 5 * 60_000;
+
+export async function getBookingLeadDays(): Promise<number> {
+	if (demoConfig && Date.now() - demoConfig.fetchedAtMs < DEMO_CONFIG_TTL_MS) {
+		return demoConfig.leadDays;
+	}
+
+	const base = (env.SORTED_API_URL || env.CONTENT_API_URL)?.trim().replace(/\/$/, '');
+	const secret = env.CONTENT_API_TOKEN?.trim();
+	if (!base || !secret) return 0;
+
+	try {
+		const res = await fetch(`${base}/api/platform-demo-config`, {
+			headers: { Authorization: `Bearer ${secret}` }
+		});
+		if (!res.ok) throw new Error(`status ${res.status}`);
+		const body = (await res.json()) as { leadDays?: unknown };
+		const leadDays = normaliseLeadDays(body?.leadDays);
+		demoConfig = { leadDays, fetchedAtMs: Date.now() };
+		return leadDays;
+	} catch (err) {
+		console.error('[demo] could not read booking settings from Sorted, continuing with no notice period', err);
+		return 0;
+	}
+}
+
+async function requireToken(): Promise<string> {
+	const direct = env.HUBSPOT_ACCESS_TOKEN?.trim();
+	if (direct) return direct;
+	return borrowTokenFromSorted();
 }
 
 export function requireMeetingSlug(): string {
@@ -42,8 +156,22 @@ export function requireMeetingSlug(): string {
 	return slug;
 }
 
-async function hubspotFetch<T>(path: string, init?: RequestInit): Promise<T> {
-	const token = requireToken();
+/**
+ * A meeting link's slug can CONTAIN a slash ("alistair-cole/privacy-culture-discovery-demo" —
+ * that is the value HubSpot's own /meeting-links listing returns), but it is still ONE path
+ * segment to this API: the slash must be sent as %2F.
+ *
+ * Verified live against the portal: the encoded form returns availability, while passing the
+ * slash through unencoded 404s at the routing layer before the slug is ever looked up — and
+ * that 404 is an HTML error page, not the JSON "slug does not exist", which is how the two
+ * failures are told apart.
+ */
+function encodeSlug(slug: string): string {
+	return encodeURIComponent(slug);
+}
+
+async function hubspotFetch<T>(path: string, init?: RequestInit, isRetry = false): Promise<T> {
+	const token = await requireToken();
 	const res = await fetch(`${API_BASE}${path}`, {
 		...init,
 		headers: {
@@ -64,6 +192,14 @@ async function hubspotFetch<T>(path: string, init?: RequestInit): Promise<T> {
 	}
 
 	if (!res.ok) {
+		// A borrowed token can be revoked or rotated before its stated expiry (someone
+		// reconnects HubSpot in Sorted). Drop it and ask once more, rather than failing every
+		// booking until this process restarts. Only once, and never for a token we were handed
+		// directly by the environment — that one cannot be re-fetched.
+		if (res.status === 401 && !isRetry && !env.HUBSPOT_ACCESS_TOKEN?.trim()) {
+			forgetBorrowedToken();
+			return hubspotFetch<T>(path, init, true);
+		}
 		const message =
 			typeof body === 'object' && body && 'message' in body
 				? String((body as { message: unknown }).message)
@@ -106,7 +242,7 @@ export async function getMeetingBookInfo(
 	const params = new URLSearchParams({ timezone });
 	if (monthOffset) params.set('monthOffset', String(monthOffset));
 	return hubspotFetch<MeetingLinkBookInfo>(
-		`/scheduler/2026-03/meetings/meeting-links/book/${encodeURIComponent(slug)}?${params}`
+		`/scheduler/2026-03/meetings/meeting-links/book/${encodeSlug(slug)}?${params}`
 	);
 }
 
@@ -118,7 +254,7 @@ export async function getAvailabilityPage(
 	const params = new URLSearchParams({ timezone });
 	if (monthOffset) params.set('monthOffset', String(monthOffset));
 	return hubspotFetch(
-		`/scheduler/2026-03/meetings/meeting-links/book/availability-page/${encodeURIComponent(slug)}?${params}`
+		`/scheduler/2026-03/meetings/meeting-links/book/availability-page/${encodeSlug(slug)}?${params}`
 	);
 }
 

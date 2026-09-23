@@ -6,6 +6,7 @@
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import { pages, pageTitle } from '$lib/content';
 	import { problems } from '$lib/site/problems';
+	import { rich } from '$lib/site/rich';
 
 	const copy = pages.platform;
 
@@ -43,8 +44,8 @@
 						{#if i > 0}<br />{/if}{line}
 					{/each}
 				</h2>
-				<p class="mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">
-					{copy.fit.body}
+				<p class="rt mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">
+					{@html rich(copy.fit.body)}
 				</p>
 			</div>
 			<div class="rounded-2xl bg-white p-4 sm:p-6 lg:p-8">
@@ -67,7 +68,7 @@
 						<span class="size-2.5 shrink-0 bg-gold" aria-hidden="true"></span>
 						<span class="text-[1.05rem] font-bold tracking-tight text-heading">{pillar.title}</span>
 					</p>
-					<p class="mt-3 text-[14px] leading-relaxed font-light text-ink/70">{pillar.body}</p>
+					<p class="rt mt-3 text-[14px] leading-relaxed font-light text-ink/70">{@html rich(pillar.body)}</p>
 				</li>
 			{/each}
 		</ul>
@@ -100,8 +101,8 @@
 								<span class="block text-[1.05rem] font-bold tracking-tight text-heading transition-colors group-hover:text-lens">
 									{item.title}
 								</span>
-								<span class="mt-1.5 block max-w-[40ch] text-[14px] leading-relaxed font-light text-ink/70">
-									{item.summary}
+								<span class="rt mt-1.5 block max-w-[40ch] text-[14px] leading-relaxed font-light text-ink/70">
+									{@html rich(item.summary)}
 								</span>
 							</span>
 							<span

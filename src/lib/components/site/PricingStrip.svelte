@@ -2,6 +2,7 @@
 	import GoldCta from './GoldCta.svelte';
 	import LensCta from './LensCta.svelte';
 	import { site } from '$lib/site/content';
+	import { rich } from '$lib/site/rich';
 
 	let { asPage = false }: { asPage?: boolean } = $props();
 </script>
@@ -60,7 +61,7 @@
 		{/each}
 	</ul>
 
-	<p class="mt-5 max-w-[58ch] text-[13px] leading-relaxed font-light text-ink/55">
-		{site.pricing.footnote}
+	<p class="rt mt-5 max-w-[58ch] text-[13px] leading-relaxed font-light text-ink/55">
+		{@html rich(site.pricing.footnote)}
 	</p>
 </section>

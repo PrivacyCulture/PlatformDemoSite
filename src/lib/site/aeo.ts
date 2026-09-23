@@ -1,5 +1,6 @@
 import { aeo, site } from '$lib/content';
 import { live } from '$lib/content/runtime';
+import { plain } from './rich';
 
 export type AeoQuestion = {
 	question: string;
@@ -135,10 +136,10 @@ export function homepageJsonLd(origin: string) {
 				isPartOf: { '@id': webpageId },
 				mainEntity: aeoQuestions.map((item) => ({
 					'@type': 'Question',
-					name: item.question,
+					name: plain(item.question),
 					acceptedAnswer: {
 						'@type': 'Answer',
-						text: item.answer
+						text: plain(item.answer)
 					}
 				}))
 			},

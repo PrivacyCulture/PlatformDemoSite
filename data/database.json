@@ -22,7 +22,7 @@
 				{ "label": "The Platform", "href": "/platform" },
 				{ "label": "Pricing", "href": "/platform#pricing" }
 			],
-			"mobileOnlyLinks": [{ "label": "FAQ", "href": "/platform#faq" }],
+			"mobileOnlyLinks": [{ "label": "FAQ", "href": "/faq" }],
 			"demo": { "label": "Book a demo", "href": "/demo" }
 		},
 		"logos": {
@@ -513,6 +513,8 @@
 			},
 			"eyebrow": "FAQ",
 			"title": "Questions, answered plainly.",
+			"intro": "Straight answers on who the platform is for, what ships at launch, how onboarding runs, what it costs and how we handle your data. Nothing here sits behind a form.",
+			"countLabel": "questions",
 			"items": [
 				{
 					"q": "Who is the Privacy Culture Platform designed for?",
@@ -540,9 +542,15 @@
 				},
 				{
 					"q": "What security assurances are available?",
-					"a": "Privacy Culture holds Cyber Essentials certification, and the Platform undergoes independent penetration testing. Detailed security collateral, including our standard DPA and sub-processor list, is accessible directly on our dedicated Trust & Security page."
+					"a": "Privacy Culture holds Cyber Essentials certification, and the Platform undergoes independent penetration testing. Detailed security collateral, including our standard DPA, is accessible directly on our dedicated Trust & Security page."
 				}
 			],
+			"cta": {
+				"eyebrow": "Still deciding",
+				"title": "Bring the awkward questions.",
+				"body": "Book a demo and we will walk the platform through your own processing activities rather than a canned dataset.",
+				"micro": "Our security collateral is published without a sales gate."
+			},
 			"securityPack": {
 				"lead": "Need the security pack?",
 				"trustLabel": "Open the Trust & Security page",
@@ -590,66 +598,56 @@
 				{
 					"id": "contracts",
 					"title": "Contractual Transparency",
-					"body": "Standard Data Processing Addendums (DPA), sub-processor registers, and security contact protocols are published openly without gating behind sales calls."
+					"body": "Standard Data Processing Addendums (DPA) and security contact protocols are published openly without gating behind sales calls."
 				}
 			],
 			"ctas": {
-				"dpa": { "label": "Read the standard DPA", "href": "/dpa" },
-				"subProcessors": { "label": "Sub-processor list", "href": "/sub-processors" }
+				"dpa": { "label": "Read the standard DPA", "href": "/dpa" }
 			}
 		},
 		"dpa": {
 			"meta": {
 				"title": "Standard DPA",
-				"description": "Public summary of the Privacy Culture Platform standard Data Processing Addendum, including UK residency, encryption, and sub-processor transparency."
+				"description": "Public summary of the Privacy Culture Platform standard Data Processing Addendum, including UK data residency, encryption and security certification."
 			},
 			"backLabel": "← Trust & Security",
 			"backHref": "/trust",
 			"eyebrow": "Standard DPA",
 			"title": "Data Processing Addendum",
 			"dateline": "Public terms summary · Privacy Culture Ltd · September 2026",
+			"keyFactsTitle": "At a glance",
+			"keyFacts": [
+				{ "label": "Role", "value": "Processor, Privacy Culture Ltd (England & Wales)" },
+				{ "label": "Data residency", "value": "United Kingdom, AWS UK Region" },
+				{ "label": "Encryption", "value": "AES-256 at rest · TLS 1.3 in transit" },
+				{ "label": "Assurance", "value": "Cyber Essentials · Independent penetration testing" }
+			],
+			"contentsLabel": "On this page",
 			"intro": "This page is the openly published summary of our standard Data Processing Addendum. The executable DPA is issued with the order form. Use your browser’s print dialog to save a PDF copy.",
 			"sections": [
 				{
+					"id": "processor",
 					"title": "Processor",
 					"body": "Privacy Culture Ltd, registered in England & Wales, acts as processor for customer personal data hosted in the Privacy Culture Platform."
 				},
 				{
+					"id": "nature-of-processing",
 					"title": "Nature of processing",
 					"body": "Records and workflows that support privacy operations, including tasks, ROPA, incidents, vendors, operational assessments, and risks."
 				},
 				{
+					"id": "location-and-security",
 					"title": "Location and security",
 					"body": "Customer data is hosted in the United Kingdom (AWS UK Region), in tier-3 data centres, with AES-256 encryption at rest and TLS 1.3 in transit. Privacy Culture holds Cyber Essentials certification. The Platform undergoes independent penetration testing."
 				}
 			],
-			"subProcessors": {
-				"title": "Sub-processors",
-				"before": "Sub-processors are published on the",
-				"linkLabel": "sub-processor list",
-				"linkHref": "/sub-processors",
-				"after": "."
-			},
-			"printLabel": "Print or save as PDF"
-		},
-		"subProcessors": {
-			"meta": {
-				"title": "Sub-processor List",
-				"description": "Published sub-processor register for the Privacy Culture Platform. Customer data is hosted in the AWS UK Region."
-			},
-			"backLabel": "← Trust & Security",
-			"backHref": "/trust",
-			"eyebrow": "Trust & Governance",
-			"title": "Sub-processor list",
-			"intro": "Customer data is hosted strictly within the United Kingdom. This register is published without a sales gate.",
-			"columns": { "name": "Name", "role": "Role", "location": "Location" },
-			"processors": [
-				{
-					"name": "Amazon Web Services EMEA SARL (UK Region)",
-					"role": "Infrastructure hosting",
-					"location": "United Kingdom"
-				}
-			]
+			"printLabel": "Print or save as PDF",
+			"cta": {
+				"eyebrow": "Contracting",
+				"title": "Need the executable DPA?",
+				"body": "The signed version is issued with your order form. Book a demo and we will send the full security pack alongside it.",
+				"micro": "Published terms, no sales gate."
+			}
 		}
 	},
 	"problems": {
@@ -1143,7 +1141,7 @@
 				{ "label": "Penetration testing", "value": "Annual 3rd-party pen test (executive summary under NDA)" },
 				{ "label": "Data residency", "value": "United Kingdom (AWS UK Region)" },
 				{ "label": "Encryption", "value": "AES-256 at rest · TLS 1.3 in transit" },
-				{ "label": "Governance", "value": "Standard DPA · Published sub-processor list" }
+				{ "label": "Governance", "value": "Standard DPA · Published without a sales gate" }
 			]
 		},
 		"aiInventory": {
@@ -1473,7 +1471,7 @@
 			},
 			{
 				"question": "Is there UK-hosted privacy management software?",
-				"answer": "Yes. Privacy Culture Ltd hosts customer data in the AWS UK Region, with AES-256 encryption at rest and TLS 1.3 in transit. The company holds Cyber Essentials certification, publishes a standard DPA and sub-processor list, and the platform undergoes independent penetration testing."
+				"answer": "Yes. Privacy Culture Ltd hosts customer data in the AWS UK Region, with AES-256 encryption at rest and TLS 1.3 in transit. The company holds Cyber Essentials certification, publishes a standard DPA, and the platform undergoes independent penetration testing."
 			},
 			{
 				"question": "How long does it take to implement privacy software?",

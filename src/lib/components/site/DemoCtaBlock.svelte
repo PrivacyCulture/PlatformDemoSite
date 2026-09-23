@@ -1,6 +1,7 @@
 <script lang="ts">
 	import GoldCta from './GoldCta.svelte';
 	import { site } from '$lib/site/content';
+	import { rich } from '$lib/site/rich';
 
 	let {
 		eyebrow = site.demoCta.eyebrow,
@@ -53,7 +54,7 @@
 			>
 				{title}
 			</h2>
-			<p class="mt-4 max-w-[46ch] text-[16px] leading-relaxed font-light text-bone/75">{body}</p>
+			<p class="rt mt-4 max-w-[46ch] text-[16px] leading-relaxed font-light text-bone/75">{@html rich(body)}</p>
 			<div class="mt-8 flex flex-wrap items-center gap-5">
 				<GoldCta href={site.demoHref} label={site.demoCta.primaryLabel} />
 				<a
@@ -78,7 +79,7 @@
 				</a>
 			</div>
 			{#if micro}
-				<p class="mt-5 text-[13px] font-light text-bone/50">{micro}</p>
+				<p class="rt mt-5 text-[13px] font-light text-bone/50">{@html rich(micro)}</p>
 			{/if}
 		</div>
 

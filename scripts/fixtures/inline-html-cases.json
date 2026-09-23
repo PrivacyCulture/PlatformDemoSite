@@ -1,0 +1,403 @@
+{
+	"note": "Shared by Sorted (src/lib/inline-html.ts) and the S2 site (src/lib/site/rich.ts). Both repos assert the SHA-256 of this file, so a change to one implementation fails CI on both.",
+	"cases": [
+		{
+			"input": "Hello",
+			"sanitized": "Hello",
+			"inputIsSafe": true,
+			"rendered": "Hello",
+			"plain": "Hello"
+		},
+		{
+			"input": "Trust & Security",
+			"sanitized": "Trust &amp; Security",
+			"inputIsSafe": false,
+			"rendered": "Trust &amp; Security",
+			"plain": "Trust & Security"
+		},
+		{
+			"input": "if cost < budget",
+			"sanitized": "if cost &lt; budget",
+			"inputIsSafe": false,
+			"rendered": "if cost &lt; budget",
+			"plain": "if cost < budget"
+		},
+		{
+			"input": "a > b",
+			"sanitized": "a &gt; b",
+			"inputIsSafe": false,
+			"rendered": "a &gt; b",
+			"plain": "a > b"
+		},
+		{
+			"input": "",
+			"sanitized": "",
+			"inputIsSafe": true,
+			"rendered": "",
+			"plain": ""
+		},
+		{
+			"input": "<strong>Hi</strong>",
+			"sanitized": "<strong>Hi</strong>",
+			"inputIsSafe": true,
+			"rendered": "<strong>Hi</strong>",
+			"plain": "Hi"
+		},
+		{
+			"input": "<b>Hi</b>",
+			"sanitized": "<strong>Hi</strong>",
+			"inputIsSafe": false,
+			"rendered": "&lt;b&gt;Hi&lt;/b&gt;",
+			"plain": "<b>Hi</b>"
+		},
+		{
+			"input": "<i>Hi</i>",
+			"sanitized": "<em>Hi</em>",
+			"inputIsSafe": false,
+			"rendered": "&lt;i&gt;Hi&lt;/i&gt;",
+			"plain": "<i>Hi</i>"
+		},
+		{
+			"input": "<em>Hi</em>",
+			"sanitized": "<em>Hi</em>",
+			"inputIsSafe": true,
+			"rendered": "<em>Hi</em>",
+			"plain": "Hi"
+		},
+		{
+			"input": "<STRONG>Hi</STRONG>",
+			"sanitized": "<strong>Hi</strong>",
+			"inputIsSafe": false,
+			"rendered": "&lt;STRONG&gt;Hi&lt;/STRONG&gt;",
+			"plain": "<STRONG>Hi</STRONG>"
+		},
+		{
+			"input": "a<br>b",
+			"sanitized": "a<br>b",
+			"inputIsSafe": true,
+			"rendered": "a<br>b",
+			"plain": "a b"
+		},
+		{
+			"input": "a<br/>b",
+			"sanitized": "a<br>b",
+			"inputIsSafe": false,
+			"rendered": "a&lt;br/&gt;b",
+			"plain": "a<br/>b"
+		},
+		{
+			"input": "a<br />b",
+			"sanitized": "a<br>b",
+			"inputIsSafe": false,
+			"rendered": "a&lt;br /&gt;b",
+			"plain": "a<br />b"
+		},
+		{
+			"input": "<a href=\"/demo\">Book a demo</a>",
+			"sanitized": "<a href=\"/demo\">Book a demo</a>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"/demo\">Book a demo</a>",
+			"plain": "Book a demo"
+		},
+		{
+			"input": "<a href='/demo'>Book</a>",
+			"sanitized": "<a href=\"/demo\">Book</a>",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href='/demo'&gt;Book&lt;/a&gt;",
+			"plain": "<a href='/demo'>Book</a>"
+		},
+		{
+			"input": "<a href=\"https://example.com/x\">x</a>",
+			"sanitized": "<a href=\"https://example.com/x\">x</a>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"https://example.com/x\">x</a>",
+			"plain": "x"
+		},
+		{
+			"input": "<a href=\"mailto:hi@x.com\">mail</a>",
+			"sanitized": "<a href=\"mailto:hi@x.com\">mail</a>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"mailto:hi@x.com\">mail</a>",
+			"plain": "mail"
+		},
+		{
+			"input": "<a href=\"tel:+441234\">call</a>",
+			"sanitized": "<a href=\"tel:+441234\">call</a>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"tel:+441234\">call</a>",
+			"plain": "call"
+		},
+		{
+			"input": "<a href=\"#faq\">jump</a>",
+			"sanitized": "<a href=\"#faq\">jump</a>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"#faq\">jump</a>",
+			"plain": "jump"
+		},
+		{
+			"input": "<a href=\"/x?a=1&b=2\">y</a>",
+			"sanitized": "<a href=\"/x?a=1&amp;b=2\">y</a>",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"/x?a=1&amp;b=2\"&gt;y&lt;/a&gt;",
+			"plain": "<a href=\"/x?a=1&b=2\">y</a>"
+		},
+		{
+			"input": "<a href=\"javascript:alert(1)\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"javascript:alert(1)\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"javascript:alert(1)\">x</a>"
+		},
+		{
+			"input": "<a href=\"jav\tascript:alert(1)\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"jav\tascript:alert(1)\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"jav\tascript:alert(1)\">x</a>"
+		},
+		{
+			"input": "<a href=\"JaVaScRiPt:alert(1)\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"JaVaScRiPt:alert(1)\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"JaVaScRiPt:alert(1)\">x</a>"
+		},
+		{
+			"input": "<a href=\"data:text/html,<script>alert(1)</script>\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"data:text/html,&lt;script&gt;alert(1)&lt;/script&gt;\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"data:text/html,<script>alert(1)</script>\">x</a>"
+		},
+		{
+			"input": "<a href=\"//evil.com\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"//evil.com\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"//evil.com\">x</a>"
+		},
+		{
+			"input": "<a href=\"vbscript:x\">x</a>",
+			"sanitized": "x",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"vbscript:x\"&gt;x&lt;/a&gt;",
+			"plain": "<a href=\"vbscript:x\">x</a>"
+		},
+		{
+			"input": "<script>alert(1)</script>",
+			"sanitized": "&lt;script&gt;alert(1)&lt;/script&gt;",
+			"inputIsSafe": false,
+			"rendered": "&lt;script&gt;alert(1)&lt;/script&gt;",
+			"plain": "<script>alert(1)</script>"
+		},
+		{
+			"input": "<img src=x onerror=alert(1)>",
+			"sanitized": "&lt;img src=x onerror=alert(1)&gt;",
+			"inputIsSafe": false,
+			"rendered": "&lt;img src=x onerror=alert(1)&gt;",
+			"plain": "<img src=x onerror=alert(1)>"
+		},
+		{
+			"input": "<svg/onload=alert(1)>",
+			"sanitized": "&lt;svg/onload=alert(1)&gt;",
+			"inputIsSafe": false,
+			"rendered": "&lt;svg/onload=alert(1)&gt;",
+			"plain": "<svg/onload=alert(1)>"
+		},
+		{
+			"input": "<strong onclick=\"x()\">Hi</strong>",
+			"sanitized": "&lt;strong onclick=\"x()\"&gt;Hi",
+			"inputIsSafe": false,
+			"rendered": "&lt;strong onclick=\"x()\"&gt;Hi&lt;/strong&gt;",
+			"plain": "<strong onclick=\"x()\">Hi</strong>"
+		},
+		{
+			"input": "<strong>Hi",
+			"sanitized": "<strong>Hi</strong>",
+			"inputIsSafe": false,
+			"rendered": "&lt;strong&gt;Hi",
+			"plain": "<strong>Hi"
+		},
+		{
+			"input": "Hi</strong>",
+			"sanitized": "Hi",
+			"inputIsSafe": false,
+			"rendered": "Hi&lt;/strong&gt;",
+			"plain": "Hi</strong>"
+		},
+		{
+			"input": "<a href=\"/a\">x<a href=\"/b\">y</a></a>",
+			"sanitized": "<a href=\"/a\">xy</a>",
+			"inputIsSafe": false,
+			"rendered": "&lt;a href=\"/a\"&gt;x&lt;a href=\"/b\"&gt;y&lt;/a&gt;&lt;/a&gt;",
+			"plain": "<a href=\"/a\">x<a href=\"/b\">y</a></a>"
+		},
+		{
+			"input": "<strong><em>both</em></strong>",
+			"sanitized": "<strong><em>both</em></strong>",
+			"inputIsSafe": true,
+			"rendered": "<strong><em>both</em></strong>",
+			"plain": "both"
+		},
+		{
+			"input": "<strong><em>crossed</strong></em>",
+			"sanitized": "<strong><em>crossed</em></strong>",
+			"inputIsSafe": false,
+			"rendered": "&lt;strong&gt;&lt;em&gt;crossed&lt;/strong&gt;&lt;/em&gt;",
+			"plain": "<strong><em>crossed</strong></em>"
+		},
+		{
+			"input": "<strong>A</strong> & B",
+			"sanitized": "<strong>A</strong> &amp; B",
+			"inputIsSafe": false,
+			"rendered": "&lt;strong&gt;A&lt;/strong&gt; &amp; B",
+			"plain": "<strong>A</strong> & B"
+		},
+		{
+			"input": "<p>block</p>",
+			"sanitized": "&lt;p&gt;block&lt;/p&gt;",
+			"inputIsSafe": false,
+			"rendered": "&lt;p&gt;block&lt;/p&gt;",
+			"plain": "<p>block</p>"
+		},
+		{
+			"input": "<a href=\"/demo\">Book</a> and <strong>bold</strong>",
+			"sanitized": "<a href=\"/demo\">Book</a> and <strong>bold</strong>",
+			"inputIsSafe": true,
+			"rendered": "<a href=\"/demo\">Book</a> and <strong>bold</strong>",
+			"plain": "Book and bold"
+		}
+	],
+	"hrefs": [
+		{
+			"raw": " /x ",
+			"safe": "/x"
+		},
+		{
+			"raw": "HTTPS://a.com",
+			"safe": "HTTPS://a.com"
+		},
+		{
+			"raw": "ftp://x",
+			"safe": null
+		},
+		{
+			"raw": "x/y",
+			"safe": null
+		},
+		{
+			"raw": "",
+			"safe": null
+		},
+		{
+			"raw": "#a",
+			"safe": "#a"
+		},
+		{
+			"raw": "?q=1",
+			"safe": "?q=1"
+		},
+		{
+			"raw": "//host",
+			"safe": null
+		},
+		{
+			"raw": "data:x",
+			"safe": null
+		},
+		{
+			"raw": "jav\tascript:x",
+			"safe": null
+		},
+		{
+			"raw": "https://a.com?b=1&c=2",
+			"safe": "https://a.com?b=1&c=2"
+		},
+		{
+			"raw": "MAILTO:a@b.c",
+			"safe": "MAILTO:a@b.c"
+		}
+	],
+	"restrict": [
+		{
+			"input": "Trust &amp; Security",
+			"output": "Trust &amp; Security"
+		},
+		{
+			"input": "<b>Bold</b> and <i>it</i>",
+			"output": "<strong>Bold</strong> and <em>it</em>"
+		},
+		{
+			"input": "<div>one</div><div>two</div>",
+			"output": "one<br>two"
+		},
+		{
+			"input": "a<br>b",
+			"output": "a<br>b"
+		},
+		{
+			"input": "<span style=\"color:red\">x</span>",
+			"output": "x"
+		},
+		{
+			"input": "<a href=\"/demo\">go</a>",
+			"output": "<a href=\"/demo\">go</a>"
+		},
+		{
+			"input": "<a href=\"javascript:x\">go</a>",
+			"output": "go"
+		},
+		{
+			"input": "<!-- c -->text",
+			"output": "text"
+		},
+		{
+			"input": "<p>one</p>",
+			"output": "one"
+		},
+		{
+			"input": "a &gt; b",
+			"output": "a &gt; b"
+		},
+		{
+			"input": "<strong>x</strong><br>",
+			"output": "<strong>x</strong>"
+		},
+		{
+			"input": "<font face=\"x\">y</font>",
+			"output": "y"
+		},
+		{
+			"input": "<a href=\"/x?a=1&amp;b=2\">y</a>",
+			"output": "<a href=\"/x?a=1&amp;b=2\">y</a>"
+		},
+		{
+			"input": "<h1>Heading</h1>",
+			"output": "Heading"
+		},
+		{
+			"input": "<strong>unclosed",
+			"output": "<strong>unclosed</strong>"
+		},
+		{
+			"input": "</em>stray",
+			"output": "stray"
+		},
+		{
+			"input": "<script>alert(1)</script>",
+			"output": "alert(1)"
+		},
+		{
+			"input": "<img src=x onerror=alert(1)>",
+			"output": ""
+		},
+		{
+			"input": "<strong>a<em>b</strong>c</em>",
+			"output": "<strong>a<em>b</em></strong>c"
+		},
+		{
+			"input": "",
+			"output": ""
+		}
+	]
+}

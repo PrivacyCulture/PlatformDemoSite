@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { earliestBookableMs, slotIsBookable } from '$lib/booking-lead-time';
 import {
 	emptyDemoForm,
 	normalizeDemoForm,
@@ -18,6 +19,7 @@ import {
 	getContact,
 	HubSpotApiError,
 	HubSpotConfigError,
+	getBookingLeadDays,
 	mergePreservingOriginalSource,
 	requireMeetingSlug,
 	updateContact
@@ -78,6 +80,22 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 	if (!Number.isFinite(duration) || duration < 300_000 || duration > 7_200_000) {
 		return json({ error: 'duration is invalid', code: 'bad_request' }, { status: 400 });
+	}
+
+	// Enforced here as well as on the availability list: filtering what is DISPLAYED is a
+	// courtesy, not a rule — this endpoint takes a startTime from the browser, so without this
+	// the notice period is bypassed by posting one.
+	//
+	// The refusal deliberately does NOT mention a notice period, name a date, or return the
+	// cutoff: a visitor should take it as that slot having gone, not as a policy aimed at them.
+	// It is also true — the slot is not on offer — and it is what someone on a stale page would
+	// expect to read. Do not "improve" this into a helpful explanation.
+	const earliest = earliestBookableMs(Date.now(), await getBookingLeadDays(), timezone);
+	if (!slotIsBookable(startTime, earliest)) {
+		return json(
+			{ error: 'That time is no longer available. Please choose another slot.', code: 'slot_unavailable' },
+			{ status: 400 }
+		);
 	}
 
 	const utms: DemoUtm = utmsFromUnknown(body.utms);

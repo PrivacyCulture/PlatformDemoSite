@@ -2,6 +2,7 @@
 	import GoldCta from './GoldCta.svelte';
 	import LensCta from './LensCta.svelte';
 	import LogoStrip from './LogoStrip.svelte';
+	import { rich } from '$lib/site/rich';
 
 	let {
 		eyebrow,
@@ -53,8 +54,8 @@
 							{#if i > 0}<br />{/if}{line}
 						{/each}
 					</h1>
-					<p class="mt-5 max-w-[46ch] text-[15px] leading-relaxed font-light text-ink/70">
-						{body}
+					<p class="rt mt-5 max-w-[46ch] text-[15px] leading-relaxed font-light text-ink/70">
+						{@html rich(body)}
 					</p>
 
 					{#if primary || secondary}
@@ -73,7 +74,7 @@
 						</div>
 					{/if}
 					{#if micro}
-						<p class="mt-4 text-[13px] font-light text-ink/50">{micro}</p>
+						<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
 					{/if}
 				</div>
 
@@ -94,8 +95,8 @@
 		>
 			{title}
 		</h1>
-		<p class="mt-5 max-w-[52ch] text-[16px] leading-relaxed font-light text-ink/70">
-			{body}
+		<p class="rt mt-5 max-w-[52ch] text-[16px] leading-relaxed font-light text-ink/70">
+			{@html rich(body)}
 		</p>
 		{#if primary || secondary}
 			<div class="mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
@@ -113,7 +114,7 @@
 			</div>
 		{/if}
 		{#if micro}
-			<p class="mt-4 text-[13px] font-light text-ink/50">{micro}</p>
+			<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
 		{/if}
 		<div class="mt-10 sm:mt-12">
 			<LogoStrip />

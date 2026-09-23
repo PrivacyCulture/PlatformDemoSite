@@ -1,60 +1,87 @@
 <script lang="ts">
-	import { pages, pageTitle } from '$lib/content';
+	import { page } from '$app/state';
+	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
+	import FaqAccordion from '$lib/components/site/FaqAccordion.svelte';
+	import PageHero from '$lib/components/site/PageHero.svelte';
+	import { jsonLdScript } from '$lib/site/aeo';
+	import { pages, pageTitle, site } from '$lib/content';
+	import { plain } from '$lib/site/rich';
 
 	const copy = pages.faq;
-	const faqs = copy.items;
 
-	let open = $state(0);
+	// Every answer on this page is public, so publish it as a FAQPage graph too.
+	const schema = $derived({
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		'@id': `${page.url.origin}/faq#faq`,
+		url: `${page.url.origin}/faq`,
+		name: copy.meta.title,
+		description: copy.meta.description,
+		inLanguage: 'en-GB',
+		mainEntity: copy.items.map((item) => ({
+			'@type': 'Question',
+			name: plain(item.q),
+			acceptedAnswer: { '@type': 'Answer', text: plain(item.a) }
+		}))
+	});
 </script>
 
 <svelte:head>
 	<title>{pageTitle(copy.meta.title)}</title>
 	<meta name="description" content={copy.meta.description} />
+	<link rel="canonical" href="{page.url.origin}/faq" />
+	{@html jsonLdScript(schema)}
 </svelte:head>
 
-<header class="w-full max-w-3xl pt-6 sm:pt-10">
-	<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{copy.eyebrow}</p>
-	<h1 class="text-[clamp(2.2rem,5.5vw,3.75rem)] leading-[1.04] font-bold tracking-tight">
-		{copy.title}
-	</h1>
-</header>
+<PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} />
 
-<div class="mt-10 w-full max-w-3xl divide-y divide-bone/10 border-y border-bone/10">
-	{#each faqs as item, i (item.q)}
-		<div>
-			<h2>
-				<button
-					type="button"
-					class="flex w-full cursor-pointer items-start justify-between gap-4 py-5 text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-					aria-expanded={open === i}
-					onclick={() => (open = open === i ? -1 : i)}
-				>
-					<span class="text-[1.05rem] leading-snug font-bold tracking-tight">{item.q}</span>
-					<span class="mt-1 font-mono text-[13px] text-gold" aria-hidden="true">
-						{open === i ? '–' : '+'}
-					</span>
-				</button>
+<section
+	class="mt-14 w-full sm:mt-20 lg:grid lg:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] lg:items-start lg:gap-12"
+	aria-labelledby="faq-heading"
+>
+	<div class="min-w-0">
+		<div class="mb-4 flex items-baseline justify-between gap-4 border-b border-ink/10 pb-3">
+			<h2 id="faq-heading" class="text-[1.05rem] font-bold tracking-tight">
+				{copy.eyebrow}
 			</h2>
-			{#if open === i}
-				<p class="pb-5 text-[15px] leading-relaxed font-light text-bone/75">{item.a}</p>
-			{/if}
+			<p class="font-mono text-[11px] tracking-[0.16em] text-ink/65 tabular-nums uppercase">
+				{String(copy.items.length).padStart(2, '0')}
+				{copy.countLabel}
+			</p>
 		</div>
-	{/each}
-</div>
 
-<p class="mt-10 max-w-3xl text-[14px] font-light text-bone/65">
-	{copy.securityPack.lead}
-	<a
-		href={copy.securityPack.trustHref}
-		class="text-lens no-underline underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-	>
-		{copy.securityPack.trustLabel}
-	</a>
-	{copy.securityPack.or}
-	<a
-		href={copy.securityPack.demoHref}
-		class="text-gold no-underline underline-offset-4 hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
-	>
-		{copy.securityPack.demoLabel}
-	</a>.
-</p>
+		<FaqAccordion headingLevel="h3" />
+	</div>
+
+	<!-- The escalation path, parked beside the questions instead of trailing under them. -->
+	<aside class="mt-10 rounded-2xl border border-lens/40 bg-white/70 p-5 lg:sticky lg:top-24 lg:mt-0">
+		<h2 class="text-[12px] tracking-[0.16em] text-heading uppercase">{copy.securityPack.lead}</h2>
+		<ul class="mt-4 space-y-2">
+			<li>
+				<a
+					href={copy.securityPack.trustHref}
+					class="inline-flex min-h-11 items-center text-[14px] font-medium text-horizon no-underline underline-offset-4 transition-colors duration-200 hover:text-lens hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+				>
+					{copy.securityPack.trustLabel}
+				</a>
+			</li>
+			<li>
+				<a
+					href={copy.securityPack.demoHref}
+					class="inline-flex min-h-11 items-center text-[14px] font-medium text-horizon no-underline underline-offset-4 transition-colors duration-200 hover:text-lens hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+				>
+					{site.nav.demo.label}
+				</a>
+			</li>
+		</ul>
+	</aside>
+</section>
+
+<section class="mt-16 w-full sm:mt-24">
+	<DemoCtaBlock
+		eyebrow={copy.cta.eyebrow}
+		title={copy.cta.title}
+		body={copy.cta.body}
+		micro={copy.cta.micro}
+	/>
+</section>

@@ -1,6 +1,5 @@
 <script lang="ts">
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
-	import LensCta from '$lib/components/site/LensCta.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import TrustSnapshot from '$lib/components/site/TrustSnapshot.svelte';
 	import { pages, pageTitle } from '$lib/content';
@@ -44,6 +43,5 @@
 	<TrustSnapshot />
 	<div class="mt-6 flex flex-wrap gap-3">
 		<GoldCta href={copy.ctas.dpa.href} label={copy.ctas.dpa.label} />
-		<LensCta href={copy.ctas.subProcessors.href} label={copy.ctas.subProcessors.label} />
 	</div>
 </section>

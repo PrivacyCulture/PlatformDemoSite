@@ -1,7 +1,9 @@
 import { json, error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { earliestBookableMs, slotIsBookable } from '$lib/booking-lead-time';
 import {
 	getAvailabilityPage,
+	getBookingLeadDays,
 	getMeetingBookInfo,
 	HubSpotApiError,
 	HubSpotConfigError,
@@ -47,8 +49,20 @@ export const GET: RequestHandler = async ({ url }) => {
 				: await getAvailabilityPage(slug, timezone, monthOffset);
 
 		const byDuration = info.linkAvailability?.linkAvailabilityByDuration ?? {};
-		const { durationMs, slots } = pickPreferredDuration(byDuration);
+		const { durationMs, slots: allSlots } = pickPreferredDuration(byDuration);
 		const durations = Object.keys(byDuration).map(Number).filter(Number.isFinite);
+
+		// HubSpot happily offers a slot in an hour's time; the notice period set in Sorted is
+		// what keeps those off the form. Cut against the VISITOR'S day, using the timezone they
+		// chose above — see earliestBookableMs.
+		//
+		// The filtered slots are simply ABSENT: neither the notice period nor the cutoff is in
+		// the response, by request. A visitor should read a quiet first day or two as "nothing
+		// free then", not as a rule being applied to them, so do not add leadDays back here as
+		// a courtesy to the UI — the payload is readable by anyone who opens the network tab.
+		const leadDays = await getBookingLeadDays();
+		const earliest = earliestBookableMs(Date.now(), leadDays, timezone);
+		const slots = allSlots.filter((s) => slotIsBookable(s.startMillisUtc, earliest));
 
 		return json({
 			timezone,

@@ -13,6 +13,7 @@
 	import { pageTitle } from '$lib/content';
 	import { site } from '$lib/site/content';
 	import { problemByHref, problemCommon } from '$lib/site/problems';
+	import { rich } from '$lib/site/rich';
 
 	let { href }: { href: string } = $props();
 
@@ -38,7 +39,7 @@
 	<blockquote
 		class="mt-12 max-w-4xl border-l-2 border-gold pl-5 text-[clamp(1.2rem,2.4vw,1.55rem)] leading-snug font-bold tracking-tight"
 	>
-		{page.quote}
+		{@html rich(page.quote)}
 	</blockquote>
 {/if}
 
@@ -49,8 +50,8 @@
 			<h2 class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
 				{page.inPlatform.title}
 			</h2>
-			<p class="mt-4 text-[16px] leading-relaxed font-light text-ink/70">
-				{page.inPlatform.body}
+			<p class="rt mt-4 text-[16px] leading-relaxed font-light text-ink/70">
+				{@html rich(page.inPlatform.body)}
 			</p>
 		</div>
 		<figure class="mt-8 w-full sm:mt-10">
@@ -89,7 +90,7 @@
 						{String(i + 1).padStart(2, '0')}
 					</p>
 					<h3 class="mt-2 text-[1.05rem] leading-snug font-bold tracking-tight">{item.title}</h3>
-					<p class="mt-2 text-[14px] leading-relaxed font-light text-ink/70">{item.body}</p>
+					<p class="rt mt-2 text-[14px] leading-relaxed font-light text-ink/70">{@html rich(item.body)}</p>
 				</li>
 			{/each}
 		</ul>
