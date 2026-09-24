@@ -71,18 +71,9 @@
 			<button
 				type="button"
 				onclick={startPlayback}
-				class="absolute inset-0 flex cursor-pointer items-center justify-center bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
+				class="absolute inset-0 cursor-pointer bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
 				aria-label={label}
-			>
-				<span
-					class="flex h-16 w-16 items-center justify-center rounded-full bg-gold text-gold-ink shadow-[0_6px_20px_rgba(212,175,106,0.35)] transition-transform duration-200 group-hover:scale-[1.05]"
-					aria-hidden="true"
-				>
-					<svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-						<path d="M8 5.14v13.72L19.06 12 8 5.14z" />
-					</svg>
-				</span>
-			</button>
+			></button>
 		{/if}
 	</div>
 
