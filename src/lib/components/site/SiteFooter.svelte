@@ -28,7 +28,7 @@
 				<nav class="w-full sm:w-1/2" aria-label={site.footer.navAriaLabel}>
 					<div class="grid grid-cols-1 gap-x-4 sm:grid-cols-2">
 						<ul>
-							{#each colA as link (link.href)}
+							{#each colA as link, i (i)}
 								<li class="pb-2 text-xs">
 									<a
 										href={link.href}
@@ -40,7 +40,7 @@
 							{/each}
 						</ul>
 						<ul>
-							{#each colB as link (link.href)}
+							{#each colB as link, i (i)}
 								<li class="pb-2 text-xs">
 									<a
 										href={link.href}

@@ -11,7 +11,7 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { env } from '$env/dynamic/private';
-import type { SiteContent } from '$lib/content';
+import type { CustomPage, SiteContent } from '$lib/content';
 import { hasBundledAsset } from '$lib/content/assets';
 import { installContentResolver, setContent } from '$lib/content/runtime';
 import database from '../../../data/database.json';
@@ -92,7 +92,50 @@ export function validateContent(body: unknown): SiteContent {
 	) {
 		throw new Error('journey.clips.scenes must be a non-empty array of strings');
 	}
-	return c;
+	return { ...c, customPages: validCustomPages((body as Record<string, unknown>).customPages) };
+}
+
+const str = (v: unknown): string => (typeof v === 'string' ? v : '');
+
+function uniqueIds<T extends { id: string }>(items: T[]): T[] {
+	const used = new Set<string>();
+	return items.map((it) => {
+		let id = it.id;
+		for (let n = 2; used.has(id); n++) id = `${it.id}-${n}`;
+		used.add(id);
+		return { ...it, id };
+	});
+}
+
+/**
+ * Pages created in the CMS. Coerced item by item rather than validated as a whole: one malformed
+ * page must cost only that page, never the rest of the site's fresh content.
+ */
+function validCustomPages(v: unknown): CustomPage[] {
+	if (!Array.isArray(v)) return [];
+	const out: CustomPage[] = [];
+	const seen = new Set<string>();
+	for (const p of v) {
+		if (!isObject(p)) continue;
+		const slug = str(p.slug);
+		if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) || seen.has(slug)) continue;
+		seen.add(slug);
+		const meta = isObject(p.meta) ? p.meta : {};
+		const cta = isObject(p.cta) ? p.cta : {};
+		const sections = Array.isArray(p.sections) ? p.sections.filter(isObject) : [];
+		out.push({
+			slug,
+			meta: { title: str(meta.title) || str(p.title), description: str(meta.description) },
+			eyebrow: str(p.eyebrow),
+			title: str(p.title),
+			intro: str(p.intro),
+			// Ids are the page's anchors AND the render's each-keys, so they are made unique here:
+			// a repeated key would throw during hydration and take the site's router down with it.
+			sections: uniqueIds(sections.map((s, i) => ({ id: str(s.id) || `section-${i + 1}`, title: str(s.title), body: str(s.body) }))),
+			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) }
+		});
+	}
+	return out;
 }
 
 /**

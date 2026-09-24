@@ -46,7 +46,7 @@
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
 		<nav aria-label={nav.ariaLabel} class="hidden translate-y-[5px] items-baseline gap-7 whitespace-nowrap lg:flex">
-			{#each nav.links as link (link.label)}
+			{#each nav.links as link, i (i)}
 				{#if link.href}
 					<a
 						href={link.href}
@@ -100,7 +100,7 @@
 		class="border-b border-ink/10 bg-white/95 py-4 backdrop-blur-md lg:hidden"
 	>
 		<ul class="flex flex-col gap-1">
-			{#each nav.links as link (link.label)}
+			{#each nav.links as link, i (i)}
 				{#if link.href}
 					<li>
 						<a
@@ -117,7 +117,7 @@
 					</li>
 				{/if}
 			{/each}
-			{#each nav.mobileOnlyLinks as link (link.href)}
+			{#each nav.mobileOnlyLinks as link, i (i)}
 				<li>
 					<a
 						href={link.href}

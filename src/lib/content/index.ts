@@ -126,6 +126,22 @@ export type ProblemItem = {
 	cta: { title: string; body: string };
 };
 
+/**
+ * A page created in the CMS rather than in this repository, drawn by the generic
+ * `(marketing)/[slug]` route. Optional in the content — a CMS or a file without any is normal,
+ * and `validateContent` drops anything malformed rather than refusing the whole payload.
+ */
+export type CustomPage = {
+	slug: string;
+	meta: { title: string; description: string };
+	eyebrow: string;
+	title: string;
+	intro: string;
+	sections: { id: string; title: string; body: string }[];
+	/** The house demo CTA. Blank lines fall back to `site.demoCta`. */
+	cta: { eyebrow: string; title: string; body: string; micro: string };
+};
+
 type Raw = typeof raw;
 
 export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site'> & {
@@ -134,6 +150,7 @@ export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site'> & {
 	};
 	journey: JourneyContent;
 	problems: { common: Raw['problems']['common']; items: ProblemItem[] };
+	customPages?: CustomPage[];
 };
 
 export const content = live((c) => c);
@@ -145,6 +162,12 @@ export const problems = live((c) => c.problems);
 export const panels = live((c) => c.panels);
 export const demoForm = live((c) => c.demoForm);
 export const aeo = live((c) => c.aeo);
+export const customPages = live((c) => c.customPages ?? [], 'array');
+
+/** A page created in the CMS, or undefined. Read inside a load, after `await parent()`. */
+export function customPageBySlug(slug: string): CustomPage | undefined {
+	return customPages.find((p) => p.slug === slug);
+}
 
 /** "<page title> — <brand>", the pattern every marketing page's <title> follows. */
 export function pageTitle(title: string, suffix: string = site.brand): string {
