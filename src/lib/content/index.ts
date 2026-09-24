@@ -111,6 +111,13 @@ export type JourneyContent = {
 export const HERO_SHARED_ELEMENTS = ['none', 'explainer-video'] as const;
 export type HeroSharedElement = (typeof HERO_SHARED_ELEMENTS)[number];
 
+/**
+ * The blocks of a problem page between its hero and its pager, in their default order.
+ * Keep in step with the CMS's PROBLEM_LAYOUT_BLOCKS.
+ */
+export const PROBLEM_BLOCKS = ['quote', 'inPlatform', 'functionality', 'pricing', 'cta'] as const;
+export type ProblemBlockId = (typeof PROBLEM_BLOCKS)[number];
+
 /** One of the ten problem pages, in the order they appear on /platform. */
 export type ProblemItem = {
 	slug: string;
@@ -137,6 +144,8 @@ export type ProblemItem = {
 	panel?: 'auditChecklist';
 	functionality: { title: string; items: { title: string; body: string }[] };
 	cta: { title: string; body: string };
+	/** Which blocks are drawn, in order. Absent = every block in PROBLEM_BLOCKS order. */
+	layout?: { id: ProblemBlockId }[];
 };
 
 /**

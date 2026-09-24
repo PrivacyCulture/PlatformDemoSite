@@ -12,6 +12,7 @@
 		primary,
 		secondary,
 		micro,
+		logos = true,
 		children
 	}: {
 		eyebrow?: string;
@@ -21,6 +22,8 @@
 		primary?: { label: string; href: string; external?: boolean };
 		secondary?: { label: string; href?: string; onSelect?: () => void; external?: boolean };
 		micro?: string;
+		/** The trusted-by logo strip under the hero. A page that places it elsewhere turns it off. */
+		logos?: boolean;
 		children?: import('svelte').Snippet;
 	} = $props();
 
@@ -83,9 +86,11 @@
 				</div>
 			</div>
 		</div>
-		<div class="mt-8 lg:mt-10">
-			<LogoStrip />
-		</div>
+		{#if logos}
+			<div class="mt-8 lg:mt-10">
+				<LogoStrip />
+			</div>
+		{/if}
 	{:else}
 		{#if eyebrow}
 			<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{eyebrow}</p>
@@ -116,8 +121,10 @@
 		{#if micro}
 			<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
 		{/if}
-		<div class="mt-10 sm:mt-12">
-			<LogoStrip />
-		</div>
+		{#if logos}
+			<div class="mt-10 sm:mt-12">
+				<LogoStrip />
+			</div>
+		{/if}
 	{/if}
 </header>
