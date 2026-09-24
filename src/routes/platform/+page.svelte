@@ -1,6 +1,7 @@
 <script lang="ts">
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import { explainerFor } from '$lib/site/explainer';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
@@ -15,6 +16,8 @@
 	let explainerOpen = $state(false);
 	// Blocks and CMS-written text sections, in the order the page draws them.
 	const entries = $derived(platformLayout(copy));
+	// This page's own explainer, or the default from Site globals.
+	const explainer = $derived(explainerFor(copy));
 	// First in the list, the logos are drawn inside the hero where they always were; the loop
 	// below then skips them so they are not drawn twice.
 	const heroLogos = $derived(logosInHero(entries));
@@ -38,7 +41,7 @@
 		onSelect: () => (explainerOpen = true)
 	}}
 >
-	<ExplainerVideo bind:open={explainerOpen} compact />
+	<ExplainerVideo bind:open={explainerOpen} compact {...explainer} />
 </PageHero>
 
 {#snippet fitBlock()}
@@ -161,7 +164,7 @@
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{:else if entry.id === 'explainer'}
-		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo /></div></section>
+		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo {...explainer} /></div></section>
 	{:else if entry.id === 'trusted'}
 		<section class="mt-12 w-full sm:mt-16"><LogoStrip /></section>
 	{/if}

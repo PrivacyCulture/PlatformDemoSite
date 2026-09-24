@@ -7,6 +7,7 @@
 	import AuditChecklist from './AuditChecklist.svelte';
 	import DemoCtaBlock from './DemoCtaBlock.svelte';
 	import ExplainerVideo from './ExplainerVideo.svelte';
+	import { explainerFor } from '$lib/site/explainer';
 	import PageHero from './PageHero.svelte';
 	import MountainScene from './MountainScene.svelte';
 	import PricingStrip from './PricingStrip.svelte';
@@ -42,7 +43,7 @@
 		secondary={common.secondary}
 		micro={site.pricing.micro}
 	>
-		<ExplainerVideo compact />
+		<ExplainerVideo compact {...explainerFor(page)} />
 	</PageHero>
 {:else}
 	<PageHero

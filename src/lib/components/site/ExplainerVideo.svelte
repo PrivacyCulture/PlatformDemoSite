@@ -7,12 +7,15 @@
 		label = site.video.label,
 		// The still shown before playback. Blank = the browser's own first frame.
 		poster = site.video.poster,
+		// Blank = no captions track (a page's own video may have none).
+		captions = site.video.captions,
 		compact = false,
 		open = $bindable(false)
 	}: {
 		src?: string;
 		label?: string;
 		poster?: string;
+		captions?: string;
 		compact?: boolean;
 		open?: boolean;
 	} = $props();
@@ -64,7 +67,9 @@
 				if (videoEl) videoEl.currentTime = 0;
 			}}
 		>
-			<track kind="captions" src={site.video.captions} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
+			<!-- Always present: a page's own video may have no captions yet, and a track with no src
+			     is ignored by the browser. The CMS says so on that page's explainer card. -->
+			<track kind="captions" src={captions || undefined} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
 		</video>
 
 		{#if !started}
