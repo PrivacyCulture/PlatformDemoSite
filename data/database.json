@@ -127,6 +127,7 @@
 		"video": {
 			"eyebrow": "Explainer",
 			"src": "/clips/ExplainerTest.mp4",
+			"poster": "/clips/ExplainerTest-poster.webp",
 			"captions": "/clips/overview-captions.vtt",
 			"captionsLang": "en",
 			"captionsLabel": "English",

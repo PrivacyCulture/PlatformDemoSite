@@ -1,20 +1,25 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
+	import { asset } from '$lib/content/assets';
 
 	let {
 		src = site.video.src,
 		label = site.video.label,
+		// The still shown before playback. Blank = the browser's own first frame.
+		poster = site.video.poster,
 		compact = false,
 		open = $bindable(false)
 	}: {
 		src?: string;
 		label?: string;
+		poster?: string;
 		compact?: boolean;
 		open?: boolean;
 	} = $props();
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let started = $state(false);
+	const posterUrl = $derived(poster?.trim() ? asset(poster.trim()) : undefined);
 
 	function startPlayback() {
 		started = true;
@@ -44,6 +49,7 @@
 			bind:this={videoEl}
 			class="aspect-video w-full bg-black object-cover"
 			{src}
+			poster={posterUrl}
 			controls={started}
 			playsinline
 			preload="metadata"
