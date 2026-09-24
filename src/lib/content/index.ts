@@ -107,6 +107,10 @@ export type JourneyContent = {
 	};
 };
 
+/** Shared elements a problem page's hero may carry. Keep in step with the CMS's ENUM_RULES. */
+export const HERO_SHARED_ELEMENTS = ['none', 'explainer-video'] as const;
+export type HeroSharedElement = (typeof HERO_SHARED_ELEMENTS)[number];
+
 /** One of the ten problem pages, in the order they appear on /platform. */
 export type ProblemItem = {
 	slug: string;
@@ -116,7 +120,16 @@ export type ProblemItem = {
 	/** One-line summary used in the /platform list. */
 	summary: string;
 	meta: { title: string; description: string };
-	hero: { title: string; body: string };
+	hero: {
+		title: string;
+		body: string;
+		/**
+		 * A shared element drawn in the hero's right-hand column. The element's own content is
+		 * edited once (the explainer is `site.video`); this only chooses whether it appears here.
+		 * Optional so content written before it existed still renders — absent reads as 'none'.
+		 */
+		sharedElement?: HeroSharedElement;
+	};
 	quote?: string;
 	/** Product screenshot section. Omitted when `panel` is used instead. */
 	inPlatform?: { title: string; body: string; image: ImageRef };

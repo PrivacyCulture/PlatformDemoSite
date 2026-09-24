@@ -676,7 +676,8 @@
 				},
 				"hero": {
 					"title": "Five tools, five answers. Which one does the regulator get?",
-					"body": "When the ROPA lives in one spreadsheet, the vendor list in another and the DPIA register on a shared drive, every question about a processing activity has several answers. Connect them into one estate so a record has one owner, one status and one story."
+					"body": "When the ROPA lives in one spreadsheet, the vendor list in another and the DPIA register on a shared drive, every question about a processing activity has several answers. Connect them into one estate so a record has one owner, one status and one story.",
+					"sharedElement": "none"
 				},
 				"quote": "“A privacy programme is never more accurate than the least-maintained spreadsheet it depends on.”",
 				"inPlatform": {
@@ -723,7 +724,8 @@
 				},
 				"hero": {
 					"title": "When did the business last confirm your Article 30 record was true?",
-					"body": "A ROPA rebuilt in the fortnight before an audit is a snapshot of a rush, not a record of processing. Put confirmation in the hands of the people who own each activity, on a schedule, so the register stays current between audits rather than being reconstructed for them."
+					"body": "A ROPA rebuilt in the fortnight before an audit is a snapshot of a rush, not a record of processing. Put confirmation in the hands of the people who own each activity, on a schedule, so the register stays current between audits rather than being reconstructed for them.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "See at a glance which records are still true.",
@@ -769,7 +771,8 @@
 				},
 				"hero": {
 					"title": "Your DPIA found the risk. Did anything happen next?",
-					"body": "Too many assessments end as a signed PDF in a folder. Tie each DPIA to the processing activity it assessed and the risks it raised, so mitigations have owners, deadlines and a live status that someone is accountable for."
+					"body": "Too many assessments end as a signed PDF in a folder. Tie each DPIA to the processing activity it assessed and the risks it raised, so mitigations have owners, deadlines and a live status that someone is accountable for.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "Every assessment, and where it has got to.",
@@ -815,7 +818,8 @@
 				},
 				"hero": {
 					"title": "You vetted the vendor two years ago. Who has checked since?",
-					"body": "Due diligence at onboarding is a moment. Vendors change sub-processors, move data, get acquired and let certifications lapse. Keep processors on a re-attestation schedule and tie them to the activities they serve, so a change on their side becomes a task on yours."
+					"body": "Due diligence at onboarding is a moment. Vendors change sub-processors, move data, get acquired and let certifications lapse. Keep processors on a re-attestation schedule and tie them to the activities they serve, so a change on their side becomes a task on yours.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "The vendors that need you this week.",
@@ -861,7 +865,8 @@
 				},
 				"hero": {
 					"title": "How many AI tools is your business using that privacy has never seen?",
-					"body": "Teams adopt assistants, transcription tools and copilots faster than any intake form can catch them. Surface every AI tool in use, record what data it touches and attach it to a processing activity, so it is governed before it ships rather than discovered after."
+					"body": "Teams adopt assistants, transcription tools and copilots faster than any intake form can catch them. Surface every AI tool in use, record what data it touches and attach it to a processing activity, so it is governed before it ships rather than discovered after.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "Eight of your forty-two activities are running AI.",
@@ -907,7 +912,8 @@
 				},
 				"hero": {
 					"title": "Can you show the board where privacy stands, on one screen?",
-					"body": "Boards do not want a walkthrough of a spreadsheet. They want the trend, the target and the gap. Pull those from the live estate rather than assembling them by hand each quarter, so the story is current and every number can be traced."
+					"body": "Boards do not want a walkthrough of a spreadsheet. They want the trend, the target and the gap. Pull those from the live estate rather than assembling them by hand each quarter, so the story is current and every number can be traced.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "The whole operation on one screen.",
@@ -953,7 +959,8 @@
 				},
 				"hero": {
 					"title": "More than five DSARs a month, and you can't keep up?",
-					"body": "Stop manually chasing department leads for data locations. When your estate is connected to operational systems, locating data subject records takes minutes instead of weeks."
+					"body": "Stop manually chasing department leads for data locations. When your estate is connected to operational systems, locating data subject records takes minutes instead of weeks.",
+					"sharedElement": "none"
 				},
 				"quote": "“Regulators don't measure good intentions; they measure statutory deadlines.”",
 				"inPlatform": {
@@ -1000,7 +1007,8 @@
 				},
 				"hero": {
 					"title": "Stop guessing where your risk actually sits.",
-					"body": "Generic annual privacy training tick-boxes don't prevent data breaches. Align your educational initiatives with actual operational risk markers derived from data activities and incident logs."
+					"body": "Generic annual privacy training tick-boxes don't prevent data breaches. Align your educational initiatives with actual operational risk markers derived from data activities and incident logs.",
+					"sharedElement": "none"
 				},
 				"inPlatform": {
 					"title": "The teams that need more than a module.",
@@ -1046,7 +1054,8 @@
 				},
 				"hero": {
 					"title": "It is 5pm on a Friday and someone has lost a laptop. Now what?",
-					"body": "Seventy-two hours is not long when the first six are spent working out who is in charge and which systems were involved. Predefine the roles, start the clock at detection and log every decision as it is made, so the notification is evidenced rather than reconstructed."
+					"body": "Seventy-two hours is not long when the first six are spent working out who is in charge and which systems were involved. Predefine the roles, start the clock at detection and log every decision as it is made, so the notification is evidenced rather than reconstructed.",
+					"sharedElement": "none"
 				},
 				"quote": "“The regulator will ask what you knew, when you knew it, and what you did in between.”",
 				"inPlatform": {
@@ -1093,7 +1102,8 @@
 				},
 				"hero": {
 					"title": "Can you evidence your accountability programme today?",
-					"body": "Scrambling before an audit or insurer assessment creates friction and reveals gaps. Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically."
+					"body": "Scrambling before an audit or insurer assessment creates friction and reveals gaps. Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically.",
+					"sharedElement": "none"
 				},
 				"panel": "auditChecklist",
 				"functionality": {

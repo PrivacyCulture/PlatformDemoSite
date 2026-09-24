@@ -6,6 +6,7 @@
 	 */
 	import AuditChecklist from './AuditChecklist.svelte';
 	import DemoCtaBlock from './DemoCtaBlock.svelte';
+	import ExplainerVideo from './ExplainerVideo.svelte';
 	import PageHero from './PageHero.svelte';
 	import MountainScene from './MountainScene.svelte';
 	import PricingStrip from './PricingStrip.svelte';
@@ -19,6 +20,8 @@
 
 	const page = $derived(problemByHref(href));
 	const common = problemCommon;
+	// Absent (content written before the field existed) or anything unrecognised reads as none.
+	const showExplainer = $derived(page.hero.sharedElement === 'explainer-video');
 </script>
 
 <svelte:head>
@@ -26,14 +29,27 @@
 	<meta name="description" content={page.meta.description} />
 </svelte:head>
 
-<PageHero
-	eyebrow={common.eyebrow}
-	title={page.hero.title}
-	body={page.hero.body}
-	primary={common.primary}
-	secondary={common.secondary}
-	micro={site.pricing.micro}
-/>
+{#if showExplainer}
+	<PageHero
+		eyebrow={common.eyebrow}
+		title={page.hero.title}
+		body={page.hero.body}
+		primary={common.primary}
+		secondary={common.secondary}
+		micro={site.pricing.micro}
+	>
+		<ExplainerVideo compact />
+	</PageHero>
+{:else}
+	<PageHero
+		eyebrow={common.eyebrow}
+		title={page.hero.title}
+		body={page.hero.body}
+		primary={common.primary}
+		secondary={common.secondary}
+		micro={site.pricing.micro}
+	/>
+{/if}
 
 {#if page.quote}
 	<blockquote
