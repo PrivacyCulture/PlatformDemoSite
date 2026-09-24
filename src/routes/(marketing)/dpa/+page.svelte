@@ -128,10 +128,10 @@
 
 	<section class="dpa-cta mt-16 sm:mt-24">
 		<DemoCtaBlock
-			eyebrow={copy.cta.eyebrow}
-			title={copy.cta.title}
-			body={copy.cta.body}
-			micro={copy.cta.micro}
+			eyebrow={copy.cta?.eyebrow || undefined}
+			title={copy.cta?.title || undefined}
+			body={copy.cta?.body || undefined}
+			micro={copy.cta?.micro || undefined}
 		/>
 	</section>
 </div>

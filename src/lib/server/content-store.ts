@@ -138,6 +138,45 @@ function validCustomPages(v: unknown): CustomPage[] {
 	return out;
 }
 
+/** A JSON object, excluding arrays. */
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+	return isObject(v) && !Array.isArray(v);
+}
+
+/**
+ * Fills anything the CMS leaves out from `data/database.json`, the shape every content type
+ * is derived from and therefore the contract a payload has to meet. `validateContent` only
+ * proves the top level is there, so a payload could drop a subtree — `pages.faq.cta`, say —
+ * and still be accepted, leaving a page to read a property off undefined and 500. Missing
+ * copy now falls back to the build's own and the rest of the fresh content is kept, on the
+ * same reasoning as `withBundledClips`: one gap must cost only that gap.
+ *
+ * Arrays are taken from the payload whole; the CMS owns how many items a list has.
+ */
+function withFallbackDefaults(c: SiteContent): SiteContent {
+	const filled: string[] = [];
+	const fill = (value: unknown, base: unknown, path: string): unknown => {
+		if (value === undefined) {
+			filled.push(path);
+			return base;
+		}
+		if (!isPlainObject(base) || !isPlainObject(value)) return value;
+		const out: Record<string, unknown> = { ...value };
+		for (const [k, b] of Object.entries(base)) {
+			out[k] = fill(value[k], b, path ? `${path}.${k}` : k);
+		}
+		return out;
+	};
+	const out = fill(c, fallback, '') as SiteContent;
+	if (filled.length > 0) {
+		console.warn(
+			`[content] CMS content is missing ${filled.length} value(s); using the build's own for ` +
+				`${filled.join(', ')}.`
+		);
+	}
+	return out;
+}
+
 /**
  * Clips are bundled into the build, so the CMS cannot introduce new ones. When
  * it names one the build does not have, keep the build's own clip list.
@@ -174,7 +213,7 @@ async function fetchContent(): Promise<void> {
 		}
 		if (!res.ok) throw new Error(`CMS responded ${res.status} ${res.statusText}`.trim());
 		const body: unknown = await res.json();
-		const content = withBundledClips(validateContent(body));
+		const content = withBundledClips(withFallbackDefaults(validateContent(body)));
 		snapshot = { content, source: 'cms', fetchedAt: new Date().toISOString() };
 		etag = res.headers.get('etag');
 		freshUntil = Date.now() + cfg.ttlSeconds * 1000;
