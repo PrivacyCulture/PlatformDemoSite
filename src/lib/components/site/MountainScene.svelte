@@ -106,7 +106,13 @@
 			);
 	}
 
+	/* One column on a phone: the path spans the whole viewport instead of hugging one edge. */
 	@media (max-width: 640px) {
+		.mountain-scene::before,
+		.mountain-scene::after {
+			width: 100vw;
+		}
+
 		.mountain-scene::after {
 			background: rgba(255, 255, 255, 0.88);
 		}
