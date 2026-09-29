@@ -31,13 +31,13 @@
 
 	<div class="mt-10 lg:grid lg:grid-cols-[minmax(0,44rem)_minmax(0,1fr)] lg:items-start lg:gap-12">
 		<article class="min-w-0">
-			{#each copy.intro as paragraph (paragraph)}
+			{#each copy.intro as paragraph, p (p)}
 				<p class="mt-4 max-w-[62ch] text-[16px] leading-relaxed font-light text-ink/70 first:mt-0">
 					{paragraph}
 				</p>
 			{/each}
 			<ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
-				{#each copy.introLinks as link (link.href)}
+				{#each copy.introLinks as link, l (l)}
 					<li><a href={link.href} class={linkClass}>{link.label}</a></li>
 				{/each}
 			</ul>
@@ -52,7 +52,7 @@
 						<h2 class="mt-2 text-[1.25rem] leading-snug font-bold tracking-tight">
 							{section.title}
 						</h2>
-						{#each section.paragraphs as paragraph (paragraph)}
+						{#each section.paragraphs as paragraph, p (p)}
 							<p class="mt-3 max-w-[62ch] text-[15px] leading-relaxed font-light text-ink/70">
 								{paragraph}
 							</p>
@@ -60,7 +60,7 @@
 
 						{#if section.items.length}
 							<dl class="mt-4 max-w-[62ch] space-y-3">
-								{#each section.items as item (item.term)}
+								{#each section.items as item, t (t)}
 									<div class="border-l-2 border-lens/40 pl-4">
 										<dt class="text-[14px] font-semibold text-ink/85">{item.term}</dt>
 										<dd class="mt-1 text-[15px] leading-relaxed font-light text-ink/70">{item.body}</dd>
@@ -71,7 +71,7 @@
 
 						{#if section.links.length}
 							<ul class="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-[14px]">
-								{#each section.links as link (link.href)}
+								{#each section.links as link, l (l)}
 									<li>
 										<a
 											href={link.href}
@@ -104,7 +104,7 @@
 									<div id="cookies-{group.id}" class="scroll-mt-24">
 										<h3 class="text-[12px] tracking-[0.16em] text-lens uppercase">{group.title}</h3>
 										<ul class="mt-3 space-y-3">
-											{#each group.cookies as cookie (cookie.name)}
+											{#each group.cookies as cookie, c (c)}
 												<li class="cn-cookie rounded-2xl border border-ink/10 bg-white/70 p-4 sm:p-5">
 													<p class="font-mono text-[13px] font-semibold break-words text-ink/85">
 														{cookie.name}
