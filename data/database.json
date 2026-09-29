@@ -49,7 +49,7 @@
 			"ariaLabel": "Legal",
 			"links": [
 				{ "label": "Privacy Policy", "href": "https://www.privacyculture.com/privacy-policy" },
-				{ "label": "Cookie Notice", "href": "https://www.privacyculture.com/cookie-notice" },
+				{ "label": "Cookie Notice", "href": "/cookie-notice" },
 				{ "label": "Terms of Use", "href": "https://www.privacyculture.com/terms-of-use" },
 				{ "label": "Trust & Security", "href": "/trust" }
 			]
@@ -649,6 +649,304 @@
 				"body": "The signed version is issued with your order form. Book a demo and we will send the full security pack alongside it.",
 				"micro": "Published terms, no sales gate."
 			}
+		},
+		"cookieNotice": {
+			"meta": {
+				"title": "Cookie Notice",
+				"description": "The cookies and similar technologies used on the Privacy Culture Platform website, what each one does, how long it lasts and how to change your choices."
+			},
+			"eyebrow": "Legal",
+			"title": "Cookie Notice",
+			"dateline": "Privacy Culture Ltd · Last updated September 2026",
+			"contentsLabel": "On this page",
+			"intro": [
+				"Our Privacy Notice explains our principles when it comes to the collection, processing and storage of your information. This website uses cookies to distinguish you from other visitors. This helps us give you a good experience when you browse the site and also allows us to improve it.",
+				"This Cookie Notice explains what cookies are, which ones this website uses, what they are used for and the options you have to control them. It covers platform.privacyculture.com. Our main website, www.privacyculture.com, has its own Cookie Notice."
+			],
+			"introLinks": [
+				{ "label": "Read our Privacy Notice", "href": "https://www.privacyculture.com/privacy-policy" },
+				{ "label": "www.privacyculture.com Cookie Notice", "href": "https://www.privacyculture.com/cookie-notice" }
+			],
+			"sections": [
+				{
+					"id": "what-are-cookies",
+					"title": "What are cookies?",
+					"paragraphs": [
+						"Cookies are small pieces of data, stored in text files, that are placed on your device when you visit web pages. They are widely used to make websites work, or work more efficiently, and to give website owners information for different purposes.",
+						"This notice also covers similar technologies that work in the same way, such as your browser’s local storage and session storage, and tracking pixels (tiny images or requests that tell a service a page was viewed)."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "types-of-cookies",
+					"title": "Types of cookies",
+					"paragraphs": ["We group the cookies on this site by purpose:"],
+					"items": [
+						{
+							"term": "Necessary",
+							"body": "Help make the website usable by enabling basic functions like page navigation and remembering your cookie choices. The website cannot work properly without them."
+						},
+						{
+							"term": "Preferences",
+							"body": "Let a website remember information that changes the way it behaves or looks, like your preferred language or region. This site does not currently set any preference cookies."
+						},
+						{
+							"term": "Statistics",
+							"body": "Help us understand how visitors use the website by collecting and reporting information on pages visited, how people move between them and where they came from."
+						},
+						{
+							"term": "Marketing",
+							"body": "Used to track visitors across websites so that advertising can be more relevant, and to measure whether our campaigns lead to demo bookings."
+						}
+					],
+					"links": []
+				},
+				{
+					"id": "cookies-we-use",
+					"title": "Cookies we use on this site",
+					"paragraphs": [
+						"The list below sets out each cookie and similar technology used on this website, who sets it, what it is for and how long it lasts. Statistics and marketing cookies are only set if you accept them in the cookie banner."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "legal-basis",
+					"title": "Legal basis for using cookies",
+					"paragraphs": [
+						"We use cookies in line with the UK General Data Protection Regulation (UK GDPR), the EU GDPR, the UK Data Protection Act 2018 and the Privacy and Electronic Communications Regulations (PECR). The legal basis for processing personal data collected through cookies depends on the type of cookie:"
+					],
+					"items": [
+						{
+							"term": "Necessary cookies",
+							"body": "Our legitimate interest in making sure the website, and any services we provide to you through it, work properly and securely. These cookies are exempt from consent because they are strictly necessary."
+						},
+						{
+							"term": "Preference, statistics and marketing cookies",
+							"body": "Your consent, which you can give or withdraw at any time as described below."
+						}
+					],
+					"links": []
+				},
+				{
+					"id": "change-settings",
+					"title": "How can you change your cookie settings?",
+					"paragraphs": [
+						"When you first visit this website, a cookie banner lets you choose which categories of cookies to accept or reject. Only necessary cookies are set until you make a choice. You can change or withdraw your consent at any time with the button below, and it will apply from that point on.",
+						"You can also manage cookies in your browser settings, where you can accept, reject or delete them. Every browser is slightly different, so check the ‘Help’ menu of your browser (or your phone’s handset manual). If you block necessary cookies, some parts of the website may not work as intended.",
+						"To opt out of being tracked by Google Analytics across all websites, install the Google Analytics opt-out browser add-on. To find out more about cookies, including how to see which cookies have been set, visit www.aboutcookies.org or www.allaboutcookies.org."
+					],
+					"items": [],
+					"links": [
+						{ "label": "Google Chrome", "href": "https://support.google.com/chrome/answer/95647" },
+						{ "label": "Microsoft Edge", "href": "https://support.microsoft.com/en-gb/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" },
+						{ "label": "Mozilla Firefox", "href": "https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox" },
+						{ "label": "Apple Safari", "href": "https://support.apple.com/en-gb/guide/safari/sfri11471/mac" },
+						{ "label": "Opera", "href": "https://help.opera.com/en/latest/web-preferences/#cookies" },
+						{ "label": "Google Analytics opt-out", "href": "https://tools.google.com/dlpage/gaoptout" },
+						{ "label": "aboutcookies.org", "href": "https://www.aboutcookies.org" },
+						{ "label": "allaboutcookies.org", "href": "https://www.allaboutcookies.org" }
+					]
+				},
+				{
+					"id": "contact",
+					"title": "Contact us",
+					"paragraphs": [
+						"If you have any questions about our use of cookies or other technologies, email our Data Protection Officer at DPO@privacyculture.com or write to hello@privacyculture.com. You can also call us on +44 (0) 20 7112 9360.",
+						"Our principal address is Bouverie House, 154-160 Fleet Street, London EC4A 2DQ."
+					],
+					"items": [],
+					"links": [
+						{ "label": "DPO@privacyculture.com", "href": "mailto:DPO@privacyculture.com" },
+						{ "label": "hello@privacyculture.com", "href": "mailto:hello@privacyculture.com" }
+					]
+				},
+				{
+					"id": "changes",
+					"title": "Changes to this Cookie Notice",
+					"paragraphs": [
+						"We may update this Cookie Notice from time to time, for example when we add or remove a service that sets cookies. Please check this page now and then. If we make significant changes to the way we use cookies, we will show a prominent notice on the website and ask for your consent again where needed."
+					],
+					"items": [],
+					"links": []
+				}
+			],
+			"cookieTableAfter": "cookies-we-use",
+			"cookieTableLabels": {
+				"name": "Name",
+				"provider": "Provider",
+				"type": "Type",
+				"purpose": "Purpose",
+				"duration": "Duration",
+				"moreInfo": "Provider’s privacy policy"
+			},
+			"cookieGroups": [
+				{
+					"id": "necessary",
+					"title": "Necessary",
+					"cookies": [
+						{
+							"name": "CookieConsent",
+							"provider": "Cookiebot (on privacyculture.com)",
+							"type": "HTTP cookie",
+							"purpose": "Stores your cookie consent choices for this website.",
+							"duration": "1 year",
+							"infoHref": "https://www.cookiebot.com/en/privacy-policy/"
+						},
+						{
+							"name": "__cf_bm",
+							"provider": "HubSpot (via Cloudflare)",
+							"type": "HTTP cookie",
+							"purpose": "Tells humans and bots apart, to protect HubSpot’s services from malicious traffic.",
+							"duration": "30 minutes",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						},
+						{
+							"name": "test_cookie",
+							"provider": "Google (doubleclick.net)",
+							"type": "HTTP cookie",
+							"purpose": "Checks whether your browser supports cookies.",
+							"duration": "15 minutes",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "sveltekit:scroll, sveltekit:snapshot",
+							"provider": "Privacy Culture",
+							"type": "HTML session storage",
+							"purpose": "Remembers your place on a page so the back button returns you to where you were.",
+							"duration": "Session",
+							"infoHref": "https://www.privacyculture.com/privacy-policy"
+						}
+					]
+				},
+				{
+					"id": "statistics",
+					"title": "Statistics",
+					"cookies": [
+						{
+							"name": "_ga",
+							"provider": "Google Analytics",
+							"type": "HTTP cookie",
+							"purpose": "Registers a unique ID used to produce statistics on how you use the website.",
+							"duration": "2 years",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "_ga_M67X8M2TQR",
+							"provider": "Google Analytics",
+							"type": "HTTP cookie",
+							"purpose": "Keeps track of your session, including how many times you have visited and the dates of your first and most recent visit.",
+							"duration": "2 years",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "_hjSessionUser_6785893",
+							"provider": "Hotjar",
+							"type": "HTTP cookie",
+							"purpose": "Gives you a unique ID the first time you visit, so your later visits are recognised as the same visitor.",
+							"duration": "1 year",
+							"infoHref": "https://www.hotjar.com/legal/policies/privacy/"
+						},
+						{
+							"name": "_hjSession_6785893",
+							"provider": "Hotjar",
+							"type": "HTTP cookie",
+							"purpose": "Holds data for the current session, so page views in the same visit are grouped together.",
+							"duration": "30 minutes",
+							"infoHref": "https://www.hotjar.com/legal/policies/privacy/"
+						},
+						{
+							"name": "__hstc",
+							"provider": "HubSpot",
+							"type": "HTTP cookie",
+							"purpose": "Tracks visitors, storing the time of your first visit, your previous visit and your current one, and how many sessions you have had.",
+							"duration": "6 months",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						},
+						{
+							"name": "hubspotutk",
+							"provider": "HubSpot",
+							"type": "HTTP cookie",
+							"purpose": "Keeps track of your identity as a visitor, so HubSpot can recognise you across sessions and produce visitor statistics.",
+							"duration": "6 months",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						},
+						{
+							"name": "__hssc",
+							"provider": "HubSpot",
+							"type": "HTTP cookie",
+							"purpose": "Counts page views in a session and works out whether the session count needs updating.",
+							"duration": "30 minutes",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						},
+						{
+							"name": "__hssrc",
+							"provider": "HubSpot",
+							"type": "HTTP cookie",
+							"purpose": "Recognises when you have restarted your browser, to tell new sessions apart.",
+							"duration": "Session",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						},
+						{
+							"name": "pc_demo_utm",
+							"provider": "Privacy Culture",
+							"type": "HTML session storage",
+							"purpose": "Remembers the campaign link (UTM tags) that brought you to the site, so that if you book a demo we know which campaign it came from.",
+							"duration": "Session",
+							"infoHref": "https://www.privacyculture.com/privacy-policy"
+						}
+					]
+				},
+				{
+					"id": "marketing",
+					"title": "Marketing",
+					"cookies": [
+						{
+							"name": "_gcl_au",
+							"provider": "Google Ads",
+							"type": "HTTP cookie",
+							"purpose": "Stores click information from our ads so that demo bookings can be linked back to the ad that led to them.",
+							"duration": "3 months",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "_gcl_ls",
+							"provider": "Google Ads",
+							"type": "HTML local storage",
+							"purpose": "A copy of the ad click information in _gcl_au, used when cookies are not available.",
+							"duration": "Persistent",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "IDE",
+							"provider": "Google (doubleclick.net)",
+							"type": "HTTP cookie",
+							"purpose": "Records your actions after viewing or clicking one of our ads, to measure how well the ad works and show you more relevant ads.",
+							"duration": "13 months",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "pagead/1p-user-list/#, rmkt/collect/#",
+							"provider": "Google Ads",
+							"type": "Pixel tracker",
+							"purpose": "Adds visitors to our remarketing audiences and records conversions, so we can show relevant ads on other websites and limit how often you see the same one.",
+							"duration": "Session",
+							"infoHref": "https://business.safety.google/privacy/"
+						},
+						{
+							"name": "__ptq.gif",
+							"provider": "HubSpot",
+							"type": "Pixel tracker",
+							"purpose": "Sends information about your device and behaviour to HubSpot, our marketing platform, and tracks you across devices and marketing channels.",
+							"duration": "Session",
+							"infoHref": "https://legal.hubspot.com/privacy-policy"
+						}
+					]
+				}
+			],
+			"consentButtonLabel": "Change your cookie settings",
+			"printLabel": "Print or save as PDF"
 		}
 	},
 	"problems": {
