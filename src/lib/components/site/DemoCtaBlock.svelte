@@ -2,6 +2,7 @@
 	import GoldCta from './GoldCta.svelte';
 	import { site } from '$lib/site/content';
 	import { rich } from '$lib/site/rich';
+	import { asset } from '$lib/content/assets';
 
 	let {
 		eyebrow = site.demoCta.eyebrow,
@@ -24,19 +25,11 @@
 	// Only a link that leaves the site opens a new tab.
 	const external = $derived(/^https?:\/\//i.test(secondaryHref));
 
-	// Node constellation echoing the Visual ROPA View: one gold hub, satellite nodes on
-	// gold-to-lens gradient lines. Purely decorative, hidden from assistive tech.
-	const hub = { x: 300, y: 150 };
-	const nodes = [
-		{ x: 120, y: 60, r: 7, tone: 'lens' },
-		{ x: 470, y: 48, r: 6, tone: 'gold' },
-		{ x: 90, y: 230, r: 5, tone: 'bone' },
-		{ x: 500, y: 236, r: 8, tone: 'lens' },
-		{ x: 300, y: 278, r: 5, tone: 'gold' },
-		{ x: 410, y: 130, r: 4, tone: 'bone' },
-		{ x: 190, y: 160, r: 4, tone: 'gold' }
-	] as const;
-	const stroke = { lens: '#009bcc', gold: '#d4af6a', bone: 'rgba(247,250,252,0.55)' } as const;
+	// The picture in the right-hand column, set in the CMS on the Next step box (`demoCta.image`).
+	// The default is the node constellation that used to be drawn here, now a file under static/
+	// so Sorted can swap it for any image. A blank alt keeps it decorative.
+	const image = $derived(site.demoCta.image);
+	const imageSrc = $derived(image?.src?.trim() ? asset(image.src.trim()) : '');
 </script>
 
 <section
@@ -92,62 +85,19 @@
 			{/if}
 		</div>
 
-		<div aria-hidden="true" class="constellation hidden lg:block">
-			<svg viewBox="0 0 600 320" class="h-auto w-full">
-				<defs>
-					<linearGradient id="demo-cta-line" x1="0" y1="0" x2="1" y2="1">
-						<stop offset="0%" stop-color="#d4af6a" stop-opacity="1" />
-						<stop offset="100%" stop-color="#009bcc" stop-opacity="0.9" />
-					</linearGradient>
-					<radialGradient id="demo-cta-hub">
-						<stop offset="0%" stop-color="#d4af6a" stop-opacity="0.35" />
-						<stop offset="100%" stop-color="#d4af6a" stop-opacity="0" />
-					</radialGradient>
-				</defs>
-
-				{#each nodes as n (n.x + '-' + n.y)}
-					<line x1={hub.x} y1={hub.y} x2={n.x} y2={n.y} stroke="url(#demo-cta-line)" stroke-width="1.6" />
-				{/each}
-				<line x1={nodes[0].x} y1={nodes[0].y} x2={nodes[6].x} y2={nodes[6].y} stroke="rgba(247,250,252,0.28)" stroke-width="1" stroke-dasharray="3 5" />
-				<line x1={nodes[1].x} y1={nodes[1].y} x2={nodes[5].x} y2={nodes[5].y} stroke="rgba(247,250,252,0.28)" stroke-width="1" stroke-dasharray="3 5" />
-				<line x1={nodes[3].x} y1={nodes[3].y} x2={nodes[4].x} y2={nodes[4].y} stroke="rgba(247,250,252,0.28)" stroke-width="1" stroke-dasharray="3 5" />
-
-				<circle cx={hub.x} cy={hub.y} r="62" fill="url(#demo-cta-hub)" />
-				<circle class="pulse" cx={hub.x} cy={hub.y} r="30" fill="none" stroke="#d4af6a" stroke-opacity="0.35" stroke-width="1" />
-				<circle cx={hub.x} cy={hub.y} r="20" fill="#103389" stroke="#d4af6a" stroke-width="2" />
-				<circle cx={hub.x} cy={hub.y} r="5" fill="#d4af6a" />
-
-				{#each nodes as n, i (i)}
-					<circle cx={n.x} cy={n.y} r={n.r + 6} fill={stroke[n.tone]} fill-opacity="0.16" />
-					<circle cx={n.x} cy={n.y} r={n.r} fill="#0b1220" stroke={stroke[n.tone]} stroke-width="2" />
-				{/each}
-			</svg>
-		</div>
+		{#if imageSrc}
+			<div class="hidden lg:block">
+				<img
+					src={imageSrc}
+					alt={image.alt ?? ''}
+					width={image.width}
+					height={image.height}
+					class="block h-auto w-full"
+					loading="lazy"
+					decoding="async"
+				/>
+			</div>
+		{/if}
 	</div>
 </section>
 
-<style>
-	.pulse {
-		transform-origin: 300px 150px;
-		transform-box: view-box;
-		animation: demo-cta-pulse 3.2s ease-out infinite;
-	}
-
-	@keyframes demo-cta-pulse {
-		0% {
-			transform: scale(0.85);
-			opacity: 0.9;
-		}
-		100% {
-			transform: scale(1.9);
-			opacity: 0;
-		}
-	}
-
-	@media (prefers-reduced-motion: reduce) {
-		.pulse {
-			animation: none;
-			opacity: 0.4;
-		}
-	}
-</style>

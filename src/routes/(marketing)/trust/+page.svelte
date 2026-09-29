@@ -1,7 +1,6 @@
 <script lang="ts">
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
-	import TrustSnapshot from '$lib/components/site/TrustSnapshot.svelte';
 	import { pages, pageTitle } from '$lib/content';
 
 	const copy = pages.trust;
@@ -40,8 +39,7 @@
 </section>
 
 <section class="mt-16 w-full sm:mt-24">
-	<TrustSnapshot />
-	<div class="mt-6 flex flex-wrap gap-3">
+	<div class="flex flex-wrap gap-3">
 		<GoldCta href={copy.ctas.dpa.href} label={copy.ctas.dpa.label} />
 	</div>
 </section>

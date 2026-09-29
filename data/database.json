@@ -139,7 +139,13 @@
 			"title": "See your privacy estate differently.",
 			"body": "Book a 25-minute demo to see the Visual ROPA View and connected workflows in action.",
 			"micro": "25 minutes · Live walkthrough of the platform",
-			"primaryLabel": "Book a demo"
+			"primaryLabel": "Book a demo",
+			"image": {
+				"src": "/Images/next-step-constellation.svg",
+				"alt": "",
+				"width": 600,
+				"height": 320
+			}
 		}
 	},
 	"journey": {
@@ -947,6 +953,36 @@
 			],
 			"consentButtonLabel": "Change your cookie settings",
 			"printLabel": "Print or save as PDF"
+		},
+		"notFound": {
+			"meta": {
+				"title": "Page not found",
+				"description": "The page you asked for is not on this site. Head back to the platform overview, watch the two-minute explainer or book a demo."
+			},
+			"hero": {
+				"eyebrow": "Page not found",
+				"title": "This page has gone off the map.",
+				"body": "It may have moved, been retired, or the address was mistyped. Nothing here was lost. The platform overview, pricing and the demo are all one click away.",
+				"primary": { "label": "Back to the home page", "href": "/" },
+				"secondary": { "label": "See the platform", "href": "/platform" },
+				"micro": "If you followed a link from somewhere else, let us know and we will fix it.",
+				"sharedElement": "explainer-video"
+			},
+			"error": {
+				"eyebrow": "Something went wrong",
+				"title": "That did not work, and it is on us.",
+				"body": "Something failed while drawing this page. Try again in a moment. If it keeps happening, the home page and the demo booking still work."
+			},
+			"whereNext": {
+				"eyebrow": "Where next",
+				"title": "The pages people usually want",
+				"items": [
+					{ "label": "The Platform", "body": "The ten privacy problems it solves and how the pieces fit together.", "href": "/platform" },
+					{ "label": "Pricing", "body": "Transparent rates scaled to organisation size, every module included.", "href": "/pricing" },
+					{ "label": "FAQ", "body": "Straight answers on data residency, security and how onboarding works.", "href": "/faq" },
+					{ "label": "Book a demo", "body": "Twenty-five minutes, live, with the Visual ROPA View on screen.", "href": "/demo" }
+				]
+			}
 		}
 	},
 	"problems": {

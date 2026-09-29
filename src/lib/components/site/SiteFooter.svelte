@@ -1,8 +1,10 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
+	import { visibleLinks } from '$lib/site/archive';
 
-	const colA = site.footer.links;
-	const colB = site.footer.secondaryLinks;
+	// Links to pages archived in the CMS are hidden while they are archived.
+	const colA = $derived(visibleLinks(site.footer.links));
+	const colB = $derived(visibleLinks(site.footer.secondaryLinks));
 </script>
 
 <footer class="relative z-10 w-full bg-horizon pt-8 pb-5 text-white" aria-label={site.footer.ariaLabel}>

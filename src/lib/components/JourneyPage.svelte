@@ -27,7 +27,7 @@
 		type BeatId
 	} from '$lib/journey/beats';
 	import { getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
-	import { content, sceneClassName } from '$lib/journey/content';
+	import { content, sceneClassName, sceneShowMe } from '$lib/journey/content';
 	import { site } from '$lib/content';
 
 	const SCENES = content.scenes;
@@ -862,7 +862,7 @@
 			label={scene.label}
 			pain={scene.pain}
 			whatIfRest={scene.whatIfRest}
-			showMe={scene.showMe}
+			showMe={sceneShowMe(scene.showMe)}
 			class={sceneClassName(scene)}
 			onAdvance={advance}
 			onRetreat={retreat}

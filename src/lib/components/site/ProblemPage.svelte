@@ -34,27 +34,25 @@
 	<meta name="description" content={page.meta.description} />
 </svelte:head>
 
-{#if showExplainer}
-	<PageHero
-		eyebrow={common.eyebrow}
-		title={page.hero.title}
-		body={page.hero.body}
-		primary={common.primary}
-		secondary={common.secondary}
-		micro={site.pricing.micro}
-	>
-		<ExplainerVideo compact {...explainerFor(page)} />
-	</PageHero>
-{:else}
-	<PageHero
-		eyebrow={common.eyebrow}
-		title={page.hero.title}
-		body={page.hero.body}
-		primary={common.primary}
-		secondary={common.secondary}
-		micro={site.pricing.micro}
-	/>
-{/if}
+{#snippet video()}
+	<ExplainerVideo compact {...explainerFor(page)} />
+{/snippet}
+
+<!-- The way to the other problem pages, under the video, or under the hero text when there is none. -->
+{#snippet stepper()}
+	<ProblemPager current={page.href} />
+{/snippet}
+
+<PageHero
+	eyebrow={common.eyebrow}
+	title={page.hero.title}
+	body={page.hero.body}
+	primary={common.primary}
+	secondary={common.secondary}
+	micro={site.pricing.micro}
+	children={showExplainer ? video : undefined}
+	under={stepper}
+/>
 
 {#snippet quoteBlock()}
 	{#if page.quote}

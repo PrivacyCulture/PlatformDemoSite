@@ -13,7 +13,8 @@
 		secondary,
 		micro,
 		logos = true,
-		children
+		children,
+		under
 	}: {
 		eyebrow?: string;
 		title: string;
@@ -25,6 +26,8 @@
 		/** The trusted-by logo strip under the hero. A page that places it elsewhere turns it off. */
 		logos?: boolean;
 		children?: import('svelte').Snippet;
+		/** Drawn under the side element (the video) in the split layout, or under the text without one. */
+		under?: import('svelte').Snippet;
 	} = $props();
 
 	const split = $derived(Boolean(children));
@@ -41,8 +44,20 @@
 >
 	{#if split}
 		<div class="flex flex-1 flex-col justify-center">
-			<div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
-				<div class="hero-main min-w-0 max-w-[36rem]">
+			<!-- With something under the video (the problem pager), wide screens use a grid so the right
+			     column ends level with the bottom of the buttons: text, buttons and micro take rows 1-3 on
+			     the left, the video and pager span rows 1-2 on the right, and the 1fr first row absorbs
+			     any difference in height. Without it, the two columns are centred as before. -->
+			<div
+				class={[
+					'flex flex-col gap-8',
+					under
+						? 'lg:grid lg:grid-cols-[minmax(0,36rem)_min(40rem,46%)] lg:grid-rows-[1fr_auto_auto] lg:justify-between lg:gap-x-10 lg:gap-y-0'
+						: 'lg:flex-row lg:items-center lg:justify-between lg:gap-10'
+				]}
+			>
+				<div class={['hero-main min-w-0 max-w-[36rem]', under && 'lg:contents']}>
+					<div class={under && 'lg:col-start-1 lg:row-start-1 lg:self-end'}>
 					{#if eyebrow}
 						<p
 							class="mb-4 text-[12px] tracking-[0.2em] text-lens uppercase sm:text-[13px] sm:tracking-[0.22em]"
@@ -60,9 +75,10 @@
 					<p class="rt mt-5 max-w-[46ch] text-[15px] leading-relaxed font-light text-ink/70">
 						{@html rich(body)}
 					</p>
+					</div>
 
 					{#if primary || secondary}
-						<div class="mt-8 flex flex-wrap items-center gap-5">
+						<div class={['mt-8 flex flex-wrap items-center gap-5', under && 'lg:col-start-1 lg:row-start-2']}>
 							{#if primary}
 								<GoldCta href={primary.href} label={primary.label} external={primary.external} />
 							{/if}
@@ -77,12 +93,20 @@
 						</div>
 					{/if}
 					{#if micro}
-						<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
+						<p class={['rt mt-4 text-[13px] font-light text-ink/50', under && 'lg:col-start-1 lg:row-start-3']}>
+							{@html rich(micro)}
+						</p>
 					{/if}
 				</div>
 
-				<div class="hero-specs w-full max-w-[40rem] shrink-0 lg:w-[min(40rem,46%)]">
+				<div
+					class={[
+						'hero-specs w-full max-w-[40rem] shrink-0',
+						under ? 'lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-end' : 'lg:w-[min(40rem,46%)]'
+					]}
+				>
 					{@render children?.()}
+					{@render under?.()}
 				</div>
 			</div>
 		</div>
@@ -120,6 +144,9 @@
 		{/if}
 		{#if micro}
 			<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
+		{/if}
+		{#if under}
+			<div class="max-w-[36rem]">{@render under()}</div>
 		{/if}
 		{#if logos}
 			<div class="mt-10 sm:mt-12">

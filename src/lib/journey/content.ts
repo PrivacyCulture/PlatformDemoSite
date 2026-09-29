@@ -1,4 +1,5 @@
 import { journey } from '$lib/content';
+import { isArchived } from '$lib/site/archive';
 
 export type {
 	JourneyContent,
@@ -20,7 +21,7 @@ export type PlatformSpec = {
 export function platformSpecs(): PlatformSpec[] {
 	return content.scenes.flatMap((scene) => {
 		const href = scene.showMe?.href;
-		if (!href) return [];
+		if (!href || isArchived(href)) return [];
 		const slug = href.match(/^\/platform\/([^/?#]+)$/)?.[1];
 		if (!slug) return [];
 		return [
@@ -33,6 +34,11 @@ export function platformSpecs(): PlatformSpec[] {
 			}
 		];
 	});
+}
+
+/** A scene's "Show me" link, or undefined when its page is archived — the scene itself stays. */
+export function sceneShowMe<T extends { href?: string }>(showMe: T | undefined): T | undefined {
+	return showMe && !isArchived(showMe.href) ? showMe : undefined;
 }
 
 export function platformSpecBySlug(slug: string): PlatformSpec | undefined {

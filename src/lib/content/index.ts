@@ -173,6 +173,8 @@ export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site'> & {
 	journey: JourneyContent;
 	problems: { common: Raw['problems']['common']; items: ProblemItem[] };
 	customPages?: CustomPage[];
+	/** Addresses archived in the CMS: answered with "not found", and links to them hidden. */
+	archivedPaths?: string[];
 };
 
 export const content = live((c) => c);
@@ -185,6 +187,7 @@ export const panels = live((c) => c.panels);
 export const demoForm = live((c) => c.demoForm);
 export const aeo = live((c) => c.aeo);
 export const customPages = live((c) => c.customPages ?? [], 'array');
+export const archivedPaths = live((c) => c.archivedPaths ?? [], 'array');
 
 /** A page created in the CMS, or undefined. Read inside a load, after `await parent()`. */
 export function customPageBySlug(slug: string): CustomPage | undefined {

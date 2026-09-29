@@ -8,7 +8,7 @@
 	import LogoStrip from '$lib/components/site/LogoStrip.svelte';
 	import { platformLayout, logosInHero } from '$lib/site/page-layout';
 	import { pages, pageTitle } from '$lib/content';
-	import { problems } from '$lib/site/problems';
+	import { visibleProblems } from '$lib/site/problems';
 	import { rich } from '$lib/site/rich';
 
 	const copy = pages.platform;
@@ -102,7 +102,7 @@
 				</h2>
 
 				<ul class="mt-10 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16">
-					{#each problems as item, i (item.href)}
+					{#each visibleProblems() as item, i (item.href)}
 						<li class="border-b border-ink/10">
 							<a
 								href={item.href}

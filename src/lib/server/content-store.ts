@@ -92,7 +92,13 @@ export function validateContent(body: unknown): SiteContent {
 	) {
 		throw new Error('journey.clips.scenes must be a non-empty array of strings');
 	}
-	return { ...c, customPages: validCustomPages((body as Record<string, unknown>).customPages) };
+	const archived = (body as Record<string, unknown>).archivedPaths;
+	return {
+		...c,
+		customPages: validCustomPages((body as Record<string, unknown>).customPages),
+		// Coerced, never validated as a whole: a stray entry must not cost the site its content.
+		archivedPaths: Array.isArray(archived) ? archived.filter((x): x is string => typeof x === 'string' && x.startsWith('/')) : []
+	};
 }
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
