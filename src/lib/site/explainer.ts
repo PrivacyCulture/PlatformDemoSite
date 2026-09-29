@@ -11,8 +11,12 @@ import { site } from '$lib/site/content';
  * The thumbnail and captions belong to a VIDEO, so they follow the file: a page with its own file
  * uses its own thumbnail and captions (blank = none), never the default video's, which would
  * describe a different film.
+ *
+ * A page with a thumbnail and NO file shows that thumbnail as a plain image, not the default video
+ * behind someone else's still: `image` is true, there is nothing to play, and the label (blank =
+ * none, never the default's "Watch…") is its alt text and caption.
  */
-export type ExplainerProps = { src: string; poster: string; captions: string; label: string };
+export type ExplainerProps = { src: string; poster: string; captions: string; label: string; image: boolean };
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
 
@@ -20,7 +24,9 @@ export function explainerFor(page: unknown): ExplainerProps {
 	const rec = page && typeof page === 'object' ? ((page as Record<string, unknown>).explainer as Record<string, unknown> | undefined) : undefined;
 	const own = rec && typeof rec === 'object' ? rec : {};
 	const src = str(own.src);
+	const poster = str(own.poster);
+	if (!src && poster) return { src: '', poster, captions: '', label: str(own.label), image: true };
 	const label = str(own.label) || site.video.label;
-	if (!src) return { src: site.video.src, poster: str(own.poster) || site.video.poster, captions: site.video.captions, label };
-	return { src, poster: str(own.poster), captions: str(own.captions), label };
+	if (!src) return { src: site.video.src, poster: site.video.poster, captions: site.video.captions, label, image: false };
+	return { src, poster, captions: str(own.captions), label, image: false };
 }

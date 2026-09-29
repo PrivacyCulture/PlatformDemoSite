@@ -10,6 +10,8 @@
 		// Blank = no captions track (a page's own video may have none).
 		captions = site.video.captions,
 		compact = false,
+		// A still in place of the video: the page has a thumbnail and no file of its own.
+		image = false,
 		open = $bindable(false)
 	}: {
 		src?: string;
@@ -17,6 +19,7 @@
 		poster?: string;
 		captions?: string;
 		compact?: boolean;
+		image?: boolean;
 		open?: boolean;
 	} = $props();
 
@@ -45,6 +48,7 @@
 	 * not after a state change has been flushed.
 	 */
 	export function play() {
+		if (image) return;
 		started = true;
 		open = true;
 		const video = videoEl;
@@ -71,19 +75,32 @@
 </script>
 
 <div class="w-full" id={compact ? 'overview' : undefined}>
-	{#if !compact}
+	{#if !compact && !image}
 		<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{site.video.eyebrow}</p>
 	{/if}
 
+	{#if image}
+		<!-- A thumbnail with no video: shown as a still where the player would be, nothing to play. -->
+		<div
+			class={[
+				'relative overflow-hidden rounded-2xl shadow-[0_8px_24px_rgba(11,18,32,0.1)]',
+				compact ? '' : 'mt-6'
+			]}
+		>
+			<img class="block aspect-video w-full bg-white object-cover" src={posterUrl} alt={label} decoding="async" />
+		</div>
+		{#if label}<p class="mt-3 text-[14px] font-semibold tracking-wide text-lens">{label}</p>{/if}
+	{:else}
 	<div
 		class={[
-			'group relative overflow-hidden rounded-2xl shadow-[0_8px_24px_rgba(11,18,32,0.1)]',
+			// isolate: Safari otherwise lets the video's layer escape the rounded clip at the corners.
+			'group relative isolate overflow-hidden rounded-2xl shadow-[0_8px_24px_rgba(11,18,32,0.1)]',
 			compact ? '' : 'mt-6'
 		]}
 	>
 		<video
 			bind:this={videoEl}
-			class="aspect-video w-full bg-black object-cover"
+			class="block aspect-video w-full rounded-[inherit] bg-transparent object-cover"
 			{src}
 			poster={posterUrl}
 			controls={started || touch}
@@ -126,4 +143,5 @@
 			{label}
 		</button>
 	{/if}
+{/if}
 </div>

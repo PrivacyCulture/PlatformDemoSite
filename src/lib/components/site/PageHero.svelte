@@ -26,11 +26,14 @@
 		/** The trusted-by logo strip under the hero. A page that places it elsewhere turns it off. */
 		logos?: boolean;
 		children?: import('svelte').Snippet;
-		/** Drawn under the side element (the video) in the split layout, or under the text without one. */
+		/**
+		 * Drawn in the right column under the side element (the video), ending level with the bottom of
+		 * the buttons. It makes the hero split even with no side element, so it sits in the same place.
+		 */
 		under?: import('svelte').Snippet;
 	} = $props();
 
-	const split = $derived(Boolean(children));
+	const split = $derived(Boolean(children || under));
 	const lines = $derived(titleLines?.length ? titleLines : [title]);
 </script>
 
@@ -44,10 +47,10 @@
 >
 	{#if split}
 		<div class="flex flex-1 flex-col justify-center">
-			<!-- With something under the video (the problem pager), wide screens use a grid so the right
-			     column ends level with the bottom of the buttons: text, buttons and micro take rows 1-3 on
-			     the left, the video and pager span rows 1-2 on the right, and the 1fr first row absorbs
-			     any difference in height. Without it, the two columns are centred as before. -->
+			<!-- With something under the video (the problem pager), wide screens use a grid. Left: text,
+			     buttons and micro in rows 1-3. Right: the video centred against the text in row 1, as the
+			     centred layout places it, and the pager in row 2, its bottom level with the buttons'. The
+			     1fr first row absorbs any difference in height. Without it, the two columns are centred. -->
 			<div
 				class={[
 					'flex flex-col gap-8',
@@ -78,7 +81,7 @@
 					</div>
 
 					{#if primary || secondary}
-						<div class={['mt-8 flex flex-wrap items-center gap-5', under && 'lg:col-start-1 lg:row-start-2']}>
+						<div class={['mt-8 flex flex-wrap items-center gap-5', under && 'lg:col-start-1 lg:row-start-2 lg:self-end']}>
 							{#if primary}
 								<GoldCta href={primary.href} label={primary.label} external={primary.external} />
 							{/if}
@@ -99,15 +102,21 @@
 					{/if}
 				</div>
 
-				<div
-					class={[
-						'hero-specs w-full max-w-[40rem] shrink-0',
-						under ? 'lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-end' : 'lg:w-[min(40rem,46%)]'
-					]}
-				>
-					{@render children?.()}
-					{@render under?.()}
-				</div>
+				{#if under}
+					{#if children}
+						<div class="hero-specs w-full max-w-[40rem] lg:col-start-2 lg:row-start-1 lg:self-center">
+							{@render children()}
+						</div>
+					{/if}
+					<!-- Stacked under the video on narrow screens, the pager's own top margin is the gap. -->
+					<div class={['w-full max-w-[40rem] lg:col-start-2 lg:row-start-2 lg:self-end', children && '-mt-8 lg:mt-0']}>
+						{@render under()}
+					</div>
+				{:else}
+					<div class="hero-specs w-full max-w-[40rem] shrink-0 lg:w-[min(40rem,46%)]">
+						{@render children?.()}
+					</div>
+				{/if}
 			</div>
 		</div>
 		{#if logos}
@@ -144,9 +153,6 @@
 		{/if}
 		{#if micro}
 			<p class="rt mt-4 text-[13px] font-light text-ink/50">{@html rich(micro)}</p>
-		{/if}
-		{#if under}
-			<div class="max-w-[36rem]">{@render under()}</div>
 		{/if}
 		{#if logos}
 			<div class="mt-10 sm:mt-12">

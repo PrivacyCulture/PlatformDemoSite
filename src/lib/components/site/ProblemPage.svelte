@@ -21,8 +21,16 @@
 
 	const page = $derived(problemByHref(href));
 	const common = problemCommon;
-	// Absent (content written before the field existed) or anything unrecognised reads as none.
-	const showExplainer = $derived(page.hero.sharedElement === 'explainer-video');
+	// The explainer shows when the hero asks for it, or when the page has a video or thumbnail of its
+	// own: setting one in the CMS is itself the request, so it must not wait on a second switch.
+	// Otherwise (the switch absent, "none" or unrecognised) the hero has no side element.
+	const explainer = $derived(explainerFor(page));
+	const ownExplainer = $derived.by(() => {
+		const own = (page as { explainer?: { src?: unknown; poster?: unknown } }).explainer;
+		const set = (v: unknown) => typeof v === 'string' && v.trim() !== '';
+		return Boolean(own && (set(own.src) || set(own.poster)));
+	});
+	const showExplainer = $derived(page.hero.sharedElement === 'explainer-video' || ownExplainer);
 	// The blocks between the hero and the pager, in the order the CMS gives them. A block left out
 	// is not drawn (its content stays in the file, so it can be put back); no layout at all is the
 	// order the page always had.
@@ -35,10 +43,10 @@
 </svelte:head>
 
 {#snippet video()}
-	<ExplainerVideo compact {...explainerFor(page)} />
+	<ExplainerVideo compact {...explainer} />
 {/snippet}
 
-<!-- The way to the other problem pages, under the video, or under the hero text when there is none. -->
+<!-- The way to the other problem pages: right of the hero text, under the video when there is one. -->
 {#snippet stepper()}
 	<ProblemPager current={page.href} />
 {/snippet}

@@ -38,7 +38,7 @@
 	body={copy.hero.body}
 	primary={copy.hero.primary}
 	logos={heroLogos}
-	secondary={{
+	secondary={explainerProps.image ? undefined : {
 		label: copy.hero.secondary.label,
 		onSelect: () => explainer?.play()
 	}}
