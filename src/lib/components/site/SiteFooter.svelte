@@ -5,6 +5,17 @@
 	// Links to pages archived in the CMS are hidden while they are archived.
 	const colA = $derived(visibleLinks(site.footer.links));
 	const colB = $derived(visibleLinks(site.footer.secondaryLinks));
+
+	// The certification badge under the logo, edited in the CMS (Globals → Footer). An ABSENT key
+	// is the Cyber Essentials mark — what content served before these keys existed must still
+	// show — while an image set to blank means "no badge". Keep the defaults in step with
+	// FOOTER_CERTIFICATION in Sorted's platform-documents.ts.
+	const CERT_DEFAULT = { image: '/brand/cyberEssentials.png', alt: 'Cyber Essentials certified' };
+	const footer = $derived(site.footer as typeof site.footer & Partial<Record<'certificationImage' | 'certificationAlt' | 'certificationHref', string>>);
+	const certImage = $derived((footer.certificationImage ?? CERT_DEFAULT.image).trim());
+	const certAlt = $derived(footer.certificationAlt ?? CERT_DEFAULT.alt);
+	const certHref = $derived((footer.certificationHref ?? '').trim());
+	const certIsDefault = $derived(certImage === CERT_DEFAULT.image);
 </script>
 
 <footer class="relative z-10 w-full bg-horizon pt-8 pb-5 text-white" aria-label={site.footer.ariaLabel}>
@@ -23,16 +34,32 @@
 					decoding="async"
 				/>
 			</a>
-			<!-- White badge: the mark's navy text disappears on the horizon background. -->
-			<img
-				src="/brand/cyberEssentials.png"
-				alt="Cyber Essentials certified"
-				class="mt-4 block h-auto w-[8rem] rounded bg-white p-1.5"
-				width="1280"
-				height="605"
-				loading="lazy"
-				decoding="async"
-			/>
+			{#snippet certBadge()}
+				<!-- White badge: the mark's navy text disappears on the horizon background. -->
+				<img
+					src={certImage}
+					alt={certAlt}
+					class="block h-auto w-[8rem] rounded bg-white p-1.5"
+					width={certIsDefault ? 1280 : undefined}
+					height={certIsDefault ? 605 : undefined}
+					loading="lazy"
+					decoding="async"
+				/>
+			{/snippet}
+			{#if certImage}
+				{#if certHref}
+					<a
+						href={certHref}
+						target={/^https?:/.test(certHref) ? '_blank' : undefined}
+						rel={/^https?:/.test(certHref) ? 'noopener' : undefined}
+						class="mt-4 inline-block focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+					>
+						{@render certBadge()}
+					</a>
+				{:else}
+					<div class="mt-4">{@render certBadge()}</div>
+				{/if}
+			{/if}
 		</div>
 
 		<div class="w-full px-8 md:w-2/3 md:px-0">
