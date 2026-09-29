@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { pushState } from '$app/navigation';
 	import BookDemoCalendar from '$lib/components/BookDemoCalendar.svelte';
 	import BookDemoForm from '$lib/components/BookDemoForm.svelte';
 	import { emptyDemoForm, type DemoFormValues } from '$lib/demo/fields';
@@ -111,6 +112,8 @@
 					onBooked={(result) => {
 						confirmation = result;
 						step = 'confirm';
+						// A URL of its own, so analytics can count completed bookings.
+						pushState('/demo-booked', {});
 					}}
 				/>
 			{:else if confirmation}

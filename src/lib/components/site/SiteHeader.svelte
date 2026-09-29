@@ -15,7 +15,7 @@
 			if (fragment) return path === '/platform' && hash === `#${fragment}`;
 			return path === '/platform' || path.startsWith('/platform/');
 		}
-		if (pathname === '/demo') return path === '/demo';
+		if (pathname === '/demo') return path === '/demo' || path === '/demo-booked';
 		return path === href || path.startsWith(`${href}/`);
 	}
 
