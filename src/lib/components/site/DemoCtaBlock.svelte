@@ -15,6 +15,15 @@
 		micro?: string;
 	} = $props();
 
+	// The second link's words and address. Set in the CMS on the Next step box; blank is what this
+	// box showed before it had a link of its own — the video label, to the overview address.
+	// The file does not carry the keys until one is set, so they are read loosely.
+	const cta = site.demoCta as typeof site.demoCta & { secondaryLabel?: string; secondaryHref?: string };
+	const secondaryLabel = $derived(cta.secondaryLabel?.trim() || site.video.label);
+	const secondaryHref = $derived(cta.secondaryHref?.trim() || site.overviewHref);
+	// Only a link that leaves the site opens a new tab.
+	const external = $derived(/^https?:\/\//i.test(secondaryHref));
+
 	// Node constellation echoing the Visual ROPA View: one gold hub, satellite nodes on
 	// gold-to-lens gradient lines. Purely decorative, hidden from assistive tech.
 	const hub = { x: 300, y: 150 };
@@ -58,12 +67,12 @@
 			<div class="mt-8 flex flex-wrap items-center gap-5">
 				<GoldCta href={site.demoHref} label={site.demoCta.primaryLabel} />
 				<a
-					href={site.overviewHref}
-					target="_blank"
-					rel="noopener noreferrer"
+					href={secondaryHref}
+					target={external ? '_blank' : undefined}
+					rel={external ? 'noopener noreferrer' : undefined}
 					class="group inline-flex min-h-11 cursor-pointer items-center gap-2 text-[14px] font-medium text-bone/80 no-underline transition-colors duration-200 hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 				>
-					{site.video.label}
+					{secondaryLabel}
 					<svg
 						viewBox="0 0 24 24"
 						class="h-4 w-4 text-lens transition-transform duration-200 group-hover:translate-x-0.5"
