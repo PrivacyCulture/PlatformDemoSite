@@ -14,6 +14,7 @@ import { env } from '$env/dynamic/private';
 import type { CustomPage, SiteContent } from '$lib/content';
 import { hasBundledAsset } from '$lib/content/assets';
 import { installContentResolver, setContent } from '$lib/content/runtime';
+import { addedSection } from '$lib/site/added-sections';
 import database from '../../../data/database.json';
 
 export type ContentChannel = 'live' | 'draft';
@@ -137,7 +138,8 @@ function validCustomPages(v: unknown): CustomPage[] {
 			intro: str(p.intro),
 			// Ids are the page's anchors AND the render's each-keys, so they are made unique here:
 			// a repeated key would throw during hydration and take the site's router down with it.
-			sections: uniqueIds(sections.map((s, i) => ({ id: str(s.id) || `section-${i + 1}`, title: str(s.title), body: str(s.body) }))),
+			// Each section is coerced to its template's shape; one the site does not draw is dropped.
+			sections: uniqueIds(sections.flatMap((s, i) => { const a = addedSection({ ...s, id: str(s.id) || `section-${i + 1}` }); return a ? [a] : []; })),
 			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) }
 		});
 	}

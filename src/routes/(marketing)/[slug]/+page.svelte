@@ -1,19 +1,22 @@
 <!--
 	A page created in the CMS (Sorted → Website → Platform → New page). Its shape is fixed:
-	a heading, an introduction, numbered sections and the house demo call to action.
+	a heading, an introduction, numbered sections and the house demo call to action. A section is
+	made from a template; a text section keeps the numbered form below, every other template is
+	drawn by AddedSection exactly as it is on any other page.
 
 	THE RULE, shared with Sorted's registry (`CUSTOM_PAGE_HTML` in platform-documents.ts): only
 	the fields rendered here through rich() may carry inline markup — intro, each section's body,
 	and the CTA's body and micro line. Every other string is plain text.
 -->
 <script lang="ts">
+	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import { pageTitle } from '$lib/content';
 	import { rich, plain } from '$lib/site/rich';
 
 	let { data } = $props();
 	const page = $derived(data.page);
-	const sections = $derived(page.sections.filter((s) => s.title.trim() || s.body.trim()));
+	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
 </script>
 
 <svelte:head>
@@ -37,6 +40,9 @@
 			<!-- Keyed by position, not id: the committed fallback file is never validated, and a
 			     repeated key would throw during hydration and take the site's router down. -->
 			{#each sections as section, i (i)}
+				{#if section.template !== 'text'}
+					<AddedSection {section} class="!mt-0" />
+				{:else}
 				<section id={section.id} class="scroll-mt-24 border-t border-ink/10 pt-6">
 					<p class="flex items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-ink/65 tabular-nums">
 						<span aria-hidden="true" class="h-px w-5 bg-gold"></span>
@@ -51,6 +57,7 @@
 						</p>
 					{/if}
 				</section>
+				{/if}
 			{/each}
 		</div>
 	{/if}

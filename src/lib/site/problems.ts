@@ -1,6 +1,7 @@
 import { PROBLEM_BLOCKS, type ProblemBlockId, type ProblemItem } from '$lib/content';
 import { live } from '$lib/content/runtime';
 import { isArchived } from '$lib/site/archive';
+import { pageLayout, type LayoutEntry } from '$lib/site/page-layout';
 
 /** The pain points in the order they appear on /platform. Each has its own page. */
 export const problems: readonly ProblemItem[] = live((c) => c.problems.items, 'array');
@@ -35,16 +36,10 @@ export function problemNeighbours(href: string): { previous: Problem | null; nex
 }
 
 /**
- * The page's blocks in drawing order. Unknown ids and repeats are dropped — one bad entry must not
- * cost the page its layout, and a repeated id is a duplicate {#each} key, which throws during
- * hydration and takes the whole client router down.
+ * The page's blocks and added sections in drawing order. Unknown ids and repeats are dropped —
+ * one bad entry must not cost the page its layout, and a repeated id is a duplicate {#each} key,
+ * which throws during hydration and takes the whole client router down.
  */
-export function problemLayout(page: Pick<ProblemItem, 'layout'>): ProblemBlockId[] {
-	if (!Array.isArray(page.layout)) return [...PROBLEM_BLOCKS];
-	const seen = new Set<ProblemBlockId>();
-	for (const entry of page.layout) {
-		const id = entry && typeof entry === 'object' ? (entry as { id?: unknown }).id : undefined;
-		if (typeof id === 'string' && (PROBLEM_BLOCKS as readonly string[]).includes(id)) seen.add(id as ProblemBlockId);
-	}
-	return [...seen];
+export function problemLayout(page: Pick<ProblemItem, 'layout' | 'sections'>): LayoutEntry<ProblemBlockId>[] {
+	return pageLayout(page, PROBLEM_BLOCKS, PROBLEM_BLOCKS);
 }

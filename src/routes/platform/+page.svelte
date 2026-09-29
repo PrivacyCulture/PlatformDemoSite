@@ -1,4 +1,5 @@
 <script lang="ts">
+	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
 	import { explainerFor } from '$lib/site/explainer';
@@ -16,7 +17,7 @@
 	// The hero CTA starts the explainer through its play method, inside the click itself: a phone
 	// browser refuses playback that is requested after the gesture has finished.
 	let explainer = $state<ExplainerVideo | null>(null);
-	// Blocks and CMS-written text sections, in the order the page draws them.
+	// Blocks and the sections added in the CMS, in the order the page draws them.
 	const entries = $derived(platformLayout(copy));
 	// This page's own explainer, or the default from Site globals.
 	const explainerProps = $derived(explainerFor(copy));
@@ -148,19 +149,7 @@
 
 <!-- The blocks between the hero and the end of the page, in the order the CMS gives them. -->
 {#each bodyEntries as entry (entry.id)}
-	{#if entry.kind === 'text'}
-		<section class="mt-14 w-full sm:mt-20">
-			<div class="max-w-[46rem] border-t border-ink/10 pt-6">
-				{#if entry.title}
-					<h2 class="text-[clamp(1.5rem,3vw,2.1rem)] leading-tight font-bold tracking-tight">{entry.title}</h2>
-				{/if}
-				{#if entry.body}
-					<p class="rt mt-4 max-w-[62ch] text-[15px] leading-relaxed font-light whitespace-pre-line text-ink/70">
-						{@html rich(entry.body)}
-					</p>
-				{/if}
-			</div>
-		</section>
+	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
 	{:else if entry.id === 'fit'}{@render fitBlock()}
 	{:else if entry.id === 'problems'}{@render problemsBlock()}
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
