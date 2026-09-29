@@ -538,10 +538,23 @@
 		return Math.min(1, Math.max(0, (progress - from) / span));
 	}
 
+	/**
+	 * True once the front layer is showing this scene's own clip. Between a beat change and the
+	 * crossfade, `videoEl`, `clipTime` and `videoDuration` still describe the outgoing clip, and
+	 * timing a scene's text off those would flash it up on the first frame of the new scene.
+	 */
+	function sceneClipShown(sceneId: BeatId): boolean {
+		const own = sceneSrcForBeat(theme, sceneId);
+		if (!own || clipSrc !== own) return false;
+		const video = videoEl;
+		return Boolean(video && videoMatchesSrc(video, own));
+	}
+
 	function sceneShowsText(sceneId: BeatId, sceneIndex: number, afterSeconds: number): boolean {
 		if (sceneIndex < 0) return false;
 		if (!isBeatActive(scrollP, beatDefs, sceneIndex)) return false;
 		if (activeBeatId === sceneId && videoDuration > 0) {
+			if (!sceneClipShown(sceneId)) return false;
 			return clipTime >= afterSeconds;
 		}
 		return isSceneTextActive(scrollP, beatDefs, sceneIndex, videoDuration, afterSeconds);
@@ -589,7 +602,10 @@
 				playback.hasVideo &&
 				video &&
 				video.duration &&
-				video.readyState >= 2
+				video.readyState >= 2 &&
+				// Until the crossfade promotes the new clip, `video` is still the outgoing layer;
+				// reading its playhead would time the incoming scene's text off the wrong clip.
+				videoMatchesSrc(video, clipSrc)
 			) {
 				if (playback.nativePlay) {
 					const t = video.currentTime;
