@@ -73,7 +73,10 @@
 			"phoneHref": "tel:+442071129360",
 			"email": "hello@privacyculture.com",
 			"linkedin": "https://www.linkedin.com/company/privacy-culture/",
-			"linkedinAriaLabel": "Privacy Culture on LinkedIn"
+			"linkedinAriaLabel": "Privacy Culture on LinkedIn",
+			"certificationImage": "/brand/cyberEssentials.png",
+			"certificationAlt": "Cyber Essentials certified",
+			"certificationHref": ""
 		},
 		"shell": {
 			"skipToContent": "Skip to content",

@@ -4,6 +4,7 @@
 	 * from the site content (`$lib/content`) under `problems`; the route file only
 	 * names which entry to render.
 	 */
+	import AddedSection from './AddedSection.svelte';
 	import AuditChecklist from './AuditChecklist.svelte';
 	import DemoCtaBlock from './DemoCtaBlock.svelte';
 	import ExplainerVideo from './ExplainerVideo.svelte';
@@ -31,10 +32,10 @@
 		return Boolean(own && (set(own.src) || set(own.poster)));
 	});
 	const showExplainer = $derived(page.hero.sharedElement === 'explainer-video' || ownExplainer);
-	// The blocks between the hero and the pager, in the order the CMS gives them. A block left out
-	// is not drawn (its content stays in the file, so it can be put back); no layout at all is the
-	// order the page always had.
-	const blocks = $derived(problemLayout(page));
+	// The blocks between the hero and the pager, and the sections added in the CMS, in the order
+	// the CMS gives them. A block left out is not drawn (its content stays in the file, so it can
+	// be put back); no layout at all is the order the page always had.
+	const entries = $derived(problemLayout(page));
 </script>
 
 <svelte:head>
@@ -142,12 +143,13 @@
 	</div>
 {/snippet}
 
-{#each blocks as id (id)}
-	{#if id === 'quote'}{@render quoteBlock()}
-	{:else if id === 'inPlatform'}{@render inPlatformBlock()}
-	{:else if id === 'functionality'}{@render functionalityBlock()}
-	{:else if id === 'pricing'}{@render pricingBlock()}
-	{:else if id === 'cta'}{@render ctaBlock()}
+{#each entries as entry (entry.id)}
+	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
+	{:else if entry.id === 'quote'}{@render quoteBlock()}
+	{:else if entry.id === 'inPlatform'}{@render inPlatformBlock()}
+	{:else if entry.id === 'functionality'}{@render functionalityBlock()}
+	{:else if entry.id === 'pricing'}{@render pricingBlock()}
+	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{/if}
 {/each}
 

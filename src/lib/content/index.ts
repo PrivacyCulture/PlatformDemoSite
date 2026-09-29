@@ -8,6 +8,9 @@
 import type { BeatId } from '$lib/journey/beats';
 import type raw from '../../../data/database.json';
 import { live } from './runtime';
+import type { AddedSection } from '$lib/site/added-sections';
+
+export type { AddedSection } from '$lib/site/added-sections';
 
 export type ImageRef = {
 	src: string;
@@ -144,8 +147,13 @@ export type ProblemItem = {
 	panel?: 'auditChecklist';
 	functionality: { title: string; items: { title: string; body: string }[] };
 	cta: { title: string; body: string };
-	/** Which blocks are drawn, in order. Absent = every block in PROBLEM_BLOCKS order. */
-	layout?: { id: ProblemBlockId }[];
+	/**
+	 * Which blocks and added sections are drawn, in order. Absent = every block in PROBLEM_BLOCKS
+	 * order and nothing added. An id names a block, or a section in `sections`.
+	 */
+	layout?: { id: string }[];
+	/** Sections added to this page in the CMS, placed by `layout`. */
+	sections?: AddedSection[];
 };
 
 /**
@@ -159,7 +167,8 @@ export type CustomPage = {
 	eyebrow: string;
 	title: string;
 	intro: string;
-	sections: { id: string; title: string; body: string }[];
+	/** Drawn in order. Each is made from a template; the first pages had only text sections. */
+	sections: AddedSection[];
 	/** The house demo CTA. Blank lines fall back to `site.demoCta`. */
 	cta: { eyebrow: string; title: string; body: string; micro: string };
 };
