@@ -13,11 +13,13 @@
 
 	const copy = pages.platform;
 
-	let explainerOpen = $state(false);
+	// The hero CTA starts the explainer through its play method, inside the click itself: a phone
+	// browser refuses playback that is requested after the gesture has finished.
+	let explainer = $state<ExplainerVideo | null>(null);
 	// Blocks and CMS-written text sections, in the order the page draws them.
 	const entries = $derived(platformLayout(copy));
 	// This page's own explainer, or the default from Site globals.
-	const explainer = $derived(explainerFor(copy));
+	const explainerProps = $derived(explainerFor(copy));
 	// First in the list, the logos are drawn inside the hero where they always were; the loop
 	// below then skips them so they are not drawn twice.
 	const heroLogos = $derived(logosInHero(entries));
@@ -38,10 +40,10 @@
 	logos={heroLogos}
 	secondary={{
 		label: copy.hero.secondary.label,
-		onSelect: () => (explainerOpen = true)
+		onSelect: () => explainer?.play()
 	}}
 >
-	<ExplainerVideo bind:open={explainerOpen} compact {...explainer} />
+	<ExplainerVideo bind:this={explainer} compact {...explainerProps} />
 </PageHero>
 
 {#snippet fitBlock()}
@@ -164,7 +166,7 @@
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{:else if entry.id === 'explainer'}
-		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo {...explainer} /></div></section>
+		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo {...explainerProps} /></div></section>
 	{:else if entry.id === 'trusted'}
 		<section class="mt-12 w-full sm:mt-16"><LogoStrip /></section>
 	{/if}

@@ -22,18 +22,51 @@
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let started = $state(false);
+	/**
+	 * A device with no hover (phones, tablets). The clean poster with an invisible click target
+	 * relies on the pointer cursor to say "this plays"; a phone has no cursor, and its browser
+	 * only reliably honours a play request that comes straight from a tap on the media itself.
+	 * So on touch devices the browser's own controls are there from the start.
+	 */
+	let touch = $state(false);
 	const posterUrl = $derived(poster?.trim() ? asset(poster.trim()) : undefined);
 
-	function startPlayback() {
+	$effect(() => {
+		const query = window.matchMedia('(hover: none)');
+		const sync = () => (touch = query.matches);
+		sync();
+		query.addEventListener('change', sync);
+		return () => query.removeEventListener('change', sync);
+	});
+
+	/**
+	 * Starts playback. Call it synchronously from the user's tap or click: mobile browsers refuse
+	 * a play request that is not inside a user gesture, and the request must be made on the spot,
+	 * not after a state change has been flushed.
+	 */
+	export function play() {
 		started = true;
 		open = true;
-		void videoEl?.play();
+		const video = videoEl;
+		if (!video) return;
+		revealIfHidden(video);
+		video.play().catch(() => {
+			// Refused (no gesture, or the browser wants a tap on the media itself): the native
+			// controls are showing now, so the viewer can press the browser's own play button.
+		});
+	}
+
+	/** Bring the player on screen when a control elsewhere on the page starts it. */
+	function revealIfHidden(video: HTMLVideoElement) {
+		const rect = video.getBoundingClientRect();
+		const viewportH = window.innerHeight || document.documentElement.clientHeight;
+		const inView = rect.top >= 0 && rect.bottom <= viewportH;
+		if (!inView) video.scrollIntoView({ block: 'center', behavior: 'smooth' });
 	}
 
 	$effect(() => {
-		if (!open || !videoEl) return;
-		started = true;
-		void videoEl.play();
+		if (!open || !videoEl || started) return;
+		play();
 	});
 </script>
 
@@ -53,7 +86,7 @@
 			class="aspect-video w-full bg-black object-cover"
 			{src}
 			poster={posterUrl}
-			controls={started}
+			controls={started || touch}
 			playsinline
 			preload="metadata"
 			aria-label={label}
@@ -72,10 +105,10 @@
 			<track kind="captions" src={captions || undefined} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
 		</video>
 
-		{#if !started}
+		{#if !started && !touch}
 			<button
 				type="button"
-				onclick={startPlayback}
+				onclick={play}
 				class="absolute inset-0 cursor-pointer bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
 				aria-label={label}
 			></button>
@@ -87,7 +120,7 @@
 	{:else}
 		<button
 			type="button"
-			onclick={startPlayback}
+			onclick={play}
 			class="mt-3 inline-flex cursor-pointer items-center bg-transparent p-0 text-[14px] font-semibold tracking-wide text-lens underline-offset-4 transition-colors hover:text-gold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-gold"
 		>
 			{label}
