@@ -23,6 +23,16 @@
 					decoding="async"
 				/>
 			</a>
+			<!-- White badge: the mark's navy text disappears on the horizon background. -->
+			<img
+				src="/brand/cyberEssentials.png"
+				alt="Cyber Essentials certified"
+				class="mt-4 block h-auto w-[8rem] rounded bg-white p-1.5"
+				width="1280"
+				height="605"
+				loading="lazy"
+				decoding="async"
+			/>
 		</div>
 
 		<div class="w-full px-8 md:w-2/3 md:px-0">
