@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from './SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	/**
 	 * One of the ten problem pages. Every string and image on the page is read
 	 * from the site content (`$lib/content`) under `problems`; the route file only
@@ -38,10 +40,12 @@
 	const entries = $derived(problemLayout(page));
 </script>
 
-<svelte:head>
-	<title>{pageTitle(page.meta.title)}</title>
-	<meta name="description" content={page.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(page.meta.title)}
+	description={page.meta.description}
+	keywords={metaKeywords(page.meta)}
+	image={page.inPlatform?.image?.src}
+/>
 
 {#snippet video()}
 	<ExplainerVideo compact {...explainer} />

@@ -9,6 +9,7 @@
 	and the CTA's body and micro line. Every other string is plain text.
 -->
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import { pageTitle } from '$lib/content';
@@ -16,13 +17,19 @@
 
 	let { data } = $props();
 	const page = $derived(data.page);
+	// The page's own main image — the first section carrying one — is its link-preview picture.
+	const firstImage = $derived(
+		page.sections.map((s) => ('image' in s ? (s.image as { src?: string } | undefined)?.src : '') ?? '').find((src) => !!src) ?? null
+	);
 	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
 </script>
 
-<svelte:head>
-	<title>{pageTitle(plain(page.meta.title || page.title))}</title>
-	{#if page.meta.description}<meta name="description" content={plain(page.meta.description)} />{/if}
-</svelte:head>
+<SeoHead
+	title={pageTitle(plain(page.meta.title || page.title))}
+	description={page.meta.description}
+	keywords={page.meta.keywords}
+	image={firstImage}
+/>
 
 <div class="w-full pt-6 sm:pt-10">
 	<header class="max-w-[46rem]">

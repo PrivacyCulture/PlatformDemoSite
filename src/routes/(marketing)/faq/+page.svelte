@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import { page } from '$app/state';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import FaqAccordion from '$lib/components/site/FaqAccordion.svelte';
@@ -26,9 +28,9 @@
 	});
 </script>
 
+<SeoHead title={pageTitle(copy.meta.title)} description={copy.meta.description} keywords={metaKeywords(copy.meta)} />
+
 <svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
 	<link rel="canonical" href="{page.url.origin}/faq" />
 	{@html jsonLdScript(schema)}
 </svelte:head>

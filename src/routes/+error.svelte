@@ -10,6 +10,7 @@
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import SiteShell from '$lib/components/site/SiteShell.svelte';
 	import { pages, pageTitle } from '$lib/content';
 	import { isArchived, visibleLinks } from '$lib/site/archive';
@@ -34,9 +35,9 @@
 	const links = $derived(visibleLinks(copy.whereNext.items));
 </script>
 
+<SeoHead title={pageTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} />
+
 <svelte:head>
-	<title>{pageTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))}</title>
-	<meta name="description" content={plain(copy.meta.description)} />
 	<meta name="robots" content="noindex" />
 </svelte:head>
 

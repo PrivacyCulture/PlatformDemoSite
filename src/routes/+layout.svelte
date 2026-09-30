@@ -12,8 +12,9 @@
 </script>
 
 <svelte:head>
+	<!-- A last-resort title only. Every page draws its own tags through SeoHead; a description
+	     here would be a second one on every page that sets its own. -->
 	<title>{site.meta.title}</title>
-	<meta name="description" content={site.meta.description} />
 </svelte:head>
 
 {@render children()}

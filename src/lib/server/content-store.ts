@@ -132,7 +132,7 @@ function validCustomPages(v: unknown): CustomPage[] {
 		const sections = Array.isArray(p.sections) ? p.sections.filter(isObject) : [];
 		out.push({
 			slug,
-			meta: { title: str(meta.title) || str(p.title), description: str(meta.description) },
+			meta: { title: str(meta.title) || str(p.title), description: str(meta.description), keywords: str(meta.keywords) },
 			eyebrow: str(p.eyebrow),
 			title: str(p.title),
 			intro: str(p.intro),

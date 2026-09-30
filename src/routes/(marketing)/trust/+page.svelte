@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import { pages, pageTitle } from '$lib/content';
@@ -7,10 +9,11 @@
 	const pillars = copy.pillars;
 </script>
 
-<svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+/>
 
 <PageHero
 	eyebrow={copy.hero.eyebrow}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
@@ -27,10 +29,12 @@
 	const bodyEntries = $derived(heroLogos ? entries.slice(1) : entries);
 </script>
 
-<svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+	image={copy.fit?.image?.src}
+/>
 
 <PageHero
 	eyebrow={copy.hero.eyebrow}

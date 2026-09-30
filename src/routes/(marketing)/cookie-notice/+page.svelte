@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import { pages, pageTitle } from '$lib/content';
 
 	const copy = pages.cookieNotice;
@@ -15,10 +17,11 @@
 	}
 </script>
 
-<svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+/>
 
 <div class="w-full pt-6 sm:pt-10">
 	<header class="cn-doc-header max-w-[46rem]">
