@@ -11,7 +11,7 @@
 	let { children }: { children: import('svelte').Snippet } = $props();
 </script>
 
-<div class="site-shell relative min-h-dvh overflow-x-hidden bg-white text-ink" style:--site-grain={grain}>
+<div class="site-shell relative min-h-dvh overflow-x-clip bg-white text-ink" style:--site-grain={grain}>
 	<div class="site-mountain pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
 		<img src={poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
 		<video
@@ -34,7 +34,7 @@
 		{site.shell.skipToContent}
 	</a>
 
-	<div class="relative z-10 px-page">
+	<div class="relative z-20 px-page">
 		<div class="mx-auto w-full max-w-page">
 			<SiteHeader />
 			<main id="main" class="pb-10">

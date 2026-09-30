@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { fade, fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 	import { site } from '$lib/site/content';
 	import { visibleLinks, isArchived } from '$lib/site/archive';
 
@@ -11,8 +13,15 @@
 	const logo = site.logos.colour;
 
 	let open = $state(false);
+	let scrolled = $state(false);
+	let headerHeight = $state(0);
+	let toggle = $state<HTMLButtonElement>();
+	let sheet = $state<HTMLElement>();
 	const path = $derived(page.url.pathname);
 	const hash = $derived(page.url.hash);
+	const reduceMotion =
+		typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const motion = reduceMotion ? 0 : 1;
 
 	function isCurrent(href: string) {
 		const [pathname, fragment] = href.split('#');
@@ -24,15 +33,61 @@
 		return path === href || path.startsWith(`${href}/`);
 	}
 
+	function close(returnFocus = false) {
+		open = false;
+		if (returnFocus) toggle?.focus();
+	}
+
 	$effect(() => {
 		void path;
+		void hash;
 		open = false;
+	});
+
+	// While the sheet is open the page behind it holds still (blocking the gestures rather than
+	// setting overflow on the root, which knocks the sticky header off screen in WebKit), and
+	// focus starts on the first link.
+	$effect(() => {
+		if (!open) return;
+		const hold = (e: Event) => {
+			if (!sheet?.contains(e.target as Node)) e.preventDefault();
+		};
+		const options = { passive: false } as const;
+		document.addEventListener('touchmove', hold, options);
+		document.addEventListener('wheel', hold, options);
+		sheet?.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+		const desktop = matchMedia('(min-width: 64rem)');
+		const onDesktop = () => desktop.matches && close();
+		desktop.addEventListener('change', onDesktop);
+		return () => {
+			document.removeEventListener('touchmove', hold);
+			document.removeEventListener('wheel', hold);
+			desktop.removeEventListener('change', onDesktop);
+		};
 	});
 </script>
 
+<svelte:window
+	onscroll={() => (scrolled = window.scrollY > 8)}
+	onkeydown={(e) => {
+		if (open && e.key === 'Escape') close(true);
+	}}
+/>
+
+<!-- Below lg the header sticks to the top, frosting over once the page scrolls under it -->
 <header
-	class="relative z-40 flex items-center justify-between gap-4 py-4 sm:py-5"
+	bind:clientHeight={headerHeight}
+	class="sticky top-0 z-40 flex items-center justify-between gap-4 py-3 sm:py-4 lg:static lg:py-5"
 >
+	<div
+		class="pointer-events-none absolute inset-y-0 left-1/2 -z-10 w-screen -translate-x-1/2 border-b backdrop-blur-lg transition-[opacity,border-color,background-color] duration-200 lg:hidden {open
+			? 'border-ink/10 bg-white opacity-100'
+			: scrolled
+				? 'border-ink/10 bg-white/85 opacity-100'
+				: 'border-transparent bg-white/85 opacity-0'}"
+		aria-hidden="true"
+	></div>
+
 	<a
 		href="/"
 		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
@@ -82,18 +137,19 @@
 
 			<button
 				type="button"
-				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink/15 text-ink transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden"
+				bind:this={toggle}
+				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border text-ink transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden {open
+					? 'border-ink/10 bg-ink/[0.04]'
+					: 'border-ink/15 bg-white/60'}"
 				aria-expanded={open}
 				aria-controls="mobile-nav"
 				onclick={() => (open = !open)}
 			>
 				<span class="sr-only">{open ? nav.closeMenu : nav.openMenu}</span>
-				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-					{#if open}
-						<path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.6" />
-					{:else}
-						<path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.6" />
-					{/if}
+				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" class="menu-icon" class:open>
+					<path class="bar top" d="M3 5h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					<path class="bar mid" d="M3 9h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					<path class="bar bot" d="M3 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
 				</svg>
 			</button>
 		</div>
@@ -101,50 +157,101 @@
 </header>
 
 {#if open}
+	<!-- Tapping the dimmed page closes the menu -->
+	<button
+		type="button"
+		tabindex="-1"
+		aria-hidden="true"
+		class="fixed inset-0 z-30 cursor-default bg-ink/25 backdrop-blur-[2px] lg:hidden"
+		onclick={() => close()}
+		transition:fade={{ duration: 180 * motion }}
+	></button>
+
 	<nav
+		bind:this={sheet}
 		id="mobile-nav"
 		aria-label={nav.mobileAriaLabel}
-		class="border-b border-ink/10 bg-white/95 py-4 backdrop-blur-md lg:hidden"
+		class="fixed inset-x-3 z-40 flex max-h-[calc(100dvh-var(--nav-top)-0.75rem)] flex-col overflow-y-auto overscroll-contain rounded-3xl border border-ink/[0.06] bg-white p-2 shadow-[0_24px_60px_-12px_rgba(11,18,32,0.28)] sm:inset-x-auto sm:right-[var(--spacing-page)] sm:w-[22rem] lg:hidden"
+		style:top="var(--nav-top)"
+		style:--nav-top="{headerHeight + 8}px"
+		transition:fly={{ y: -8 * motion, duration: 200 * motion, easing: cubicOut }}
 	>
-		<ul class="flex flex-col gap-1">
-			{#each links as link, i (i)}
-				{#if link.href}
-					<li>
-						<a
-							href={link.href}
-							aria-current={isCurrent(link.href) ? 'page' : undefined}
-							class="block rounded-lg px-3 py-3 text-[15px] no-underline transition-colors {isCurrent(
-								link.href
-							)
-								? 'bg-ink/[0.04] text-lens'
-								: 'text-ink hover:bg-ink/[0.03]'}"
-						>
-							{link.label}
-						</a>
-					</li>
-				{/if}
-			{/each}
-			{#each mobileOnlyLinks as link, i (i)}
-				<li>
+		<ul class="flex flex-col">
+			{#each [...links.filter((l) => l.href), ...mobileOnlyLinks] as link, i (i)}
+				{@const current = !!link.href && isCurrent(link.href)}
+				<li class="border-ink/[0.06] [&:not(:first-child)]:border-t">
 					<a
 						href={link.href}
-						class="block rounded-lg px-3 py-3 text-[15px] text-ink no-underline hover:bg-ink/[0.03]"
+						aria-current={current ? 'page' : undefined}
+						onclick={() => close()}
+						class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens {current
+							? 'text-lens'
+							: 'text-ink hover:bg-ink/[0.03] active:bg-ink/[0.05]'}"
 					>
-						{link.label}
+						<span class="flex items-center gap-3">
+							<span
+								class="h-1.5 w-1.5 rounded-full transition-colors {current ? 'bg-lens' : 'bg-ink/15'}"
+								aria-hidden="true"
+							></span>
+							{link.label}
+						</span>
+						<svg
+							width="16"
+							height="16"
+							viewBox="0 0 16 16"
+							fill="none"
+							aria-hidden="true"
+							class="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 {current
+								? 'text-lens'
+								: 'text-ink/35'}"
+						>
+							<path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+						</svg>
 					</a>
 				</li>
 			{/each}
-			{#if showDemo}
-			<li class="mt-2 px-3 sm:hidden">
+		</ul>
+
+		{#if showDemo}
+			<div class="mt-2 p-2 sm:hidden">
 				<a
 					href={nav.demo.href}
-					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+					aria-current={isCurrent(nav.demo.href) ? 'page' : undefined}
+					onclick={() => close()}
+					class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-3 text-[15px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
 				>
 					{nav.demo.label}
 					<span aria-hidden="true">{nav.arrow}</span>
 				</a>
-			</li>
-			{/if}
-		</ul>
+			</div>
+		{/if}
 	</nav>
 {/if}
+
+<style>
+	.menu-icon .bar {
+		transform-box: fill-box;
+		transform-origin: center;
+		transition:
+			transform 200ms ease,
+			opacity 150ms ease;
+	}
+
+	.menu-icon.open .top {
+		transform: translateY(4px) rotate(45deg);
+	}
+
+	.menu-icon.open .mid {
+		opacity: 0;
+	}
+
+	.menu-icon.open .bot {
+		transform: translateY(-4px) rotate(-45deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.menu-icon .bar {
+			transition: none;
+		}
+	}
+</style>
