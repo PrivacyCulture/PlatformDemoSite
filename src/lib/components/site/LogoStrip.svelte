@@ -10,7 +10,7 @@
 		{site.trusted.label}
 	</p>
 	<ul
-		class="flex flex-wrap items-center gap-x-8 gap-y-4 sm:gap-x-10 lg:gap-x-14"
+		class="flex flex-wrap items-center gap-x-[1.2rem] gap-y-[0.6rem] sm:gap-x-6 lg:gap-x-[2.1rem]"
 		aria-label={site.trusted.ariaLabel}
 	>
 		<!-- Keyed by position: the CMS can copy an entry, and a duplicate key would throw during
