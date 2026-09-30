@@ -5,7 +5,7 @@
 // never shows; a section it lets through in the wrong shape is a page that reads a property off
 // undefined and 500s — on the live site, from content nobody here can see.
 import { addedSection, addedSections, safeHref, SECTION_TEMPLATE_IDS } from '../src/lib/site/added-sections';
-import { pageLayout, platformLayout, PLATFORM_DEFAULT_LAYOUT } from '../src/lib/site/page-layout';
+import { pageLayout, platformLayout, faqLayout, PLATFORM_DEFAULT_LAYOUT } from '../src/lib/site/page-layout';
 
 let failures = 0;
 function check(name: string, cond: boolean, detail?: string) {
@@ -40,6 +40,9 @@ check('an added section carries its coerced content', entries[1]?.kind === 'sect
 check('an unknown id, a repeat and a section the list names but the page lacks are all skipped', entries.length === 3);
 check('no layout at all is the default order with nothing added', pageLayout({ sections: copy.sections }, ['a', 'b'], ['b', 'a']).map((e) => e.id).join() === 'b,a');
 check('/platform keeps its own default', platformLayout({}).map((e) => e.id).join() === PLATFORM_DEFAULT_LAYOUT.join());
+check('/faq with no layout is the questions then the call to action', faqLayout({}).map((e) => e.id).join() === 'questions,cta');
+check('/faq draws its own order, with an added section between', faqLayout({ layout: [{ id: 'cta' }, { id: 'sec-a' }, { id: 'questions' }], sections: [{ id: 'sec-a', template: 'text', title: 'A' }] }).map((e) => e.id).join() === 'cta,sec-a,questions');
+check('/faq can drop a block', faqLayout({ layout: [{ id: 'questions' }] }).map((e) => e.id).join() === 'questions');
 
 console.log(failures ? `\n${failures} failed` : '\nAll passed');
 process.exit(failures ? 1 : 0);
