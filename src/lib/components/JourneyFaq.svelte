@@ -173,21 +173,9 @@
 		overscroll-behavior: contain;
 	}
 
-	/* Above the centred legal links, which wrap to three rows on a phone and two on a tablet. */
+	/* In the bottom-right corner at every width, clear of the home indicator. */
 	.faq-trigger {
-		bottom: max(8rem, calc(env(safe-area-inset-bottom) + 7.5rem));
-	}
-
-	@media (min-width: 640px) {
-		.faq-trigger {
-			bottom: max(4.25rem, calc(env(safe-area-inset-bottom) + 3.75rem));
-		}
-	}
-
-	@media (min-width: 900px) {
-		.faq-trigger {
-			bottom: max(1.25rem, calc(env(safe-area-inset-bottom) + 1rem));
-		}
+		bottom: max(1.25rem, calc(env(safe-area-inset-bottom) + 1rem));
 	}
 
 	.faq-bubble {

@@ -24,6 +24,7 @@
 	} = $props();
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
+	let zoomEl = $state<HTMLDialogElement | null>(null);
 	let started = $state(false);
 	/**
 	 * A device with no hover (phones, tablets). The clean poster with an invisible click target
@@ -87,8 +88,58 @@
 				compact ? '' : 'mt-6'
 			]}
 		>
-			<img class="block aspect-video w-full bg-white object-cover" src={posterUrl} alt={label} decoding="async" />
+			<!-- Often a screenshot too small to read in the column, so it opens full size on click. -->
+			<button
+				type="button"
+				class="group block w-full cursor-pointer bg-transparent p-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
+				aria-label={label ? `Enlarge: ${label}` : 'Enlarge image'}
+				onclick={() => zoomEl?.showModal()}
+			>
+				<img class="block aspect-video w-full bg-white object-cover" src={posterUrl} alt={label} decoding="async" />
+				<!-- Shown on hover or keyboard focus; always on touch, which has no hover to reveal it. -->
+				<span
+					class={[
+						'pointer-events-none absolute right-3 bottom-3 grid h-10 w-10 place-items-center rounded-full bg-ink/70 text-white shadow-lg transition-opacity duration-200',
+						touch ? 'opacity-100' : 'opacity-0 group-hover:opacity-100 group-focus-visible:opacity-100'
+					]}
+					aria-hidden="true"
+				>
+					<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+						<circle cx="11" cy="11" r="7" />
+						<path d="m20 20-3.5-3.5M11 8v6M8 11h6" />
+					</svg>
+				</span>
+			</button>
 		</div>
+		<!-- A native dialog: centred, Esc closes it, focus is held inside and returned afterwards.
+		     A click on the dim surround lands on the dialog itself, so that closes it too. -->
+		<dialog
+			bind:this={zoomEl}
+			class="zoom m-auto max-h-none max-w-none cursor-zoom-out bg-transparent p-0 backdrop:bg-ink/80"
+			aria-label={label || 'Image'}
+			onclick={(e) => {
+				if (e.target === zoomEl) zoomEl?.close();
+			}}
+		>
+			<div class="relative">
+				<img
+					class="block max-h-[90vh] max-w-[94vw] rounded-xl bg-white object-contain shadow-2xl"
+					src={posterUrl}
+					alt={label}
+					decoding="async"
+				/>
+				<button
+					type="button"
+					class="absolute top-2 right-2 grid h-10 w-10 cursor-pointer place-items-center rounded-full bg-ink/70 text-white hover:bg-ink focus-visible:outline focus-visible:outline-2 focus-visible:outline-gold"
+					aria-label="Close"
+					onclick={() => zoomEl?.close()}
+				>
+					<svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+						<path d="M6 6l12 12M18 6 6 18" />
+					</svg>
+				</button>
+			</div>
+		</dialog>
 		{#if label}<p class="mt-3 text-[14px] font-semibold tracking-wide text-lens">{label}</p>{/if}
 	{:else}
 	<div
@@ -126,7 +177,7 @@
 			<button
 				type="button"
 				onclick={play}
-				class="absolute inset-0 cursor-pointer bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
+				class="play-cursor absolute inset-0 bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[-4px] focus-visible:outline-gold"
 				aria-label={label}
 			></button>
 		{/if}
@@ -145,3 +196,39 @@
 	{/if}
 {/if}
 </div>
+
+<style>
+	/* Over a video not yet started, the cursor itself says "play": a dark disc with a white ring
+	   and triangle, readable on a light or a dark poster. 32px, the size every browser honours,
+	   with the hotspot at its centre. Browsers that refuse the image fall back to the hand. */
+	.play-cursor {
+		cursor:
+			url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14.5' fill='%230b1220' fill-opacity='0.75' stroke='white' stroke-width='1.5'/%3E%3Cpath d='M13 10.5v11l9-5.5z' fill='white'/%3E%3C/svg%3E")
+				16 16,
+			pointer;
+	}
+	/* Open the enlarged view with a short fade and grow, not a jump. */
+	.zoom[open] {
+		animation: zoom-in 180ms ease-out;
+	}
+	.zoom[open]::backdrop {
+		animation: zoom-fade 180ms ease-out;
+	}
+	@keyframes zoom-in {
+		from {
+			opacity: 0;
+			transform: scale(0.96);
+		}
+	}
+	@keyframes zoom-fade {
+		from {
+			opacity: 0;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.zoom[open],
+		.zoom[open]::backdrop {
+			animation: none;
+		}
+	}
+</style>
