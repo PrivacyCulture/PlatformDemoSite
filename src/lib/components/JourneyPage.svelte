@@ -781,6 +781,9 @@
 </script>
 
 <JourneyLoader progress={loadProgress} visible={loading} />
+<!-- Every fixed layer of the journey, lifted as one when the FAQ opens, so the video moves up and
+     the questions rise in beneath it (see JourneyFaq and .journey-lift in layout.css). -->
+<div class="journey-lift">
 {#if mounted && !reduced}
 	<JourneyVideo
 		bind:videoEl
@@ -976,6 +979,8 @@
 		</div>
 	</Beat>
 {/if}
+
+</div>
 
 <div id="scroll-space" aria-hidden="true"></div>
 

@@ -30,6 +30,24 @@
 	height: 1120vh;
 }
 
+/* The homepage FAQ's height, and the journey's lift when it opens: the fixed layers move up by
+   exactly the panel's height while the panel rises by the same amount, so the two read as one
+   page scrolling down. The wrapper is itself fixed to the viewport, so while it carries a
+   transform its fixed children (which then position against it) stay where they were. */
+:root {
+	--faq-sheet-h: min(72dvh, 44rem);
+}
+
+.journey-lift {
+	position: fixed;
+	inset: 0;
+	transition: transform 0.44s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+:root.faq-open .journey-lift {
+	transform: translateY(calc(-1 * var(--faq-sheet-h)));
+}
+
 #video-stage {
 	position: fixed;
 	inset: 0;
@@ -307,6 +325,14 @@ html.loading body {
 @media (prefers-reduced-motion: reduce) {
 	#scroll-space {
 		height: auto;
+	}
+
+	/* The journey is ordinary flowing content here, so it is not lifted. */
+	.journey-lift,
+	:root.faq-open .journey-lift {
+		position: static;
+		transform: none;
+		transition: none;
 	}
 
 	#video-stage,
