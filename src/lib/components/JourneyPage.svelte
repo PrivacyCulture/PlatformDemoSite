@@ -12,23 +12,36 @@
 	import ShowMeFlash from '$lib/components/ShowMeFlash.svelte';
 	import {
 		beatFocusProgress,
-		beatWindow,
+		beatRestProgress,
+		CLIP_FPS,
 		cloneBeatDefs,
 		currentBeatIndex,
+		frameIndexAt,
+		frameTime,
 		initialActiveBeats,
 		isBeatActive,
 		isPayoffBeatId,
 		isSceneBeatId,
 		isSceneTextActive,
+		lastFrameTime,
 		navJumpsFromBeats,
 		nextBeatProgress,
 		nextVisibleBeatIndex,
-		prevBeatProgress,
+		prevVisibleBeatIndex,
 		SCENE_TEXT_AFTER_SECONDS,
+		sceneLocalProgress,
+		sceneProgressAt,
+		sceneZones,
 		type BeatDef,
 		type BeatId
 	} from '$lib/journey/beats';
-	import { focusForSrc, getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
+	import {
+		focusForSrc,
+		getTheme,
+		nextSceneSrcAfterBeat,
+		prevSceneSrcBeforeBeat,
+		sceneSrcForBeat
+	} from '$lib/journey/videos';
 	import { content, sceneClassName, sceneShowMe } from '$lib/journey/content';
 	import { site } from '$lib/content';
 
@@ -52,6 +65,8 @@
 	let mounted = $state(false);
 	let journeyStarted = $state(false);
 
+	/** Which way the visitor is travelling; picks which neighbouring clip to warm. */
+	let scrollDir = $state<1 | -1>(1);
 	const navJumps = $derived(navJumpsFromBeats(beatDefs));
 	const activeBeatId = $derived.by(() => {
 		const on = Object.entries(activeBeats).find(([, active]) => active)?.[0] as BeatId | undefined;
@@ -71,8 +86,12 @@
 	const sceneIndexVisible = $derived(
 		!loading && journeyStarted && activeSceneNumber > 0
 	);
-	/** Clip that follows the active one — warmed in the idle video layer. */
-	const nextClipSrc = $derived(nextSceneSrcAfterBeat(theme, activeBeatId) ?? '');
+	/** Clip the visitor is heading into (next, or previous on the way back), warmed in the idle layer. */
+	const nextClipSrc = $derived(
+		(scrollDir < 0
+			? prevSceneSrcBeforeBeat(theme, activeBeatId)
+			: nextSceneSrcAfterBeat(theme, activeBeatId)) ?? ''
+	);
 
 	let heroShowMeOpen = $state(false);
 	const HERO_SHOW_ME_DELAY_MS = 1100;
@@ -86,22 +105,43 @@
 	const playback = {
 		ready: false,
 		hasVideo: false,
-		easedT: 0,
-		lastSet: -1,
+		/** Eased playhead (seconds) the scrub is heading for; below 0 snaps on the next frame. */
+		easedT: -1,
+		/** Frame last seeked to (or showing); -1 forces a seek. */
+		frameIndex: -1,
 		localScrollP: 0,
 		nativePlay: false,
-		clipFinished: false
+		/** scrollY the page last wrote itself, to tell its own scrolling from the visitor's. */
+		lastWrittenY: -1
 	};
 
 	let clipTime = $state(0);
 	let clipReady = $state(false);
 	let scenePlayGen = 0;
-	let lastScenePlayed: string | null = null;
-	/** True while the back control is reverse-scrubbing via scroll. */
+	/** The lens clip has played through and holds its last frame. */
+	let payoffFinished = false;
+	/** Scene that Next / Begin / the scene index asked to play once its clip is showing. */
+	let pendingPlayBeat = $state<BeatId | null>(null);
+	/** Furthest point reached in the current direction (direction flips need 0.01 of travel). */
+	let dirAnchor = 0;
+	/** True while Back is rewinding the clip by animating the scroll. */
 	let reverseNavigating = $state(false);
-
 	let reverseNavGen = 0;
 	let reverseRaf = 0;
+	/** Beat the running Back animation is heading for, so a second press steps further back. */
+	let retreatTargetIdx: number | null = null;
+
+	/** Back rewinds a clip at this multiple of real time. */
+	const REWIND_RATE = 1.25;
+	/** ms per unit of scroll progress across stretches that hold one frame (pads, hero, lens). */
+	const REWIND_FAST_MS_PER_PROGRESS = 4000;
+	/** Share of the gap to the scroll's frame closed each animation frame while scrubbing. */
+	const SCRUB_EASE = 0.3;
+
+	function setDirection(dir: 1 | -1) {
+		scrollDir = dir;
+		dirAnchor = playback.localScrollP;
+	}
 
 	function stopReverseNav() {
 		reverseNavGen += 1;
@@ -110,9 +150,21 @@
 			reverseRaf = 0;
 		}
 		reverseNavigating = false;
+		retreatTargetIdx = null;
 	}
 
-	function stopNativePlay(opts: { hold?: boolean } = {}) {
+	/** Point the scrub at the frame already showing, so handing over to the scroll never jumps. */
+	function holdCurrentFrame(video: HTMLVideoElement | null) {
+		if (!video?.duration || !Number.isFinite(video.duration)) {
+			playback.easedT = -1;
+			playback.frameIndex = -1;
+			return;
+		}
+		playback.easedT = video.currentTime;
+		playback.frameIndex = frameIndexAt(video.currentTime, video.duration);
+	}
+
+	function stopNativePlay() {
 		scenePlayGen += 1;
 		playback.nativePlay = false;
 		const video = videoEl;
@@ -121,15 +173,7 @@
 			video.playbackRate = 1;
 			if (!video.paused) video.pause();
 		}
-		if (opts.hold && video?.duration) {
-			try {
-				video.currentTime = Math.max(0, video.duration - 0.05);
-				clipTime = video.duration;
-				playback.clipFinished = true;
-			} catch {
-				/* ignore */
-			}
-		}
+		holdCurrentFrame(video);
 	}
 
 	/** Seek to the first frame and resolve after the browser paints it (avoids end-frame flash). */
@@ -145,7 +189,7 @@
 				window.clearTimeout(fallback);
 				clipTime = 0;
 				playback.easedT = 0;
-				playback.lastSet = 0;
+				playback.frameIndex = 0;
 				resolve();
 			};
 
@@ -153,7 +197,7 @@
 			if (video.currentTime < 0.05 && !video.seeking) {
 				clipTime = 0;
 				playback.easedT = 0;
-				playback.lastSet = 0;
+				playback.frameIndex = 0;
 				resolve();
 				return;
 			}
@@ -172,92 +216,150 @@
 		return isSceneBeatId(id) || isPayoffBeatId(id);
 	}
 
-	/** Play a scene / payoff clip from the start to the end (real playback). */
-	async function playActiveSceneToEnd(forBeatId?: BeatId): Promise<void> {
-		const beatId = forBeatId ?? activeBeatId;
+	function activeIndex(): number {
+		const index = beatDefs.findIndex((b) => b.id === activeBeatId);
+		return index >= 0 ? index : currentBeatIndex(scrollProgress(), beatDefs);
+	}
+
+	/** Scroll the page to `p` (0–1) as the page itself rather than the visitor. */
+	function writeScroll(p: number) {
+		const clamped = Math.min(1, Math.max(0, p));
+		const max = document.documentElement.scrollHeight - window.innerHeight;
+		const top = max * clamped;
+		if (Math.abs(window.scrollY - top) > 0.5) window.scrollTo({ top, behavior: 'auto' });
+		playback.lastWrittenY = top;
+		syncScrollState(clamped);
+	}
+
+	/**
+	 * Play a scene / payoff clip from the first frame to the last at 1×. For scenes the scroll
+	 * follows the playhead (see `followPlayhead`), and the clip parks in its rest zone when done,
+	 * so scrolling afterwards scrubs on from the last frame.
+	 */
+	async function playActiveSceneToEnd(beatId: BeatId): Promise<void> {
 		if (!isPlayableClipBeat(beatId)) return;
-
-		// Clear end-hold before any scrub/frame loop can paint the last frame.
-		playback.clipFinished = false;
-		if (lastScenePlayed === beatId) lastScenePlayed = null;
-
 		if (!playback.hasVideo || !clipReady) return;
 
 		const video = videoEl;
 		if (!video) return;
 
 		const expected = sceneSrcForBeat(theme, beatId);
-		if (expected && clipSrc !== expected) return;
-		if (expected && !videoMatchesSrc(video, expected)) return;
+		if (!expected || clipSrc !== expected || !videoMatchesSrc(video, expected)) return;
 
 		const gen = ++scenePlayGen;
 		video.loop = false;
 		video.playbackRate = 1;
 		playback.nativePlay = true;
-		playback.clipFinished = false;
-		lastScenePlayed = beatId;
+		if (isPayoffBeatId(beatId)) payoffFinished = false;
 
 		await seekVideoToStart(video, gen);
 		if (gen !== scenePlayGen) return;
 
 		await new Promise<void>((resolve) => {
 			let settled = false;
-			const finish = () => {
-				if (settled || gen !== scenePlayGen) return;
-				settled = true;
-				video.removeEventListener('ended', finish);
-				video.removeEventListener('timeupdate', onTime);
-				window.clearTimeout(safety);
-				try {
-					if (video.duration && Number.isFinite(video.duration)) {
-						video.currentTime = Math.max(0, video.duration - 0.05);
-						clipTime = video.duration;
-					}
-				} catch {
-					/* ignore */
-				}
-				video.pause();
-				if (gen === scenePlayGen) {
-					playback.nativePlay = false;
-					playback.clipFinished = true;
-				}
-				resolve();
-			};
+			const dur =
+				video.duration && Number.isFinite(video.duration) && video.duration > 0
+					? video.duration
+					: 12;
 
 			const onTime = () => {
 				if (gen !== scenePlayGen) return;
 				clipTime = video.currentTime;
 			};
 
+			const finish = () => {
+				if (settled) return;
+				settled = true;
+				video.removeEventListener('ended', finish);
+				video.removeEventListener('timeupdate', onTime);
+				window.clearTimeout(safety);
+				resolve();
+				// Superseded (Next, Back, the visitor scrolling): leave the playhead alone.
+				if (gen !== scenePlayGen) return;
+
+				video.pause();
+				playback.nativePlay = false;
+				const d = video.duration;
+				const hasDur = Boolean(d) && Number.isFinite(d);
+
+				if (isPayoffBeatId(beatId)) {
+					payoffFinished = true;
+					if (hasDur) {
+						try {
+							video.currentTime = lastFrameTime(d);
+						} catch {
+							/* ignore */
+						}
+						clipTime = d;
+					}
+					playback.easedT = -1;
+					return;
+				}
+
+				// Scene: park the scroll in the rest zone; the scrub then holds the last frame
+				// (and seeks to it if playback was cut short).
+				if (hasDur) clipTime = d;
+				holdCurrentFrame(video);
+				playback.easedT = -1;
+				const index = beatDefs.findIndex((b) => b.id === beatId);
+				if (index >= 0 && activeBeatId === beatId && !reverseNavigating) {
+					writeScroll(sceneZones(beatDefs, index).rest);
+				}
+			};
+
+			const safety = window.setTimeout(finish, (dur + 1.5) * 1000);
 			video.addEventListener('ended', finish);
 			video.addEventListener('timeupdate', onTime);
-
 			void video.play().catch(() => finish());
-
-			const dur =
-				video.duration && Number.isFinite(video.duration) && video.duration > 0
-					? video.duration
-					: 12;
-			const safety = window.setTimeout(finish, (dur + 1.5) * 1000);
 		});
 	}
 
-	function jumpTo(p: number, opts: { instant?: boolean; keepPlayhead?: boolean } = {}) {
+	/** While a scene plays, move the scroll with the playhead so scroll and frame always agree. */
+	function followPlayhead(t: number, duration: number) {
+		const index = beatDefs.findIndex((b) => b.id === activeBeatId);
+		if (index < 0) return;
+		writeScroll(sceneProgressAt(beatDefs, index, t / Math.max(0.001, lastFrameTime(duration))));
+	}
+
+	/** Move the frame toward wherever the scroll maps to, one decoded frame at a time. */
+	function scrubTo(video: HTMLVideoElement) {
+		if (!video.paused) video.pause();
+		const dur = video.duration;
+		const target = localClipProgress(playback.localScrollP, activeBeatId) * lastFrameTime(dur);
+		if (reverseNavigating || playback.easedT < 0) {
+			playback.easedT = target;
+		} else {
+			const gap = target - playback.easedT;
+			playback.easedT = Math.abs(gap) < 0.5 / CLIP_FPS ? target : playback.easedT + gap * SCRUB_EASE;
+		}
+
+		// One seek at a time: with sparse keyframes a seek can take several frames to decode.
+		if (video.seeking) return;
+		const index = frameIndexAt(playback.easedT, dur);
+		const t = frameTime(index, dur);
+		if (index === playback.frameIndex && Math.abs(video.currentTime - t) < 0.75 / CLIP_FPS) return;
+		try {
+			video.currentTime = t;
+		} catch {
+			return;
+		}
+		playback.frameIndex = index;
+		clipTime = t;
+	}
+
+	function jumpTo(p: number, opts: { instant?: boolean } = {}) {
 		if (loading) return;
 		stopReverseNav();
-		if (!opts.keepPlayhead && !(p <= 0.02 && isHeroLoopBeat(activeBeatId))) {
-			stopNativePlay();
-		}
+		pendingPlayBeat = null;
+		if (!(p <= 0.02 && isHeroLoopBeat(activeBeatId))) stopNativePlay();
 		if (p > 0.02) journeyStarted = true;
-		const max = document.documentElement.scrollHeight - window.innerHeight;
-		const top = max * Math.min(1, Math.max(0, p));
-		window.scrollTo({
-			top,
-			behavior: opts.instant || reduced ? 'auto' : 'smooth'
-		});
+		setDirection(p >= playback.localScrollP ? 1 : -1);
 		if (opts.instant || reduced) {
-			syncScrollState(Math.min(1, Math.max(0, p)));
+			writeScroll(p);
+			return;
 		}
+		const max = document.documentElement.scrollHeight - window.innerHeight;
+		window.scrollTo({ top: max * Math.min(1, Math.max(0, p)), behavior: 'smooth' });
 	}
 
 	function sceneTextAfter(beatId: BeatId): number {
@@ -283,8 +385,6 @@
 		video.loop = true;
 		video.playbackRate = 1;
 		playback.nativePlay = true;
-		playback.clipFinished = false;
-		lastScenePlayed = null;
 		if (video.paused) {
 			void video.play().catch(() => {
 				/* autoplay blocked — still frame is fine */
@@ -292,166 +392,156 @@
 		}
 	}
 
-	/** Keep playhead ready for scene / payoff autoplay (no end-frame flash). */
-	function prepareSceneEnter(beatId: BeatId) {
-		if (!isPlayableClipBeat(beatId)) return;
-		playback.clipFinished = false;
-		lastScenePlayed = null;
-		playback.easedT = 0;
-		playback.lastSet = -1;
-		playback.nativePlay = true;
-		const expected = sceneSrcForBeat(theme, beatId);
-		const video = videoEl;
-		if (video && expected && clipSrc === expected) {
-			try {
-				video.pause();
-				video.currentTime = 0;
-			} catch {
-				/* ignore */
-			}
-			clipTime = 0;
-		}
+	/** Cut to a scene's first frame and play it through once its clip is showing. */
+	function enterScene(id: BeatId) {
+		if (loading) return;
+		const index = beatDefs.findIndex((b) => b.id === id);
+		if (index < 0) return;
+		stopReverseNav();
+		// The hero keeps looping underneath until the scene's clip fades in over it.
+		if (!isHeroLoopBeat(activeBeatId)) stopNativePlay();
+		journeyStarted = true;
+		pendingPlayBeat = id;
+		writeScroll(sceneZones(beatDefs, index).enter);
+		setDirection(1);
 	}
 
 	function beginJourney() {
 		if (loading) return;
-		stopReverseNav();
-		journeyStarted = true;
-		const firstScene = beatDefs.find((b) => b.id === 'beat-scene-1');
-		if (!firstScene) {
-			jumpTo(nextBeatProgress(0, beatDefs, videoDuration), { instant: true });
+		if (beatDefs.some((b) => b.id === 'beat-scene-1')) {
+			enterScene('beat-scene-1');
 			return;
 		}
-		prepareSceneEnter(firstScene.id);
-		jumpTo(firstScene.at + 0.01, { instant: true, keepPlayhead: true });
+		jumpTo(nextBeatProgress(0, beatDefs, videoDuration), { instant: true });
 	}
 
 	function jumpToScene(sceneNumber: number) {
-		const id = `beat-scene-${sceneNumber}` as BeatId;
-		const beat = beatDefs.find((b) => b.id === id);
-		if (!beat) return;
-		journeyStarted = true;
-		prepareSceneEnter(id);
-		jumpTo(beat.at + 0.01, { instant: true, keepPlayhead: true });
+		enterScene(`beat-scene-${sceneNumber}` as BeatId);
 	}
 
 	function advance() {
 		if (loading) return;
-		stopReverseNav();
-		journeyStarted = true;
-		const idx = currentBeatIndex(scrollProgress(), beatDefs);
-
-		const nextIdx = nextVisibleBeatIndex(beatDefs, idx + 1);
+		const nextIdx = nextVisibleBeatIndex(beatDefs, activeIndex() + 1);
 		if (nextIdx < 0) {
 			jumpTo(1, { instant: true });
 			return;
 		}
 
 		const next = beatDefs[nextIdx]!;
-		if (isPlayableClipBeat(next.id)) {
-			prepareSceneEnter(next.id);
-			jumpTo(next.at + 0.01, { instant: true, keepPlayhead: true });
-		} else {
-			jumpTo(beatFocusProgress(next, beatDefs, videoDuration, sceneTextAfter(next.id)), {
-				instant: true
-			});
+		if (isSceneBeatId(next.id)) {
+			enterScene(next.id);
+			return;
 		}
+		journeyStarted = true;
+		const p = isPayoffBeatId(next.id)
+			? next.at + 0.01
+			: beatFocusProgress(next, beatDefs, videoDuration, sceneTextAfter(next.id));
+		jumpTo(p, { instant: true });
 	}
 
-	/** Animate scroll backward so the active clip scrubs in reverse, like scrolling up. */
+	/**
+	 * Rewind: animate the scroll back so the scrub plays the clip backwards to its first frame,
+	 * then step into the previous scene on its last frame (the state before Next was pressed).
+	 */
 	function retreat() {
 		if (loading) return;
+		const base = retreatTargetIdx ?? activeIndex();
+		if (base <= 0) return;
+		pendingPlayBeat = null;
 		stopNativePlay();
-		playback.clipFinished = false;
-		lastScenePlayed = null;
-		playback.easedT = -1;
-		playback.lastSet = -1;
 
-		const cur = scrollProgress();
-		const idx = currentBeatIndex(cur, beatDefs);
-		const lead = sceneTextAfter(beatDefs[idx]?.id ?? 'beat-hero');
-		const target = prevBeatProgress(cur, beatDefs, videoDuration, lead);
-		if (Math.abs(cur - target) < 0.002) return;
-
-		void animateRetreatTo(target);
+		const targetIdx = prevVisibleBeatIndex(beatDefs, base);
+		const target = beatRestProgress(beatDefs[targetIdx]!, beatDefs);
+		setDirection(-1);
+		animateRetreatTo(target, targetIdx);
 	}
 
-	function animateRetreatTo(target: number): Promise<void> {
+	type RewindSegment = { from: number; to: number; ms: number };
+
+	/**
+	 * Timed path for a rewind: stretches inside a scene's play zone run at REWIND_RATE × the
+	 * clip's real time; stretches that hold a single frame (pads, hero, lens) pass quickly.
+	 */
+	function rewindPath(startP: number, endP: number): RewindSegment[] {
+		if (startP <= endP) {
+			return [{ from: startP, to: endP, ms: (endP - startP) * REWIND_FAST_MS_PER_PROGRESS }];
+		}
+		const clipSeconds = videoDuration > 0 && Number.isFinite(videoDuration) ? videoDuration : 5;
+		const zones = beatDefs
+			.map((b, i) => (isSceneBeatId(b.id) && !b.hidden ? sceneZones(beatDefs, i) : null))
+			.filter((z): z is NonNullable<typeof z> => z !== null);
+
+		const cuts = [startP, endP];
+		for (const z of zones) {
+			for (const pt of [z.playFrom, z.playTo]) {
+				if (pt < startP && pt > endP) cuts.push(pt);
+			}
+		}
+		cuts.sort((a, b) => b - a);
+
+		const segments: RewindSegment[] = [];
+		for (let i = 0; i < cuts.length - 1; i++) {
+			const from = cuts[i]!;
+			const to = cuts[i + 1]!;
+			if (from - to < 1e-6) continue;
+			const mid = (from + to) / 2;
+			const zone = zones.find((z) => mid > z.playFrom && mid < z.playTo);
+			const ms = zone
+				? ((from - to) / (zone.playTo - zone.playFrom)) * (clipSeconds / REWIND_RATE) * 1000
+				: (from - to) * REWIND_FAST_MS_PER_PROGRESS;
+			segments.push({ from, to, ms });
+		}
+		return segments;
+	}
+
+	function animateRetreatTo(target: number, targetIdx: number) {
 		const gen = ++reverseNavGen;
 		if (reverseRaf) {
 			cancelAnimationFrame(reverseRaf);
 			reverseRaf = 0;
 		}
 		reverseNavigating = true;
+		retreatTargetIdx = targetIdx;
 
-		return new Promise((resolve) => {
-			const max = document.documentElement.scrollHeight - window.innerHeight;
-			const startY = window.scrollY;
-			const endY = max * Math.min(1, Math.max(0, target));
-			const distance = Math.abs(endY - startY);
+		const endP = Math.min(1, Math.max(0, target));
+		const path = rewindPath(scrollProgress(), endP);
+		const total = path.reduce((sum, seg) => sum + seg.ms, 0);
 
-			const finish = () => {
-				if (gen !== reverseNavGen) {
-					resolve();
-					return;
-				}
-				window.scrollTo({ top: endY, behavior: 'auto' });
-				syncScrollState(Math.min(1, Math.max(0, target)));
-				if (target <= 0.02) journeyStarted = false;
+		const finish = () => {
+			if (gen !== reverseNavGen) return;
+			writeScroll(endP);
+			if (endP <= 0.02) journeyStarted = false;
+			playback.easedT = -1;
+			reverseNavigating = false;
+			reverseRaf = 0;
+			retreatTargetIdx = null;
+		};
 
-				// Land on the previous beat's text hold (end frame for scenes).
-				const landed = beatDefs[currentBeatIndex(target, beatDefs)];
-				if (landed && isSceneBeatId(landed.id)) {
-					playback.clipFinished = true;
-					lastScenePlayed = landed.id;
-					const video = videoEl;
-					if (video?.duration) {
-						try {
-							video.currentTime = Math.max(0, video.duration - 0.05);
-							clipTime = video.duration;
-							playback.easedT = video.currentTime;
-							playback.lastSet = video.currentTime;
-						} catch {
-							/* ignore */
-						}
-					}
-				}
+		if (reduced || total < 16) {
+			finish();
+			return;
+		}
 
-				reverseNavigating = false;
-				reverseRaf = 0;
-				resolve();
-			};
-
-			if (reduced || distance < 2) {
+		const start = performance.now();
+		const step = (now: number) => {
+			if (gen !== reverseNavGen) return;
+			let elapsed = now - start;
+			if (elapsed >= total) {
 				finish();
 				return;
 			}
-
-			// Pace reverse scrub roughly like watching the clip rewind (~1.15× realtime).
-			const clipMs =
-				videoDuration && Number.isFinite(videoDuration) ? videoDuration * 1000 * 1.15 : 1400;
-			const durationMs = Math.min(3200, Math.max(900, Math.max(clipMs * 0.55, distance * 5500)));
-			const start = performance.now();
-
-			const step = (now: number) => {
-				if (gen !== reverseNavGen) {
-					resolve();
-					return;
+			let p = endP;
+			for (const seg of path) {
+				if (elapsed <= seg.ms) {
+					p = seg.from + (seg.to - seg.from) * (seg.ms > 0 ? elapsed / seg.ms : 1);
+					break;
 				}
-				const t = Math.min(1, (now - start) / durationMs);
-				// Gentle ease — mostly linear so reverse scrub stays readable.
-				const eased = t * (2 - t);
-				const y = startY + (endY - startY) * eased;
-				window.scrollTo({ top: y, behavior: 'auto' });
-				syncScrollState(max > 0 ? y / max : 0);
-				if (t < 1) {
-					reverseRaf = requestAnimationFrame(step);
-				} else {
-					finish();
-				}
-			};
+				elapsed -= seg.ms;
+			}
+			writeScroll(p);
 			reverseRaf = requestAnimationFrame(step);
-		});
+		};
+		reverseRaf = requestAnimationFrame(step);
 	}
 
 	function scrollProgress(): number {
@@ -473,6 +563,7 @@
 	/** Non-reactive: must not be read as an $effect dependency. */
 	let firstClipLoaded = false;
 
+	/** Runs each time a clip is brought to the front (see JourneyVideo `promote`). */
 	function handleClipReady() {
 		firstClipLoaded = true;
 		playback.ready = true;
@@ -482,32 +573,37 @@
 		if (video?.duration && Number.isFinite(video.duration)) {
 			videoDuration = video.duration;
 		}
-		if (reverseNavigating && video?.duration && Number.isFinite(video.duration)) {
-			try {
-				const local = localClipProgress(playback.localScrollP, activeBeatId);
-				const dur = Math.max(0.001, video.duration - 0.05);
-				const seekTo = Math.min(dur, Math.max(0, local * dur));
-				video.currentTime = seekTo;
-				clipTime = seekTo;
-				playback.easedT = seekTo;
-				playback.lastSet = seekTo;
-			} catch {
-				/* ignore */
-			}
-		} else if (video && isHeroLoopBeat(activeBeatId)) {
+		if (video && isHeroLoopBeat(activeBeatId)) {
 			playHeroLoop();
 		} else if (video) {
+			// A scene or the lens has just faded in, already on the frame the scroll maps to
+			// (`startTimeFor`). Scroll drives it from here unless a play was asked for.
+			scenePlayGen += 1;
+			playback.nativePlay = false;
+			payoffFinished = false;
 			try {
 				video.loop = false;
 				video.playbackRate = 1;
 				video.pause();
-				if (video.currentTime > 0.05) video.currentTime = 0;
-				clipTime = video.currentTime;
 			} catch {
 				/* ignore */
 			}
+			clipTime = video.currentTime;
+			holdCurrentFrame(video);
+			playback.easedT = -1;
 		}
 		window.setTimeout(() => setLoading(false), 200);
+	}
+
+	/** Frame an incoming clip should land on, from where the scroll is when it has loaded. */
+	function startTimeFor(url: string, duration: number): number {
+		if (!duration || !Number.isFinite(duration)) return 0;
+		let beat: BeatId | null = null;
+		if (sceneSrcForBeat(theme, activeBeatId) === url) beat = activeBeatId;
+		else beat = beatDefs.find((b) => !b.hidden && sceneSrcForBeat(theme, b.id) === url)?.id ?? null;
+		if (!beat || !isSceneBeatId(beat) || pendingPlayBeat === beat) return 0;
+		const local = localClipProgress(playback.localScrollP, beat);
+		return frameTime(frameIndexAt(local * lastFrameTime(duration), duration), duration);
 	}
 
 	function videoMatchesSrc(video: HTMLVideoElement, expected: string) {
@@ -516,30 +612,14 @@
 		return activeSrc.includes(expected) || activeSrc.endsWith(expected.replace(/^\//, ''));
 	}
 
-	/** Local 0–1 progress inside the active beat (scrub mode only). */
+	/** Local 0–1 playhead position the scroll maps to inside `beatId`. */
 	function localClipProgress(progress: number, beatId: BeatId): number {
 		const index = beatDefs.findIndex((b) => b.id === beatId);
-		if (index < 0) return 0;
-
-		if (beatId === 'beat-hero' || !journeyStarted) return 0;
-
-		// Finished scene / payoff clip: hold the end frame (not during reverse scrub).
-		if (
-			!playback.nativePlay &&
-			isPlayableClipBeat(beatId) &&
-			playback.clipFinished &&
-			lastScenePlayed === beatId
-		) {
-			return 1;
-		}
-
-		// Payoff waiting to play: stay on the first frame. Seeking to the end
-		// of a freshly loaded clip often paints black.
-		if (isPayoffBeatId(beatId)) return 0;
-
-		const { from, to } = beatWindow(beatDefs, index);
-		const span = Math.max(0.01, to - from);
-		return Math.min(1, Math.max(0, (progress - from) / span));
+		if (index < 0 || beatId === 'beat-hero' || !journeyStarted) return 0;
+		// The lens plays through on its own, then holds its last frame.
+		if (isPayoffBeatId(beatId)) return payoffFinished ? 1 : 0;
+		if (isSceneBeatId(beatId)) return sceneLocalProgress(progress, beatDefs, index);
+		return 0;
 	}
 
 	/**
@@ -576,27 +656,55 @@
 		}
 
 		let raf = 0;
-		let lastScrollP = 0;
+
+		/** The page is scrolling itself: a scene playing, Back rewinding, or a scene about to play. */
+		const pageDriving = () =>
+			reverseNavigating ||
+			pendingPlayBeat !== null ||
+			(playback.nativePlay && isSceneBeatId(activeBeatId));
+
+		/** The visitor scrolled: hand the video back to the scroll at the frame it is on. */
+		const takeOver = () => {
+			if (reverseNavigating) stopReverseNav();
+			pendingPlayBeat = null;
+			if (playback.nativePlay && isSceneBeatId(activeBeatId)) stopNativePlay();
+			playback.lastWrittenY = -1;
+		};
 
 		const onUserScrollIntent = () => {
-			if (reverseNavigating) stopReverseNav();
+			if (pageDriving()) takeOver();
 		};
 
 		const onScroll = () => {
 			if (loading && !playback.ready) return;
-			const max = document.documentElement.scrollHeight - window.innerHeight;
-			playback.localScrollP = max > 0 ? window.scrollY / max : 0;
-			playback.localScrollP = Math.min(1, Math.max(0, playback.localScrollP));
-			scrollP = playback.localScrollP;
-
-			// Manual scrub backward — snap video ease so it doesn't keep drifting forward.
-			if (playback.localScrollP < lastScrollP - 0.008) {
-				playback.easedT = -1;
-				playback.lastSet = -1;
+			// Scrollbar drags and keyboard scrolling have no wheel/touch event: spot them by the
+			// scroll moving away from where the page last put it.
+			if (
+				pageDriving() &&
+				playback.lastWrittenY >= 0 &&
+				Math.abs(window.scrollY - playback.lastWrittenY) > 4
+			) {
+				takeOver();
 			}
-			lastScrollP = playback.localScrollP;
 
-			if (playback.localScrollP > 0.02) journeyStarted = true;
+			const p = scrollProgress();
+			playback.localScrollP = p;
+			scrollP = p;
+
+			if (scrollDir > 0) {
+				if (p > dirAnchor) dirAnchor = p;
+				else if (p < dirAnchor - 0.01) {
+					scrollDir = -1;
+					dirAnchor = p;
+				}
+			} else if (p < dirAnchor) {
+				dirAnchor = p;
+			} else if (p > dirAnchor + 0.01) {
+				scrollDir = 1;
+				dirAnchor = p;
+			}
+
+			if (p > 0.02) journeyStarted = true;
 		};
 
 		const frame = () => {
@@ -606,9 +714,11 @@
 				playback.hasVideo &&
 				video &&
 				video.duration &&
+				Number.isFinite(video.duration) &&
 				video.readyState >= 2 &&
 				// Until the crossfade promotes the new clip, `video` is still the outgoing layer;
-				// reading its playhead would time the incoming scene's text off the wrong clip.
+				// driving it from the incoming beat's scroll would show the wrong frames.
+				clipSrc === sceneSrcForBeat(theme, activeBeatId) &&
 				videoMatchesSrc(video, clipSrc)
 			) {
 				if (playback.nativePlay) {
@@ -617,37 +727,18 @@
 					// and avoids re-evaluating every scene's visibility on each frame.
 					if (Math.abs(t - clipTime) > 1 / 30) clipTime = t;
 					playback.easedT = t;
-					playback.lastSet = t;
+					if (!reverseNavigating && !video.paused && isSceneBeatId(activeBeatId)) {
+						followPlayhead(t, video.duration);
+					}
 				} else {
-					if (!video.paused) video.pause();
-
-					const dur = Math.max(0.001, video.duration - 0.05);
-					const local = localClipProgress(playback.localScrollP, activeBeatId);
-					const target = local * dur;
-					if (reverseNavigating || playback.easedT < 0) {
-						playback.easedT = target;
-					} else {
-						playback.easedT += (target - playback.easedT) * 0.12;
-					}
-
-					const shouldSeek =
-						!video.seeking &&
-						(playback.lastSet < 0 || Math.abs(playback.lastSet - playback.easedT) > 1 / 30) &&
-						Math.abs(video.currentTime - playback.easedT) > 0.02;
-
-					if (shouldSeek) {
-						const clamped = Math.min(dur, Math.max(0, playback.easedT));
-						video.currentTime = clamped;
-						playback.lastSet = clamped;
-						clipTime = clamped;
-					}
+					scrubTo(video);
 				}
 			}
 			raf = requestAnimationFrame(frame);
 		};
 
 		window.addEventListener('wheel', onUserScrollIntent, { passive: true });
-		window.addEventListener('touchstart', onUserScrollIntent, { passive: true });
+		window.addEventListener('touchmove', onUserScrollIntent, { passive: true });
 		const onKeyNav = (e: KeyboardEvent) => {
 			const tag = (e.target as HTMLElement | null)?.tagName;
 			if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable) {
@@ -667,11 +758,12 @@
 		window.addEventListener('keydown', onKeyNav);
 		window.addEventListener('scroll', onScroll, { passive: true });
 		onScroll();
+		dirAnchor = playback.localScrollP;
 		raf = requestAnimationFrame(frame);
 
 		return () => {
 			window.removeEventListener('wheel', onUserScrollIntent);
-			window.removeEventListener('touchstart', onUserScrollIntent);
+			window.removeEventListener('touchmove', onUserScrollIntent);
 			window.removeEventListener('keydown', onKeyNav);
 			window.removeEventListener('scroll', onScroll);
 			cancelAnimationFrame(raf);
@@ -681,26 +773,25 @@
 		};
 	});
 
+	// Swap to the active beat's clip whenever the beat changes, in either direction and during
+	// a rewind; JourneyVideo lands it on the scroll's frame (`startTimeFor`) before the fade.
 	$effect(() => {
 		if (!mounted || reduced) return;
-		// Finish reverse-scrub on the current clip, then swap (hero loop / next scene).
-		if (reverseNavigating) return;
 		const nextSrc = sceneSrcForBeat(theme, activeBeatId) ?? '';
 		if (nextSrc && nextSrc !== clipSrc) {
 			clipSrc = nextSrc;
-			playback.easedT = 0;
-			playback.lastSet = -1;
-			playback.clipFinished = false;
+			playback.easedT = -1;
+			playback.frameIndex = -1;
 			clipTime = 0;
-			// Hold the outgoing layer (hero keeps looping; scenes keep last frame) until promote.
-			playback.nativePlay = true;
-			if (isPlayableClipBeat(activeBeatId)) lastScenePlayed = null;
 		}
 	});
 
+	// Real playback: the hero loops, the lens plays through on arrival, and a scene plays only
+	// when Next / Begin / the scene index asked for it. Scrolling into a scene just scrubs.
 	$effect(() => {
-		if (!mounted || reduced || !clipReady || reverseNavigating) return;
+		if (!mounted || reduced || !clipReady) return;
 		const id = activeBeatId;
+		const pending = pendingPlayBeat;
 		void clipSrc;
 		void videoEl;
 
@@ -713,18 +804,22 @@
 
 		if (!isPlayableClipBeat(id)) {
 			if (playback.nativePlay) stopNativePlay();
-			lastScenePlayed = null;
 			return;
 		}
 
-		const expected = sceneSrcForBeat(theme, id);
-		if (expected && clipSrc !== expected) return;
-		const video = videoEl;
-		if (!video || (expected && !videoMatchesSrc(video, expected))) return;
+		if (!sceneClipShown(id)) return;
 
-		if (id === lastScenePlayed && (playback.clipFinished || playback.nativePlay)) return;
+		if (isPayoffBeatId(id)) {
+			if (!payoffFinished && !playback.nativePlay && !reverseNavigating) {
+				void playActiveSceneToEnd(id);
+			}
+			return;
+		}
 
-		void playActiveSceneToEnd();
+		if (pending === id) {
+			pendingPlayBeat = null;
+			void playActiveSceneToEnd(id);
+		}
 	});
 
 	$effect(() => {
@@ -793,6 +888,7 @@
 		src={clipSrc}
 		nextSrc={nextClipSrc}
 		focusFor={(url) => focusForSrc(theme, url)}
+		{startTimeFor}
 		onReady={handleClipReady}
 	/>
 {/if}
@@ -805,8 +901,8 @@
 
 {#if !loading}
 	<JourneyNav
-		onHome={() => jumpTo(navJumps.hero)}
-		onJump={jumpTo}
+		onHome={() => jumpTo(navJumps.hero, { instant: true })}
+		onJump={(p) => jumpTo(p, { instant: true })}
 		jumps={navJumps}
 		copy={site.nav}
 	/>

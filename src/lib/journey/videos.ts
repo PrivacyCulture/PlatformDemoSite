@@ -87,3 +87,14 @@ export function nextSceneSrcAfterBeat(theme: JourneyTheme, beatId: BeatId): stri
 	}
 	return null;
 }
+
+/** The clip shown before `beatId` (scene 1 steps back to the hero), for warming on the way back. */
+export function prevSceneSrcBeforeBeat(theme: JourneyTheme, beatId: BeatId): string | null {
+	if (beatId === 'beat-hero') return null;
+	const current = sceneSrcForBeat(theme, beatId);
+	const index = Math.min(BEAT_SCENE_INDEX[beatId] ?? 0, theme.scenes.length - 1);
+	for (let i = index - 1; i >= 0; i--) {
+		if (theme.scenes[i] !== current) return theme.scenes[i]!;
+	}
+	return theme.hero || null;
+}

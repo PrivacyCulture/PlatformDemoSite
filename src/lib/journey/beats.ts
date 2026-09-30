@@ -145,6 +145,105 @@ export function beatLocalProgress(progress: number, beats: BeatDef[], index: num
 	return Math.min(1, Math.max(0, (progress - from) / Math.max(0.01, to - from)));
 }
 
+/** Frame rate the scene clips are rendered at. */
+export const CLIP_FPS = 24;
+
+/**
+ * Each scene window is split into three zones, as fractions of its span:
+ * a short head that holds the first frame, the play zone that maps scroll to frames,
+ * and a rest zone that holds the last frame. Next lands in the head, a finished clip
+ * (and Back) parks in the rest, so a scene can sit on either end frame well clear of
+ * the boundary where the clip swaps.
+ */
+export const SCENE_HEAD_PAD = 0.03;
+export const SCENE_REST_PAD = 0.08;
+
+export type SceneZones = {
+	from: number;
+	to: number;
+	/** Scroll progress where frame 0 starts to advance. */
+	playFrom: number;
+	/** Scroll progress where the last frame is reached. */
+	playTo: number;
+	/** Middle of the head zone: where Next lands (frame 0). */
+	enter: number;
+	/** Middle of the rest zone: where a finished clip parks (last frame). */
+	rest: number;
+};
+
+export function sceneZones(beats: BeatDef[], index: number): SceneZones {
+	const { from, to } = beatWindow(beats, index);
+	const span = to - from;
+	const playFrom = from + span * SCENE_HEAD_PAD;
+	const playTo = to - span * SCENE_REST_PAD;
+	return {
+		from,
+		to,
+		playFrom,
+		playTo,
+		enter: from + (span * SCENE_HEAD_PAD) / 2,
+		rest: to - (span * SCENE_REST_PAD) / 2
+	};
+}
+
+/** 0 in the head zone, 1 in the rest zone, linear across the play zone. */
+export function sceneLocalProgress(progress: number, beats: BeatDef[], index: number): number {
+	const { playFrom, playTo } = sceneZones(beats, index);
+	return Math.min(1, Math.max(0, (progress - playFrom) / Math.max(0.0001, playTo - playFrom)));
+}
+
+/** Scroll progress in a scene's play zone for a playhead fraction 0–1. */
+export function sceneProgressAt(beats: BeatDef[], index: number, local: number): number {
+	const { playFrom, playTo } = sceneZones(beats, index);
+	return playFrom + (playTo - playFrom) * Math.min(1, Math.max(0, local));
+}
+
+/** Number of frames in a clip of `duration` seconds. */
+export function frameCount(duration: number, fps = CLIP_FPS): number {
+	if (!duration || !Number.isFinite(duration)) return 1;
+	return Math.max(1, Math.round(duration * fps));
+}
+
+/** Seek time that shows the last frame (its centre, so it never reads as the end). */
+export function lastFrameTime(duration: number, fps = CLIP_FPS): number {
+	if (!duration || !Number.isFinite(duration)) return 0;
+	return Math.max(0, duration - 0.5 / fps);
+}
+
+/** Seek time for frame `index`: the centre of the frame, clamped to the last frame. */
+export function frameTime(index: number, duration: number, fps = CLIP_FPS): number {
+	return Math.min(lastFrameTime(duration, fps), Math.max(0, (index + 0.5) / fps));
+}
+
+/** Frame showing at playhead `time`. */
+export function frameIndexAt(time: number, duration: number, fps = CLIP_FPS): number {
+	const last = frameCount(duration, fps) - 1;
+	return Math.min(last, Math.max(0, Math.round(time * fps - 0.5)));
+}
+
+/** Where Next / the scene index land: a scene's first frame, or the beat's cue point. */
+export function beatEnterProgress(beat: BeatDef, beats: BeatDef[]): number {
+	const index = beats.findIndex((b) => b.id === beat.id);
+	if (index >= 0 && isSceneBeatId(beat.id)) return sceneZones(beats, index).enter;
+	return Math.min(1, Math.max(0, beat.at));
+}
+
+/** Where Back lands: a scene's last frame, the top for the hero, or the beat's cue point. */
+export function beatRestProgress(beat: BeatDef, beats: BeatDef[]): number {
+	if (beat.id === 'beat-hero') return 0;
+	const index = beats.findIndex((b) => b.id === beat.id);
+	if (index >= 0 && isSceneBeatId(beat.id)) return sceneZones(beats, index).rest;
+	return Math.min(1, Math.max(0, beat.at));
+}
+
+/** Previous visible beat before `index`, or 0 (the hero). */
+export function prevVisibleBeatIndex(beats: BeatDef[], index: number): number {
+	for (let i = Math.min(index, beats.length) - 1; i >= 0; i--) {
+		if (!beats[i]!.hidden) return i;
+	}
+	return 0;
+}
+
 /** Scene copy appears this many seconds after the clip starts. */
 export const SCENE_TEXT_AFTER_SECONDS = 1.5;
 
@@ -173,7 +272,7 @@ export function isSceneTextActive(
 	const beat = beats[index];
 	if (!beat || beat.hidden || !isSceneBeatId(beat.id)) return false;
 	if (!isBeatActive(progress, beats, index)) return false;
-	return beatLocalProgress(progress, beats, index) >= sceneTextThreshold(clipDuration, afterSeconds);
+	return sceneLocalProgress(progress, beats, index) >= sceneTextThreshold(clipDuration, afterSeconds);
 }
 
 export function navJumpsFromBeats(beats: BeatDef[]) {
@@ -237,8 +336,7 @@ export function beatFocusProgress(
 ): number {
 	const index = beats.findIndex((b) => b.id === beat.id);
 	if (index >= 0 && isSceneBeatId(beat.id)) {
-		const { from, to } = beatWindow(beats, index);
-		return from + (to - from) * sceneTextThreshold(clipDuration, leadSeconds);
+		return sceneProgressAt(beats, index, sceneTextThreshold(clipDuration, leadSeconds));
 	}
 	return Math.min(1, Math.max(0, beat.at));
 }
