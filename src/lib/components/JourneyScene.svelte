@@ -1,9 +1,10 @@
 <script lang="ts">
 	import type { BeatId } from '$lib/journey/beats';
-	import type { JourneyShowMe } from '$lib/journey/content';
-	import { journey } from '$lib/content';
+	import type { SceneShowMe } from '$lib/journey/content';
+	import { journey, pages } from '$lib/content';
 
 	const UI = journey.ui;
+	const PAGES = pages;
 	import Beat from '$lib/components/Beat.svelte';
 	import ShowMeFlash from '$lib/components/ShowMeFlash.svelte';
 
@@ -30,7 +31,7 @@
 		pain: string;
 		/** Text after "What if " (e.g. "it all told one story?") */
 		whatIfRest: string;
-		showMe?: JourneyShowMe;
+		showMe?: SceneShowMe;
 		onAdvance: () => void;
 		onRetreat: () => void;
 		class?: string;
@@ -319,17 +320,26 @@
 
 			{/if}
 
-			{#if showMe.href}
-				<div class="border-t border-bone/10 px-4 py-3 text-right">
+			<div
+				class="flex flex-wrap items-center justify-end gap-x-5 gap-y-2 border-t border-bone/10 px-4 py-3"
+			>
+				{#if showMe.specHref}
 					<a
-						href={showMe.exploreHref ?? showMe.href}
+						href={showMe.specHref}
+						class="mr-auto inline-flex items-center gap-1.5 text-[13px] font-medium text-bone/70 no-underline transition-colors hover:text-bone focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lens"
+					>
+						{PAGES.platformSpec.eyebrow}
+						<span aria-hidden="true">{UI.arrow}</span>
+					</a>
+				{/if}
+					<a
+						href={showMe.exploreHref}
 						class="inline-flex items-center gap-1.5 text-[13px] font-medium text-lens no-underline transition-colors hover:text-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-lens"
 					>
 						{UI.explorePrefix} {label}
 						<span aria-hidden="true">{UI.arrow}</span>
 					</a>
-				</div>
-			{/if}
+			</div>
 			</div>
 		</div>
 	</div>
