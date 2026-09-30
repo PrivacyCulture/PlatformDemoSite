@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import { journey } from '$lib/content';
 	import { focusAt, objectPositionX, parseFocus, type FocusStop } from '$lib/journey/portrait-focus';
 
@@ -14,6 +15,7 @@
 		ready = $bindable(false),
 		loadProgress = $bindable(0),
 		focusFor,
+		startTimeFor,
 		onReady
 	}: {
 		src?: string;
@@ -25,6 +27,11 @@
 		loadProgress?: number;
 		/** Portrait focus stops for a clip URL (see portrait-focus.ts); centred when absent. */
 		focusFor?: (src: string) => string;
+		/**
+		 * Playhead (seconds) a clip should show when it is brought to the front, read once the
+		 * clip has loaded so it reflects where the scroll is by then. Defaults to the first frame.
+		 */
+		startTimeFor?: (src: string, duration: number) => number;
 		onReady?: () => void;
 	} = $props();
 
@@ -46,6 +53,10 @@
 	let shownSrc = '';
 	let swapGen = 0;
 	let fadeTimer = 0;
+	/** Clip being loaded into the idle layer for a swap that has not been promoted yet. */
+	let loadingSrc = '';
+	/** True while a crossfade's outgoing layer is still visible. */
+	let fading = false;
 	/** URL last assigned to each layer, so a prefetched clip is not reloaded. */
 	const assigned = new WeakMap<HTMLVideoElement, string>();
 
@@ -150,9 +161,14 @@
 
 		try {
 			video.pause();
-			if (Math.abs(video.currentTime) > 0.02) {
-				video.currentTime = 0;
-				await waitEvent(video, 'seeked', 250);
+			// Land on the frame the scroll maps to (the last frame when stepping back into a
+			// scene) before the crossfade, so the incoming clip never flashes its first frame.
+			const duration = video.duration;
+			const wanted = untrack(() => startTimeFor?.(url, duration) ?? 0);
+			const target = Number.isFinite(wanted) ? Math.max(0, wanted) : 0;
+			if (Math.abs(video.currentTime - target) > 0.02) {
+				video.currentTime = target;
+				await waitEvent(video, 'seeked', 400);
 			} else if (video.readyState < 2) {
 				await waitEvent(video, 'loadeddata', 250);
 			}
@@ -170,6 +186,7 @@
 		const incomingIsA = incoming === layerA;
 
 		shownSrc = url;
+		loadingSrc = '';
 		videoEl = incoming;
 		ready = true;
 		loadProgress = 1;
@@ -188,9 +205,11 @@
 				}
 			}
 			swapping = false;
+			fading = false;
 			return;
 		}
 
+		fading = true;
 		if (incomingIsA) {
 			opacityA = 0;
 			opacityB = 1;
@@ -220,7 +239,8 @@
 				}
 			}
 			// Outgoing layer is now at opacity 0 — safe to reuse it for the next prefetch.
-			swapping = false;
+			fading = false;
+			if (!loadingSrc) swapping = false;
 		}, CROSSFADE_MS + 40);
 	}
 
@@ -230,7 +250,16 @@
 		const a = layerA;
 		const b = layerB;
 		if (!url || !a || !b) return;
-		if (url === shownSrc && videoEl) return;
+		if (url === shownSrc && videoEl) {
+			// Asked for the clip already showing while another was loading (e.g. back across a
+			// boundary, then straight forward again): drop that load so it cannot promote late.
+			if (loadingSrc) {
+				swapGen += 1;
+				loadingSrc = '';
+				swapping = fading;
+			}
+			return;
+		}
 
 		const gen = ++swapGen;
 		const first = !shownSrc;
@@ -239,6 +268,7 @@
 
 		if (first) ready = false;
 		swapping = true;
+		loadingSrc = url;
 
 		void (async () => {
 			const ok = await loadInto(incoming, url, gen, trackProgress);
