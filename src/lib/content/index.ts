@@ -61,8 +61,14 @@ export type JourneyContent = {
 		hero: string;
 		/** Bundled asset paths for scenes 1–6 plus the shared payoff clip. */
 		scenes: string[];
+		/**
+		 * Where the subject sits in each clip, for cropping on portrait screens:
+		 * `"time:x, …"` stops, time as a 0–1 fraction of the clip, x as % of frame width.
+		 * `scenes` runs parallel to `clips.scenes`. Missing entries stay centred.
+		 */
+		portraitFocus?: { hero?: string; scenes?: string[] };
 	};
-	ui: Omit<(typeof raw)['journey']['ui'], 'beatLabels'> & { beatLabels: Record<BeatId, string> };
+	ui:Omit<(typeof raw)['journey']['ui'], 'beatLabels'> & { beatLabels: Record<BeatId, string> };
 	hero: {
 		strapline: string;
 		titleLines: string[];

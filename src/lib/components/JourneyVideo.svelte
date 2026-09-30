@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { journey } from '$lib/content';
+	import { focusAt, objectPositionX, parseFocus, type FocusStop } from '$lib/journey/portrait-focus';
 
 	const MISSING = journey.ui.footageMissing;
 
@@ -12,6 +13,7 @@
 		missing = $bindable(false),
 		ready = $bindable(false),
 		loadProgress = $bindable(0),
+		focusFor,
 		onReady
 	}: {
 		src?: string;
@@ -21,6 +23,8 @@
 		missing?: boolean;
 		ready?: boolean;
 		loadProgress?: number;
+		/** Portrait focus stops for a clip URL (see portrait-focus.ts); centred when absent. */
+		focusFor?: (src: string) => string;
 		onReady?: () => void;
 	} = $props();
 
@@ -261,6 +265,77 @@
 		assignSrc(idle, url);
 	});
 
+	// Portrait reframing: on screens taller than wide, pan each layer's crop to follow the
+	// subject of the clip it holds, read off its own playhead so scrubbing and playback both
+	// move it. Written straight to the element each frame; no reactive state is involved.
+	const focusCache = new WeakMap<HTMLVideoElement, { url: string; stops: FocusStop[] }>();
+	const focusDebug =
+		import.meta.env.DEV &&
+		typeof window !== 'undefined' &&
+		new URLSearchParams(window.location.search).has('focusDebug');
+	let debugLine = $state<{ left: number; label: string } | null>(null);
+
+	function stopsFor(layer: HTMLVideoElement) {
+		const url = assigned.get(layer) ?? '';
+		const cached = focusCache.get(layer);
+		if (cached && cached.url === url) return cached.stops;
+		const stops = parseFocus(url && focusFor ? focusFor(url) : '');
+		focusCache.set(layer, { url, stops });
+		return stops;
+	}
+
+	$effect(() => {
+		const a = layerA;
+		const b = layerB;
+		if (!a || !b) return;
+		const portrait = window.matchMedia('(max-aspect-ratio: 1/1)');
+		let raf = 0;
+
+		const reframe = () => {
+			for (const layer of [a, b]) {
+				if (!layer.videoWidth || !layer.duration || Number(layer.style.opacity || 0) <= 0) continue;
+				const t = Math.min(1, Math.max(0, layer.currentTime / layer.duration));
+				const focus = focusAt(stopsFor(layer), t);
+				const x = objectPositionX(
+					focus,
+					window.innerWidth,
+					window.innerHeight,
+					layer.videoWidth,
+					layer.videoHeight
+				);
+				const value = `${x.toFixed(1)}% 50%`;
+				if (layer.style.objectPosition !== value) layer.style.objectPosition = value;
+				if (focusDebug && layer === videoEl) {
+					// Where the subject centre lands on screen, as % of viewport width.
+					const scale = window.innerHeight / layer.videoHeight;
+					const overflow = layer.videoWidth * scale - window.innerWidth;
+					const left = ((focus / 100) * layer.videoWidth * scale - (x / 100) * overflow) / window.innerWidth;
+					const clip = (assigned.get(layer) ?? '').split('/').pop()?.split('?')[0] ?? '';
+					debugLine = { left: left * 100, label: `${clip} · t ${t.toFixed(2)} · x ${focus.toFixed(0)}` };
+				}
+			}
+			raf = requestAnimationFrame(reframe);
+		};
+
+		const sync = () => {
+			cancelAnimationFrame(raf);
+			if (portrait.matches) {
+				raf = requestAnimationFrame(reframe);
+			} else {
+				a.style.objectPosition = '';
+				b.style.objectPosition = '';
+				debugLine = null;
+			}
+		};
+
+		sync();
+		portrait.addEventListener('change', sync);
+		return () => {
+			cancelAnimationFrame(raf);
+			portrait.removeEventListener('change', sync);
+		};
+	});
+
 	/** Only flag "missing" for the clip we are actually trying to show, not a prefetch. */
 	function onLayerError(layer: HTMLVideoElement | null) {
 		if (layer && assigned.get(layer) === src) missing = true;
@@ -294,6 +369,10 @@
 		autoplay={false}
 		onerror={() => onLayerError(layerB)}
 	></video>
+	{#if focusDebug && debugLine}
+		<div class="focus-debug-line" style:left="{debugLine.left}%"></div>
+		<div class="focus-debug-label">{debugLine.label}</div>
+	{/if}
 	{#if missing}
 		<div class="absolute inset-0 flex items-center justify-center p-6 text-center">
 			<div
@@ -323,6 +402,27 @@
 
 	.journey-video-layer.is-top {
 		z-index: 1;
+	}
+
+	.focus-debug-line {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		z-index: 2;
+		width: 2px;
+		margin-left: -1px;
+		background: #0f0;
+	}
+
+	.focus-debug-label {
+		position: absolute;
+		left: 8px;
+		bottom: 8px;
+		z-index: 2;
+		padding: 2px 6px;
+		background: rgba(0, 0, 0, 0.7);
+		color: #0f0;
+		font: 11px/1.4 monospace;
 	}
 
 	@media (prefers-reduced-motion: reduce) {

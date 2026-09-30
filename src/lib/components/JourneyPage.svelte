@@ -28,7 +28,7 @@
 		type BeatDef,
 		type BeatId
 	} from '$lib/journey/beats';
-	import { getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
+	import { focusForSrc, getTheme, nextSceneSrcAfterBeat, sceneSrcForBeat } from '$lib/journey/videos';
 	import { content, sceneClassName, sceneShowMe } from '$lib/journey/content';
 	import { site } from '$lib/content';
 
@@ -792,6 +792,7 @@
 		bind:loadProgress
 		src={clipSrc}
 		nextSrc={nextClipSrc}
+		focusFor={(url) => focusForSrc(theme, url)}
 		onReady={handleClipReady}
 	/>
 {/if}

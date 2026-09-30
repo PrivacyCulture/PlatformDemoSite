@@ -17,6 +17,10 @@ export type JourneyTheme = {
 	 * Mountains: shot-2…shot-8. Hero uses `hero` (`start.mp4`), not this list.
 	 */
 	scenes: string[];
+	/** Portrait focus stops for `hero` (see portrait-focus.ts). */
+	heroFocus: string;
+	/** Portrait focus stops, parallel to `scenes`. */
+	sceneFocus: string[];
 };
 
 export const JOURNEY_THEMES: JourneyTheme[] = live(
@@ -25,7 +29,9 @@ export const JOURNEY_THEMES: JourneyTheme[] = live(
 			id: journey.clips.themeId,
 			label: journey.clips.themeLabel,
 			hero: asset(journey.clips.hero),
-			scenes: journey.clips.scenes.map(asset)
+			scenes: journey.clips.scenes.map(asset),
+			heroFocus: journey.clips.portraitFocus?.hero ?? '',
+			sceneFocus: journey.clips.portraitFocus?.scenes ?? []
 		}
 	],
 	'array'
@@ -62,6 +68,13 @@ export function sceneSrcForBeat(theme: JourneyTheme, beatId: BeatId): string | n
 	if (beatId === 'beat-hero') return theme.hero;
 	const index = BEAT_SCENE_INDEX[beatId] ?? 0;
 	return theme.scenes[Math.min(index, theme.scenes.length - 1)] ?? null;
+}
+
+/** Portrait focus stops for the clip at `src`, or '' (centred) for an unknown clip. */
+export function focusForSrc(theme: JourneyTheme, src: string): string {
+	if (src === theme.hero) return theme.heroFocus;
+	const index = theme.scenes.indexOf(src);
+	return index < 0 ? '' : (theme.sceneFocus[index] ?? '');
 }
 
 /** The clip that plays after `beatId`, so it can be warmed in the idle video layer. */
