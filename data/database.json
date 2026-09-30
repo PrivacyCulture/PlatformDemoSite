@@ -48,7 +48,7 @@
 		"legal": {
 			"ariaLabel": "Legal",
 			"links": [
-				{ "label": "Privacy Policy", "href": "https://www.privacyculture.com/privacy-policy" },
+				{ "label": "Privacy Policy", "href": "/privacy-policy" },
 				{ "label": "Cookie Notice", "href": "/cookie-notice" },
 				{ "label": "Terms of Use", "href": "https://www.privacyculture.com/terms-of-use" },
 				{ "label": "Trust & Security", "href": "/trust" }
@@ -681,11 +681,11 @@
 			"dateline": "Privacy Culture Ltd · Last updated September 2026",
 			"contentsLabel": "On this page",
 			"intro": [
-				"Our Privacy Notice explains our principles when it comes to the collection, processing and storage of your information. This website uses cookies to distinguish you from other visitors. This helps us give you a good experience when you browse the site and also allows us to improve it.",
+				"Our Privacy Policy explains our principles when it comes to the collection, processing and storage of your information. This website uses cookies to distinguish you from other visitors. This helps us give you a good experience when you browse the site and also allows us to improve it.",
 				"This Cookie Notice explains what cookies are, which ones this website uses, what they are used for and the options you have to control them. It covers platform.privacyculture.com. Our main website, www.privacyculture.com, has its own Cookie Notice."
 			],
 			"introLinks": [
-				{ "label": "Read our Privacy Notice", "href": "https://www.privacyculture.com/privacy-policy" },
+				{ "label": "Read our Privacy Policy", "href": "/privacy-policy" },
 				{ "label": "www.privacyculture.com Cookie Notice", "href": "https://www.privacyculture.com/cookie-notice" }
 			],
 			"sections": [
@@ -837,7 +837,7 @@
 							"type": "HTML session storage",
 							"purpose": "Remembers your place on a page so the back button returns you to where you were.",
 							"duration": "Session",
-							"infoHref": "https://www.privacyculture.com/privacy-policy"
+							"infoHref": "/privacy-policy"
 						}
 					]
 				},
@@ -915,7 +915,7 @@
 							"type": "HTML session storage",
 							"purpose": "Remembers the campaign link (UTM tags) that brought you to the site, so that if you book a demo we know which campaign it came from.",
 							"duration": "Session",
-							"infoHref": "https://www.privacyculture.com/privacy-policy"
+							"infoHref": "/privacy-policy"
 						}
 					]
 				},
@@ -967,6 +967,361 @@
 				}
 			],
 			"consentButtonLabel": "Change your cookie settings",
+			"printLabel": "Print or save as PDF"
+		},
+		"privacyPolicy": {
+			"meta": {
+				"title": "Privacy Policy",
+				"description": "How Privacy Culture collects, uses, stores and protects the personal information of visitors to the Privacy Culture Platform website, and the rights you have over it."
+			},
+			"eyebrow": "Legal",
+			"title": "Privacy Policy",
+			"dateline": "Privacy Culture Ltd · Last updated September 2026",
+			"contentsLabel": "On this page",
+			"intro": [
+				"Privacy Culture Limited (“Privacy Culture”, “we”) is committed to earning your confidence and trust by complying with data protection law and following the practices that protect your privacy and safeguard your personal information.",
+				"This Privacy Policy explains how we collect, use, store, share and protect your personal information when you visit this website, platform.privacyculture.com, book a demo of the Privacy Culture Platform or otherwise get in touch with us through it. We are registered with the UK Information Commissioner’s Office under registration number ZA551135.",
+				"Personal data that our customers hold inside the Privacy Culture Platform itself is processed on their behalf under our Data Processing Addendum, not under this policy. Our main website, www.privacyculture.com, has its own Privacy Policy. Please also read our Cookie Notice, which lists the cookies this website sets."
+			],
+			"introLinks": [
+				{
+					"label": "Cookie Notice",
+					"href": "/cookie-notice"
+				},
+				{
+					"label": "Standard DPA",
+					"href": "/dpa"
+				},
+				{
+					"label": "www.privacyculture.com Privacy Policy",
+					"href": "https://www.privacyculture.com/privacy-policy"
+				}
+			],
+			"sections": [
+				{
+					"id": "controller",
+					"title": "Who is responsible for your personal information?",
+					"paragraphs": [
+						"Privacy Culture Limited is the controller of the personal information collected through this website. Our details are below. Questions about this policy can go to our Data Protection Officer."
+					],
+					"items": [
+						{
+							"term": "Name",
+							"body": "Privacy Culture Limited"
+						},
+						{
+							"term": "Address",
+							"body": "Bouverie House, 154-160 Fleet Street, London EC4A 2DQ"
+						},
+						{
+							"term": "Email",
+							"body": "DPO@privacyculture.com (Data Protection Officer) or hello@privacyculture.com"
+						},
+						{
+							"term": "Phone",
+							"body": "+44 (0) 20 7112 9360"
+						},
+						{
+							"term": "ICO registration number",
+							"body": "ZA551135"
+						}
+					],
+					"links": [
+						{
+							"label": "DPO@privacyculture.com",
+							"href": "mailto:DPO@privacyculture.com"
+						},
+						{
+							"label": "hello@privacyculture.com",
+							"href": "mailto:hello@privacyculture.com"
+						}
+					]
+				},
+				{
+					"id": "what-we-collect",
+					"title": "What personal information do we collect?",
+					"paragraphs": [
+						"The information we collect through this website may include:"
+					],
+					"items": [
+						{
+							"term": "Identity and contact details",
+							"body": "Your name, work email address, company, job role and, if you choose to give it, your telephone number, as entered when you book a demo or contact us."
+						},
+						{
+							"term": "Details about your organisation and needs",
+							"body": "The headcount band of your organisation, the tools you currently use for privacy work, your rough timing, whether you are working towards ISO 27701 or a similar standard, and what you would like to improve. These help us make a demo relevant to you."
+						},
+						{
+							"term": "Device and usage information",
+							"body": "Your IP address, browser and device type, the pages you visit, how you move between them and the campaign link that brought you here. Most of this is collected through cookies and similar technologies, and only with your consent where the law requires it. Our Cookie Notice lists each one."
+						},
+						{
+							"term": "Correspondence",
+							"body": "What you tell us in the emails, calls and meetings that follow from your enquiry."
+						},
+						{
+							"term": "Special category data",
+							"body": "We do not ask for special category data, such as health information, through this website. If you include it in a message to us, we will handle it with particular care and only as the law allows."
+						}
+					],
+					"links": [
+						{
+							"label": "Cookie Notice",
+							"href": "/cookie-notice"
+						}
+					]
+				},
+				{
+					"id": "how-we-collect",
+					"title": "How do we collect your personal information?",
+					"paragraphs": [
+						"We collect information directly from you when you:"
+					],
+					"items": [
+						{
+							"term": "Book a demo",
+							"body": "Fill in the booking form and choose a meeting time, and during the demo itself."
+						},
+						{
+							"term": "Get in touch",
+							"body": "Email, call or write to us to find out more about the Privacy Culture Platform or our services."
+						},
+						{
+							"term": "Browse the site",
+							"body": "Visit and use this website, through the cookies and similar technologies described in our Cookie Notice."
+						},
+						{
+							"term": "Follow a campaign link",
+							"body": "Arrive from an advert, email or post that carries campaign tags, which tell us which campaign brought you here."
+						},
+						{
+							"term": "Other sources",
+							"body": "We may also receive information from our marketing and analytics providers, from public sources such as your company website or professional networking profile, from colleagues who introduce you, and from event organisers where you have agreed to your details being shared."
+						}
+					],
+					"links": []
+				},
+				{
+					"id": "why-we-use",
+					"title": "Why do we use your personal information, and on what basis?",
+					"paragraphs": [
+						"We use your personal information to respond to your enquiries, to arrange and run the demo you have booked, to follow up with you afterwards, and to enter into and perform a contract with your organisation if it decides to use the Privacy Culture Platform.",
+						"We also process personal information for our legitimate business interests: to understand how visitors use this website and improve it, to measure whether our marketing campaigns lead to demo bookings, to keep our systems secure and prevent fraud, to send you information we think will interest you where the law allows, and to produce statistics about our audience. Statistics are aggregated or de-identified so that they cannot identify you.",
+						"Whenever we process your information for these purposes we take account of your rights and interests. Our lawful basis for each use is one of the following:"
+					],
+					"items": [
+						{
+							"term": "Consent",
+							"body": "You have given us clear permission, for example by accepting statistics or marketing cookies in the cookie banner or asking to receive marketing emails. You can withdraw consent at any time."
+						},
+						{
+							"term": "Legitimate interests",
+							"body": "The processing benefits you, Privacy Culture or our affiliates, such as answering your enquiry, improving this website or protecting it, and does not put anyone at undue risk. You can object to processing on this basis."
+						},
+						{
+							"term": "Contract",
+							"body": "The processing is needed to enter into or carry out a contract with you or your organisation, including providing access to the Privacy Culture Platform."
+						},
+						{
+							"term": "Legal obligation",
+							"body": "We are required to process the information to comply with the law."
+						}
+					],
+					"links": []
+				},
+				{
+					"id": "marketing",
+					"title": "Your marketing and contact preferences",
+					"paragraphs": [
+						"We respect your preferences about hearing from us. We may contact you with information about the Privacy Culture Platform, our services, events, courses and other resources that we think will interest you.",
+						"Email marketing: we will ask for your permission before sending you marketing emails, unless you are a business contact we may lawfully email about similar services. Every marketing email we send carries an ‘Unsubscribe’ link.",
+						"Telephone marketing: we may call to follow up on a demo request or to tell you about our services. If your number is registered with the Telephone Preference Service (TPS) or the Corporate Telephone Preference Service (CTPS), we will only call you for marketing purposes with your express permission.",
+						"If you tell us that you no longer want direct marketing from us, we will act on that and keep a record of your request so that we do not contact you again with marketing content. You can do this with the ‘Unsubscribe’ link or by using the contact details in this policy."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "your-rights",
+					"title": "Your data protection rights and choices",
+					"paragraphs": [
+						"Under data protection law you have the following rights:"
+					],
+					"items": [
+						{
+							"term": "Access",
+							"body": "You can ask for access to, and a copy of, the personal information we hold about you."
+						},
+						{
+							"term": "Rectification",
+							"body": "You can ask us to correct personal information you think is inaccurate or incomplete. Please tell us so that we can keep your information up to date."
+						},
+						{
+							"term": "Erasure",
+							"body": "You can ask us to delete the personal information we hold about you. We may need to keep a minimal record so that we can honour your request to be excluded from processing."
+						},
+						{
+							"term": "Restriction",
+							"body": "You can ask us to limit how we process your personal information."
+						},
+						{
+							"term": "Data portability",
+							"body": "You can ask for your personal information in a structured, machine-readable format."
+						},
+						{
+							"term": "Object",
+							"body": "You can object to processing that is based on our legitimate interests, and to direct marketing at any time."
+						},
+						{
+							"term": "Automated decision-making",
+							"body": "You have the right not to be subject to a decision based solely on automated processing. We do not make such decisions through this website."
+						},
+						{
+							"term": "Withdraw consent",
+							"body": "Where we rely on your consent, you can withdraw it at any time. For cookies, use the cookie settings on our Cookie Notice; for anything else, contact us."
+						},
+						{
+							"term": "Exercising your rights",
+							"body": "Send your request to the contact details in this policy. We will respond within one month, or tell you if we need longer. There is normally no fee. If you are not satisfied with our response, you may complain to the Information Commissioner’s Office (ICO)."
+						}
+					],
+					"links": [
+						{
+							"label": "Make a complaint to the ICO",
+							"href": "https://ico.org.uk/make-a-complaint/"
+						},
+						{
+							"label": "Your information rights, ico.org.uk",
+							"href": "https://ico.org.uk/for-the-public/"
+						}
+					]
+				},
+				{
+					"id": "retention",
+					"title": "How long do we keep your personal data?",
+					"paragraphs": [
+						"How long we keep your personal data depends on the type of information and what it is used for. We keep it only for as long as is necessary to provide what you have asked for, to enter into or perform a contract, to meet our legal obligations, to resolve disputes and to enforce our agreements.",
+						"Details from a demo enquiry that does not lead to a customer relationship are kept while the conversation is active and then reviewed for deletion. Analytics data is kept for the periods set out in our Cookie Notice. When personal data is no longer needed it is securely deleted or anonymised. If you would like a copy of our Data Retention Policy, or have any questions about how your data is stored, contact us at DPO@privacyculture.com."
+					],
+					"items": [],
+					"links": [
+						{
+							"label": "DPO@privacyculture.com",
+							"href": "mailto:DPO@privacyculture.com"
+						}
+					]
+				},
+				{
+					"id": "sharing",
+					"title": "Do we share your personal data?",
+					"paragraphs": [
+						"Where necessary, and in limited circumstances, we may share your personal information with third parties to the extent permitted or required by law, including to:"
+					],
+					"items": [
+						{
+							"term": "Meet our legal obligations",
+							"body": "Including responding to lawful requests from regulators, courts and law enforcement."
+						},
+						{
+							"term": "Cooperate with investigations",
+							"body": "Provide reasonable voluntary cooperation with a relevant police or regulatory investigation, or with ongoing or prospective legal proceedings."
+						},
+						{
+							"term": "Protect our rights",
+							"body": "Establish, exercise or defend our legal rights, including sharing information for fraud prevention."
+						},
+						{
+							"term": "Service providers",
+							"body": "Specialist providers that help us run this website and our business, acting on our instructions under contract. For this website these include HubSpot (our CRM and meeting booking), Google (analytics and advertising measurement), Hotjar (understanding how visitors use the site), Cookiebot (cookie consent) and our hosting and IT providers. Each is bound to protect your data and to use it only for the agreed service."
+						},
+						{
+							"term": "Our CRM",
+							"body": "Your details may be held in one or more customer relationship management databases that bring together your dealings with us across our services, so that we have accurate records and can understand how we might help you."
+						},
+						{
+							"term": "Advisers and stakeholders",
+							"body": "Where needed for reasonable management, analysis, planning and decision making, including decisions about the services we offer."
+						}
+					],
+					"links": []
+				},
+				{
+					"id": "international-transfers",
+					"title": "International transfers",
+					"paragraphs": [
+						"Some of the service providers named above are based, or store data, outside the United Kingdom and the European Economic Area, for example in the United States. Where your personal data is transferred outside the UK or the EEA, by us or by a provider acting on our behalf, we put in place the safeguards the law requires, such as the UK International Data Transfer Agreement or Addendum, the EU Standard Contractual Clauses or an adequacy decision, together with the organisational and technical measures needed to protect it."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "security",
+					"title": "Security",
+					"paragraphs": [
+						"We take appropriate technical and organisational measures to protect your personal information, in line with our legal obligations. These measures reduce the risk of loss, misuse, unauthorised access, disclosure and alteration.",
+						"We require every third party we work with to respect the security of your personal data and to treat it in accordance with the law. We do not allow our service providers to use your personal data for their own purposes, and only permit them to process it for specified purposes and in accordance with our instructions."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "cookies",
+					"title": "Cookies",
+					"paragraphs": [
+						"This website uses cookies and similar technologies to remember your choices, to understand how the site is used and to measure our marketing. Statistics and marketing cookies are only set with your consent, which you can change at any time. Our Cookie Notice lists each cookie, who sets it, what it does and how long it lasts."
+					],
+					"items": [],
+					"links": [
+						{
+							"label": "Read our Cookie Notice",
+							"href": "/cookie-notice"
+						}
+					]
+				},
+				{
+					"id": "changes",
+					"title": "Changes to this Privacy Policy",
+					"paragraphs": [
+						"We keep this Privacy Policy under regular review to reflect changes in the law and in our own practices. Please check this page from time to time. If we make significant changes to the way we process your personal data, we will show a prominent notice on this website."
+					],
+					"items": [],
+					"links": []
+				},
+				{
+					"id": "complaints",
+					"title": "Complaints and queries",
+					"paragraphs": [
+						"We do our best to meet the highest standards when handling personal information, and we take any complaint about it seriously. If you think our collection, use or storage of your personal information is unfair, misleading or inappropriate, please tell us.",
+						"We also welcome suggestions for improving how we work. Send any correspondence to the contact details in this policy. If you are not satisfied with our response, you may report your concern to the Information Commissioner’s Office (ICO)."
+					],
+					"items": [],
+					"links": [
+						{
+							"label": "Information Commissioner’s Office",
+							"href": "https://ico.org.uk/"
+						}
+					]
+				},
+				{
+					"id": "contact",
+					"title": "How to contact us",
+					"paragraphs": [
+						"Our principal address is Bouverie House, 154-160 Fleet Street, London EC4A 2DQ. You can email our Data Protection Officer at DPO@privacyculture.com or write to hello@privacyculture.com. You can also call us on +44 (0) 20 7112 9360."
+					],
+					"items": [],
+					"links": [
+						{
+							"label": "DPO@privacyculture.com",
+							"href": "mailto:DPO@privacyculture.com"
+						},
+						{
+							"label": "hello@privacyculture.com",
+							"href": "mailto:hello@privacyculture.com"
+						}
+					]
+				}
+			],
 			"printLabel": "Print or save as PDF"
 		},
 		"notFound": {
