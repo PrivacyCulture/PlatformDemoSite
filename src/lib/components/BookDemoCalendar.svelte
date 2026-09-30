@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
 	import type { DemoFormValues } from '$lib/demo/fields';
 	import { readStoredUtms } from '$lib/demo/utm';
 	import { demoForm } from '$lib/content';
@@ -73,6 +74,12 @@
 			: C.defaultTimezone
 	);
 	let monthOffset = $state(0);
+	// The first window worth showing. The notice period can empty the current window entirely
+	// (two days' notice on the 30th leaves nothing this month), so the form walks forward to the
+	// first window with a free slot and treats that as the start: Earlier stops there rather
+	// than leading back to a blank page.
+	const MAX_OFFSET = 3;
+	let firstOffset = $state(0);
 	let durationMs = $state(1_800_000);
 	let slots = $state<Slot[]>([]);
 	let loading = $state(false);
@@ -165,6 +172,13 @@
 				}
 				durationMs = data.durationMs ?? 1_800_000;
 				const nextSlots = data.slots ?? [];
+				// Still looking for the first window with anything in it: move on rather than
+				// show an empty one. Stays in the loading state, so there is no flash of "nothing free".
+				if (!nextSlots.length && offset === untrack(() => firstOffset) && offset < MAX_OFFSET) {
+					firstOffset = offset + 1;
+					monthOffset = offset + 1;
+					return;
+				}
 				slots = nextSlots;
 				if (nextSlots.length) {
 					const keys = new Set(nextSlots.map((s) => dayKey(s.start)));
@@ -181,7 +195,7 @@
 					selectedDayKey = null;
 				}
 			} finally {
-				if (!cancelled) loading = false;
+				if (!cancelled && untrack(() => monthOffset) === offset) loading = false;
 			}
 		})();
 
@@ -235,7 +249,15 @@
 	<div class="flex flex-wrap items-end justify-between gap-3">
 		<label class={labelCls}>
 			{C.timezoneLabel}
-			<select class={selectCls} bind:value={timezone}>
+			<select
+				class={selectCls}
+				bind:value={timezone}
+				onchange={() => {
+					// A new timezone moves the day boundaries, so look for the first free window again.
+					firstOffset = 0;
+					monthOffset = 0;
+				}}
+			>
 				{#each tzOptions as tz (tz)}
 					<option value={tz}>{tz.replace(/_/g, ' ')}</option>
 				{/each}
@@ -245,7 +267,7 @@
 			<button
 				type="button"
 				class={ghostBtn}
-				disabled={monthOffset <= 0 || loading}
+				disabled={monthOffset <= firstOffset || loading}
 				onclick={() => (monthOffset -= 1)}
 			>
 				{C.earlier}
@@ -253,7 +275,7 @@
 			<button
 				type="button"
 				class={ghostBtn}
-				disabled={monthOffset >= 3 || loading}
+				disabled={monthOffset >= MAX_OFFSET || loading}
 				onclick={() => (monthOffset += 1)}
 			>
 				{C.later}

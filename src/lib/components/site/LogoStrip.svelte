@@ -10,7 +10,9 @@
 		class="flex flex-wrap items-center gap-x-8 gap-y-4 sm:gap-x-10 lg:gap-x-14"
 		aria-label={site.trusted.ariaLabel}
 	>
-		{#each site.trusted.names as name (name)}
+		<!-- Keyed by position: the CMS can copy an entry, and a duplicate key would throw during
+		     hydration and take the client router down with it. -->
+		{#each site.trusted.names as name, i (i)}
 			<li
 				class="text-[13px] font-semibold tracking-[0.14em] text-ink/40 uppercase sm:text-[14px] sm:tracking-[0.18em]"
 			>

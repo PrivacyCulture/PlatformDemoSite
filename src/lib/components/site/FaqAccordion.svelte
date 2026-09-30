@@ -7,19 +7,24 @@
 	let {
 		items = faq.items,
 		headingLevel = 'h3',
-		idPrefix = 'faq'
+		idPrefix = 'faq',
+		tone = 'light'
 	}: {
 		items?: { q: string; a: string }[];
 		/** h2 on the standalone /faq page, h3 when nested under a section heading. */
 		headingLevel?: 'h2' | 'h3';
 		/** Keeps panel ids unique when two accordions share a page. */
 		idPrefix?: string;
+		/** 'dark' on the homepage's ink glass: bone text, light-blue accents. */
+		tone?: 'light' | 'dark';
 	} = $props();
+
+	const dark = $derived(tone === 'dark');
 
 	let open = $state(0);
 </script>
 
-<div class="divide-y divide-ink/10 border-y border-ink/10">
+<div class="divide-y border-y {dark ? 'divide-bone/15 border-bone/15' : 'divide-ink/10 border-ink/10'}">
 	{#each items as item, i (item.q)}
 		{@const expanded = open === i}
 		<div>
@@ -33,13 +38,13 @@
 					onclick={() => (open = expanded ? -1 : i)}
 				>
 					<span
-						class="text-[1.05rem] leading-snug font-bold tracking-tight text-heading transition-colors duration-200 group-hover:text-lens"
+						class="text-[1.05rem] leading-snug font-bold tracking-tight transition-colors duration-200 {dark ? 'text-bone group-hover:text-lens' : 'text-heading group-hover:text-lens'}"
 					>
 						{item.q}
 					</span>
 					<svg
 						viewBox="0 0 24 24"
-						class="mt-1.5 h-4 w-4 shrink-0 text-gold transition-transform duration-200 {expanded
+						class="mt-1.5 h-4 w-4 shrink-0 {dark ? 'text-lens' : 'text-gold'} transition-transform duration-200 {expanded
 							? 'rotate-180'
 							: ''}"
 						fill="none"
@@ -64,7 +69,7 @@
 					aria-labelledby="{idPrefix}-trigger-{i}"
 					inert={!expanded}
 				>
-					<p class="rt pb-5 text-[15px] leading-relaxed font-light text-ink/70">{@html rich(item.a)}</p>
+					<p class="rt pb-5 text-[15px] leading-relaxed font-light {dark ? 'text-bone/75' : 'text-ink/70'}">{@html rich(item.a)}</p>
 				</div>
 			</div>
 		</div>
