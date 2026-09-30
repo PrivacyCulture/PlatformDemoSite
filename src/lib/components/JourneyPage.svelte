@@ -6,6 +6,8 @@
 	import JourneyScene from '$lib/components/JourneyScene.svelte';
 	import JourneySceneIndex from '$lib/components/JourneySceneIndex.svelte';
 	import JourneyLegal from '$lib/components/JourneyLegal.svelte';
+	import JourneyFaq from '$lib/components/JourneyFaq.svelte';
+	import { faqDrawerCopy } from '$lib/site/faq-drawer';
 	import JourneyVideo from '$lib/components/JourneyVideo.svelte';
 	import ShowMeFlash from '$lib/components/ShowMeFlash.svelte';
 	import {
@@ -43,6 +45,8 @@
 	let scrollP = $state(0);
 	let activeBeats = $state(initialActiveBeats());
 	let reduced = $state(false);
+	// The FAQ sheet's words and on/off switch, edited in the CMS (Globals → FAQ drawer).
+	const faqDrawer = $derived(faqDrawerCopy((site as unknown as { faqDrawer?: unknown }).faqDrawer));
 	let loading = $state(true);
 	let loadProgress = $state(0);
 	let mounted = $state(false);
@@ -974,3 +978,8 @@
 {/if}
 
 <div id="scroll-space" aria-hidden="true"></div>
+
+<!-- Outside the loading gate, so the questions and answers are in the server-rendered page. -->
+{#if faqDrawer.show}
+	<JourneyFaq labels={faqDrawer} />
+{/if}
