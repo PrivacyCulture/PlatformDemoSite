@@ -8,7 +8,7 @@ export const FAQ_DRAWER_DEFAULT = {
 	show: 'on',
 	openLabel: 'Open frequently asked questions',
 	closeLabel: 'Close frequently asked questions',
-	allLink: 'See every question'
+	allLink: 'Find out more'
 } as const;
 
 export type FaqDrawerLabels = Partial<Record<'openLabel' | 'closeLabel' | 'allLink', string>>;
