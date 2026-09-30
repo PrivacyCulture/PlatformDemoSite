@@ -2,6 +2,8 @@
 	import { NAV_JUMPS } from '$lib/journey/beats';
 	import type { SiteContent } from '$lib/content';
 	import { site } from '$lib/content';
+	import { fade, fly } from 'svelte/transition';
+	import { cubicOut } from 'svelte/easing';
 
 	const logo = site.logos.colourWhite;
 
@@ -18,6 +20,41 @@
 	} = $props();
 
 	let menuOpen = $state(false);
+	let headerHeight = $state(0);
+	let toggle = $state<HTMLButtonElement>();
+	let sheet = $state<HTMLElement>();
+	const reduceMotion =
+		typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+	const motion = reduceMotion ? 0 : 1;
+
+	function close(returnFocus = false) {
+		menuOpen = false;
+		if (returnFocus) toggle?.focus();
+	}
+
+	// While the sheet is open the journey behind it holds still, and focus starts on the first link.
+	// journey-menu-open lifts the journey's layers above the FAQ trigger so the scrim covers it too.
+	$effect(() => {
+		if (!menuOpen) return;
+		const root = document.documentElement;
+		root.classList.add('journey-menu-open');
+		const hold = (e: Event) => {
+			if (!sheet?.contains(e.target as Node)) e.preventDefault();
+		};
+		const options = { passive: false } as const;
+		document.addEventListener('touchmove', hold, options);
+		document.addEventListener('wheel', hold, options);
+		sheet?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
+		const desktop = matchMedia('(min-width: 64rem)');
+		const onDesktop = () => desktop.matches && close();
+		desktop.addEventListener('change', onDesktop);
+		return () => {
+			root.classList.remove('journey-menu-open');
+			document.removeEventListener('touchmove', hold);
+			document.removeEventListener('wheel', hold);
+			desktop.removeEventListener('change', onDesktop);
+		};
+	});
 
 	function handleLink(link: SiteContent['site']['nav']['links'][number]) {
 		if (link.jump === 'platform') onJump(jumps.platform);
@@ -26,9 +63,22 @@
 	}
 </script>
 
+<svelte:window
+	onkeydown={(e) => {
+		if (menuOpen && e.key === 'Escape') close(true);
+	}}
+/>
+
 <header
-	class="fixed inset-x-0 top-0 z-40 flex items-center justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5"
+	bind:clientHeight={headerHeight}
+	class="fixed inset-x-0 top-0 flex items-center justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5 {menuOpen ? 'z-[48]' : 'z-40'}"
 >
+	<div
+		class="pointer-events-none absolute inset-0 -z-10 border-b border-bone/10 bg-ink/90 backdrop-blur-lg transition-opacity duration-200 lg:hidden {menuOpen
+			? 'opacity-100'
+			: 'opacity-0'}"
+		aria-hidden="true"
+	></div>
 	<a
 		href="/"
 		class="min-w-0 shrink no-underline transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
@@ -88,61 +138,125 @@
 
 			<button
 				type="button"
-				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-bone/15 text-bone transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden"
+				bind:this={toggle}
+				class="inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border text-bone transition-colors hover:border-lens/40 hover:text-lens focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens lg:hidden {menuOpen
+					? 'border-bone/20 bg-white/10'
+					: 'border-bone/15 bg-ink/20 backdrop-blur-sm'}"
 				aria-expanded={menuOpen}
 				aria-controls="journey-mobile-nav"
 				onclick={() => (menuOpen = !menuOpen)}
 			>
 				<span class="sr-only">{menuOpen ? copy.closeMenu : copy.openMenu}</span>
-				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-					{#if menuOpen}
-						<path d="M4 4l10 10M14 4L4 14" stroke="currentColor" stroke-width="1.6" />
-					{:else}
-						<path d="M3 5h12M3 9h12M3 13h12" stroke="currentColor" stroke-width="1.6" />
-					{/if}
+				<svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true" class="menu-icon" class:open={menuOpen}>
+					<path class="bar top" d="M3 5h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					<path class="bar mid" d="M3 9h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
+					<path class="bar bot" d="M3 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
 				</svg>
 			</button>
 		</div>
 	</div>
 </header>
 
+{#snippet row(label: string)}
+	<span class="flex items-center gap-3">
+		<span class="h-1.5 w-1.5 rounded-full bg-bone/25" aria-hidden="true"></span>
+		{label}
+	</span>
+	<svg
+		width="16"
+		height="16"
+		viewBox="0 0 16 16"
+		fill="none"
+		aria-hidden="true"
+		class="shrink-0 text-bone/40 transition-transform duration-200 group-hover:translate-x-0.5"
+	>
+		<path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+	</svg>
+{/snippet}
+
 {#if menuOpen}
+	<!-- Tapping the dimmed journey closes the menu. The menu sits above the FAQ drawer (z 44-46). -->
+	<button
+		type="button"
+		tabindex="-1"
+		aria-hidden="true"
+		class="fixed inset-0 z-[47] cursor-default bg-black/40 backdrop-blur-[2px] lg:hidden"
+		onclick={() => close()}
+		transition:fade={{ duration: 180 * motion }}
+	></button>
+
 	<nav
+		bind:this={sheet}
 		id="journey-mobile-nav"
 		aria-label={copy.mobileAriaLabel}
-		class="fixed inset-x-0 top-[4.25rem] z-40 border-b border-bone/10 bg-ink/95 px-5 py-4 backdrop-blur-md lg:hidden sm:top-[4.75rem]"
+		class="fixed inset-x-3 z-[48] flex max-h-[calc(100dvh-var(--nav-top)-0.75rem)] flex-col overflow-y-auto overscroll-contain rounded-3xl border border-bone/10 bg-ink p-2 shadow-[0_24px_60px_-12px_rgba(0,0,0,0.6)] backdrop-blur-xl sm:inset-x-auto sm:right-8 sm:w-[22rem] lg:hidden"
+		style:top="var(--nav-top)"
+		style:--nav-top="{headerHeight + 8}px"
+		transition:fly={{ y: -8 * motion, duration: 200 * motion, easing: cubicOut }}
 	>
-		<ul class="flex flex-col gap-1">
+		<ul class="flex flex-col">
 			{#each copy.links as link (link.label)}
-				<li>
+				<li class="border-bone/[0.08] [&:not(:first-child)]:border-t">
 					{#if link.href}
 						<a
 							href={link.href}
-							class="block rounded-lg px-3 py-3 text-[15px] text-bone no-underline hover:bg-white/[0.03]"
+							onclick={() => close()}
+							target={link.href.startsWith('http') ? '_blank' : undefined}
+							rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+							class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium text-bone no-underline transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
 						>
-							{link.label}
+							{@render row(link.label)}
 						</a>
 					{:else}
 						<button
 							type="button"
 							onclick={() => handleLink(link)}
-							class="block w-full cursor-pointer rounded-lg px-3 py-3 text-left text-[15px] text-bone hover:bg-white/[0.03]"
+							class="group flex min-h-14 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl px-4 text-left text-[17px] font-medium text-bone transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
 						>
-							{link.label}
+							{@render row(link.label)}
 						</button>
 					{/if}
 				</li>
 			{/each}
-			<li class="mt-2 px-3 sm:hidden">
-				<a
-					href={copy.demo.href}
-					onclick={() => (menuOpen = false)}
-					class="inline-flex min-h-11 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-2.5 text-[14px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-				>
-					{copy.demo.label}
-					<span aria-hidden="true">{copy.arrow}</span>
-				</a>
-			</li>
 		</ul>
+
+		<div class="mt-2 p-2 sm:hidden">
+			<a
+				href={copy.demo.href}
+				onclick={() => close()}
+				class="flex min-h-13 w-full cursor-pointer items-center justify-center gap-1.5 rounded-full bg-lens px-5 py-3 text-[15px] font-semibold tracking-wide text-white no-underline shadow-[0_8px_28px_rgba(0,0,0,0.45)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+			>
+				{copy.demo.label}
+				<span aria-hidden="true">{copy.arrow}</span>
+			</a>
+		</div>
 	</nav>
 {/if}
+
+<style>
+	.menu-icon .bar {
+		transform-box: fill-box;
+		transform-origin: center;
+		transition:
+			transform 200ms ease,
+			opacity 150ms ease;
+	}
+
+	.menu-icon.open .top {
+		transform: translateY(4px) rotate(45deg);
+	}
+
+	.menu-icon.open .mid {
+		opacity: 0;
+	}
+
+	.menu-icon.open .bot {
+		transform: translateY(-4px) rotate(-45deg);
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.menu-icon .bar {
+			transition: none;
+		}
+	}
+</style>

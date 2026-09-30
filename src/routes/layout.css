@@ -48,6 +48,11 @@
 	transform: translateY(calc(-1 * var(--faq-sheet-h)));
 }
 
+/* The mobile menu's scrim has to cover the FAQ trigger, which sits outside this wrapper. */
+:root.journey-menu-open .journey-lift {
+	z-index: 47;
+}
+
 #video-stage {
 	position: fixed;
 	inset: 0;
