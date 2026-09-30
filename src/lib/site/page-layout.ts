@@ -7,8 +7,8 @@
  * names neither a block nor an added section is skipped, as is a repeat — a repeated id is a
  * duplicate {#each} key, which throws during hydration and takes the client router down.
  *
- * Keep in step with the CMS: PLATFORM_LAYOUT_BLOCKS / PLATFORM_LAYOUT_DEFAULT and
- * PROBLEM_LAYOUT_BLOCKS in Sorted's platform-structure.ts. A block the site does not know is
+ * Keep in step with the CMS: PLATFORM_LAYOUT_BLOCKS / PLATFORM_LAYOUT_DEFAULT,
+ * PROBLEM_LAYOUT_BLOCKS and FAQ_LAYOUT_BLOCKS in Sorted's platform-structure.ts. A block the site does not know is
  * skipped here, silently.
  */
 import { addedSections, type AddedSection } from './added-sections';
@@ -52,6 +52,17 @@ export function pageLayout<B extends string>(copy: unknown, blocks: readonly B[]
 
 export function platformLayout(copy: unknown): PlatformEntry[] {
 	return pageLayout(copy, PLATFORM_BLOCKS, PLATFORM_DEFAULT_LAYOUT);
+}
+
+/**
+ * /faq's blocks: the questions (with the security pack beside them) and the call to action.
+ * Keep in step with FAQ_LAYOUT_BLOCKS in Sorted's platform-structure.ts.
+ */
+export const FAQ_BLOCKS = ['questions', 'cta'] as const;
+export type FaqBlockId = (typeof FAQ_BLOCKS)[number];
+
+export function faqLayout(copy: unknown): LayoutEntry<FaqBlockId>[] {
+	return pageLayout(copy, FAQ_BLOCKS, FAQ_BLOCKS);
 }
 
 /** Whether the logo strip stays in the hero: only while it is the first block, as it always was. */
