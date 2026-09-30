@@ -129,7 +129,8 @@ export type ProblemItem = {
 	title: string;
 	/** One-line summary used in the /platform list. */
 	summary: string;
-	meta: { title: string; description: string };
+	/** `keywords` is optional: set in the CMS, absent in content written before it existed. */
+	meta: { title: string; description: string; keywords?: string };
 	hero: {
 		title: string;
 		body: string;
@@ -163,7 +164,7 @@ export type ProblemItem = {
  */
 export type CustomPage = {
 	slug: string;
-	meta: { title: string; description: string };
+	meta: { title: string; description: string; keywords?: string };
 	eyebrow: string;
 	title: string;
 	intro: string;

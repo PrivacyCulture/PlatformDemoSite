@@ -24,7 +24,7 @@
 		<ul
 			class="pointer-events-auto flex flex-wrap items-center justify-center gap-x-1 gap-y-0 text-[12px] tracking-wide text-bone/70"
 		>
-			{#each links as link, i (link.href)}
+			{#each links as link, i (i)}
 				{#if i > 0}
 					<li aria-hidden="true" class="px-1.5 text-bone/35">·</li>
 				{/if}

@@ -1,26 +1,23 @@
 import { aeo, site } from '$lib/content';
 import { live } from '$lib/content/runtime';
-import { plain } from './rich';
-
-export type AeoQuestion = {
-	question: string;
-	answer: string;
-};
-
-/** Phrases people type into Google or ask ChatGPT, Perplexity, Gemini, and Copilot. */
-export const searchTerms: readonly string[] = live((c) => c.aeo.searchTerms, 'array');
-
-export function aeoKeywords(): string {
-	return searchTerms.join(', ');
-}
 
 export const featureList: readonly string[] = live((c) => c.aeo.featureList, 'array');
 
 /**
- * Questions a privacy lead is likely to ask an AI assistant when shopping
- * for software — answered from the public product facts on this site.
+ * What the organisation is expert in, for `knowsAbout`. A short list of real subjects, not the
+ * search phrases in aeo.searchTerms: those stay in the content file as a copywriting checklist
+ * and are no longer published anywhere, because a list of phrases nobody reads is keyword
+ * stuffing whichever part of the page carries it.
  */
-export const aeoQuestions: AeoQuestion[] = live((c) => c.aeo.questions, 'array');
+export const KNOWS_ABOUT: readonly string[] = [
+	'GDPR',
+	'UK GDPR',
+	'Record of Processing Activities (ROPA)',
+	'Data Protection Impact Assessment (DPIA)',
+	'Data Subject Access Request (DSAR)',
+	'Vendor privacy risk',
+	'AI governance'
+];
 
 export function homepageJsonLd(origin: string) {
 	const root = origin.replace(/\/$/, '');
@@ -29,8 +26,6 @@ export function homepageJsonLd(origin: string) {
 	const websiteId = `${root}/#website`;
 	const webpageId = `${root}/#webpage`;
 	const softwareId = `${root}/#software`;
-	const faqId = `${root}/#faq`;
-	const termsId = `${root}/#search-terms`;
 	const logoUrl = `${root}${site.logos.colour.src}`;
 	const pricedTiers = site.pricing.tiers.filter((tier) => tier.rate.startsWith('£'));
 	const prices = pricedTiers.map((tier) => tier.rate.replace(/[^\d.]/g, ''));
@@ -63,7 +58,7 @@ export function homepageJsonLd(origin: string) {
 					telephone: site.footer.phone,
 					availableLanguage: ['English']
 				},
-				knowsAbout: [...searchTerms]
+				knowsAbout: [...KNOWS_ABOUT]
 			},
 			{
 				'@type': 'WebSite',
@@ -83,12 +78,6 @@ export function homepageJsonLd(origin: string) {
 				inLanguage: 'en-GB',
 				isPartOf: { '@id': websiteId },
 				about: { '@id': softwareId },
-				mainEntity: { '@id': faqId },
-				keywords: aeoKeywords(),
-				speakable: {
-					'@type': 'SpeakableSpecification',
-					cssSelector: ['h1', '[data-aeo-answer]']
-				}
 			},
 			{
 				'@type': ['SoftwareApplication', 'WebApplication'],
@@ -102,7 +91,6 @@ export function homepageJsonLd(origin: string) {
 				countriesSupported: 'GB',
 				inLanguage: 'en-GB',
 				description: site.meta.description,
-				keywords: aeoKeywords(),
 				featureList: [...featureList],
 				audience: {
 					'@type': 'BusinessAudience',
@@ -127,33 +115,6 @@ export function homepageJsonLd(origin: string) {
 						description: `${tier.band} · ${tier.rate}${tier.period} · ${site.pricing.offerDescriptionSuffix}`
 					}))
 				}
-			},
-			{
-				'@type': 'FAQPage',
-				'@id': faqId,
-				url: pageUrl,
-				inLanguage: 'en-GB',
-				isPartOf: { '@id': webpageId },
-				mainEntity: aeoQuestions.map((item) => ({
-					'@type': 'Question',
-					name: plain(item.question),
-					acceptedAnswer: {
-						'@type': 'Answer',
-						text: plain(item.answer)
-					}
-				}))
-			},
-			{
-				'@type': 'DefinedTermSet',
-				'@id': termsId,
-				name: aeo.termSet.name,
-				description: aeo.termSet.description,
-				url: pageUrl,
-				hasDefinedTerm: searchTerms.map((term) => ({
-					'@type': 'DefinedTerm',
-					name: term,
-					inDefinedTermSet: { '@id': termsId }
-				}))
 			}
 		]
 	};

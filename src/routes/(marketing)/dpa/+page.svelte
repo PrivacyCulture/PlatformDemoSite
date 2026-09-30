@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import { pages, pageTitle } from '$lib/content';
 
@@ -6,10 +8,11 @@
 	const glanceId = 'at-a-glance';
 </script>
 
-<svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+/>
 
 <div class="w-full pt-6 sm:pt-10">
 	<p class="dpa-back mb-6">

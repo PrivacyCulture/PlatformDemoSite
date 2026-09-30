@@ -1,4 +1,5 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { pages, pageTitle, site } from '$lib/content';
 	import { platformSpecs } from '$lib/journey/content';
 
@@ -8,10 +9,7 @@
 	const copy = pages.platformSpec;
 </script>
 
-<svelte:head>
-	<title>{pageTitle(spec.label, site.meta.title)}</title>
-	<meta name="description" content={spec.pain} />
-</svelte:head>
+<SeoHead title={pageTitle(spec.label, site.meta.title)} description={spec.pain} />
 
 <article class="w-full max-w-3xl pt-6 sm:pt-10">
 	<p class="mb-6">

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
 	import { onMount } from 'svelte';
 	import { pushState } from '$app/navigation';
 	import BookDemoCalendar from '$lib/components/BookDemoCalendar.svelte';
@@ -41,10 +43,11 @@
 	const stepCopy = $derived(copy.steps[step]);
 </script>
 
-<svelte:head>
-	<title>{pageTitle(copy.meta.title)}</title>
-	<meta name="description" content={copy.meta.description} />
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+/>
 
 <!-- One composition: brand + one idea + one sentence. Form is the action below. -->
 <section class="demo-hero relative w-full pt-4 sm:pt-8">
