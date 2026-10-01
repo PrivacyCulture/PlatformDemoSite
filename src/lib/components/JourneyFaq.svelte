@@ -173,9 +173,12 @@
 		overscroll-behavior: contain;
 	}
 
-	/* In the bottom-right corner at every width, clear of the home indicator. */
+	/* In the bottom-right corner at every width, level with Cookiebot's settings button in the
+	   bottom-left: that is a 48px circle fixed 10px up, so its centre is 34px up, and the bubble's
+	   body (y 1–39 of 50) is centred 30px above the button's bottom edge. Cookiebot ignores the
+	   home indicator inset, so this does too, or the two would part on notched phones. */
 	.faq-trigger {
-		bottom: max(1.25rem, calc(env(safe-area-inset-bottom) + 1rem));
+		bottom: 4px;
 	}
 
 	.faq-bubble {
