@@ -1,13 +1,12 @@
 <script lang="ts">
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
-	import { page } from '$app/state';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import FaqAccordion from '$lib/components/site/FaqAccordion.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
-	import { jsonLdScript } from '$lib/site/aeo';
+	import { faqNode, FAQ_ID } from '$lib/site/aeo';
 	import { pages, pageTitle, site } from '$lib/content';
-	import { plain } from '$lib/site/rich';
+	import { page } from '$app/state';
 	import { faqLayout } from '$lib/site/page-layout';
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
 
@@ -15,29 +14,19 @@
 	// The questions, the call to action and any sections added in the CMS, in the order set there.
 	const entries = $derived(faqLayout(copy));
 
-	// Every answer on this page is public, so publish it as a FAQPage graph too.
-	const schema = $derived({
-		'@context': 'https://schema.org',
-		'@type': 'FAQPage',
-		'@id': `${page.url.origin}/faq#faq`,
-		url: `${page.url.origin}/faq`,
-		name: copy.meta.title,
-		description: copy.meta.description,
-		inLanguage: 'en-GB',
-		mainEntity: copy.items.map((item) => ({
-			'@type': 'Question',
-			name: plain(item.q),
-			acceptedAnswer: { '@type': 'Answer', text: plain(item.a) }
-		}))
-	});
+	// Every answer on this page is public, so publish it as a FAQPage graph too — the one page
+	// that does; Google's rule is to mark up one instance of a repeated FAQ, and the home drawer
+	// shows the same questions.
+	const faq = $derived(faqNode(page.url.origin, page.url.pathname));
 </script>
 
-<SeoHead title={pageTitle(copy.meta.title)} description={copy.meta.description} keywords={metaKeywords(copy.meta)} />
-
-<svelte:head>
-	<link rel="canonical" href="{page.url.origin}/faq" />
-	{@html jsonLdScript(schema)}
-</svelte:head>
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+	schema={[faq]}
+	mainEntityId={FAQ_ID(page.url.origin, page.url.pathname)}
+/>
 
 <PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} />
 

@@ -899,20 +899,9 @@
 	<div class={['scrim-layer scrim-payoff', onLens && lensCopyOpen && 'on']}></div>
 </div>
 
-{#if !loading}
-	<JourneyNav
-		onHome={() => jumpTo(navJumps.hero, { instant: true })}
-		onJump={(p) => jumpTo(p, { instant: true })}
-		jumps={navJumps}
-		copy={site.nav}
-	/>
-	<JourneySceneIndex
-		current={activeSceneNumber}
-		visible={sceneIndexVisible}
-		onSelect={jumpToScene}
-	/>
-	<JourneyLegal links={site.legal.links} ariaLabel={site.legal.ariaLabel} />
-
+<!-- The hero sits outside the loading gate so the page's one <h1> is in the server-rendered
+     HTML. Nothing shows early: a beat is opacity 0 until it is on, and the loader covers the
+     page at z-60 until the first clip is ready. -->
 	<Beat id="beat-hero" active={activeBeats['beat-hero']} label={UI.heroBeatLabel} class="hero-copy">
 		<div class="flex flex-col items-start gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-8">
 			<div class="hero-main w-full min-w-0">
@@ -956,6 +945,21 @@
 			</div>
 		</div>
 	</Beat>
+
+{#if !loading}
+	<JourneyNav
+		onHome={() => jumpTo(navJumps.hero, { instant: true })}
+		onJump={(p) => jumpTo(p, { instant: true })}
+		jumps={navJumps}
+		copy={site.nav}
+	/>
+	<JourneySceneIndex
+		current={activeSceneNumber}
+		visible={sceneIndexVisible}
+		onSelect={jumpToScene}
+	/>
+	<JourneyLegal links={site.legal.links} ariaLabel={site.legal.ariaLabel} />
+
 
 	{#each SCENES as scene (scene.id)}
 		{@const sceneIndex = beatDefs.findIndex((b) => b.id === scene.id)}
@@ -1048,9 +1052,9 @@
 					{content.lens.secondaryCta.label}
 				</a>
 
-				<h3 class="mt-8 mb-4 text-[11px] tracking-[0.24em] text-bone/80 uppercase [text-shadow:0_1px_12px_rgba(4,6,10,0.7)]">
+				<h2 class="mt-8 mb-4 text-[11px] tracking-[0.24em] text-bone/80 uppercase [text-shadow:0_1px_12px_rgba(4,6,10,0.7)]">
 					{content.lens.principlesLabel}
-				</h3>
+				</h2>
 				<ol class="grid grid-cols-1 gap-4 text-left sm:grid-cols-3">
 					{#each PRINCIPLES as item, i (item.title)}
 						<li

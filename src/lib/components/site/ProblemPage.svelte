@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { page as route } from '$app/state';
 	import SeoHead from './SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
+	import { explainerVideoNode } from '$lib/site/aeo';
+	import { pages } from '$lib/content';
 	/**
 	 * One of the ten problem pages. Every string and image on the page is read
 	 * from the site content (`$lib/content`) under `problems`; the route file only
@@ -38,6 +41,10 @@
 	// the CMS gives them. A block left out is not drawn (its content stays in the file, so it can
 	// be put back); no layout at all is the order the page always had.
 	const entries = $derived(problemLayout(page));
+	// The explainer this page shows, as structured data — only when it is on the page.
+	const videoNode = $derived(
+		showExplainer ? explainerVideoNode(route.url.origin, route.url.pathname, explainer, route.data?.videoTranscript) : null
+	);
 </script>
 
 <SeoHead
@@ -45,6 +52,12 @@
 	description={page.meta.description}
 	keywords={metaKeywords(page.meta)}
 	image={page.inPlatform?.image?.src}
+	imageWidth={page.inPlatform?.image?.width}
+	imageHeight={page.inPlatform?.image?.height}
+	imageAlt={page.inPlatform?.image?.alt}
+	parents={[{ name: pages.platform.meta.title, href: '/platform' }]}
+	heading={page.title}
+	schema={[videoNode]}
 />
 
 {#snippet video()}

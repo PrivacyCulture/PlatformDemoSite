@@ -19,7 +19,9 @@
 	const page = $derived(data.page);
 	// The page's own main image — the first section carrying one — is its link-preview picture.
 	const firstImage = $derived(
-		page.sections.map((s) => ('image' in s ? (s.image as { src?: string } | undefined)?.src : '') ?? '').find((src) => !!src) ?? null
+		page.sections
+			.map((s) => ('image' in s ? (s.image as { src?: string; width?: number; height?: number; alt?: string } | undefined) : undefined))
+			.find((img) => !!img?.src) ?? null
 	);
 	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
 </script>
@@ -28,7 +30,11 @@
 	title={pageTitle(plain(page.meta.title || page.title))}
 	description={page.meta.description}
 	keywords={page.meta.keywords}
-	image={firstImage}
+	image={firstImage?.src}
+	imageWidth={firstImage?.width}
+	imageHeight={firstImage?.height}
+	imageAlt={firstImage?.alt}
+	heading={plain(page.title)}
 />
 
 <div class="w-full pt-6 sm:pt-10">

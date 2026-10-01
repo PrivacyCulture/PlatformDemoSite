@@ -110,7 +110,7 @@
 		<!-- The questions, then the same footer the inner pages end on, scrolling together. -->
 		<div class="faq-sheet-body min-h-0 flex-1 overflow-y-auto">
 			<div class="px-page pb-10">
-				<FaqAccordion headingLevel="h3" idPrefix="home-faq" />
+				<FaqAccordion headingLevel="h2" idPrefix="home-faq" />
 				<p class="mt-4">
 				<a
 					href="/platform"
