@@ -34,6 +34,21 @@ Endpoints:
 - `GET /api/content/source` — the CMS calls this with the same Bearer token to **sync** the content file this build was deployed with (`data/database.json`), so a change made in this repository reaches Sorted without anyone downloading and uploading a file. Returns the file as JSON with an `x-content-sha256` header.
 - `GET /api/content/status` — unauthenticated health read: `{ channel, source, configured, fetchedAt, lastError, ttlSeconds, sourceSha256 }`. `sourceSha256` fingerprints the built-in content file (sha256 of `JSON.stringify` of it — the same rule Sorted uses), so Sorted can say when a deploy has brought a file it has not synced.
 
+### Search engines and AI assistants
+
+Every page emits one JSON-LD graph (organisation, website, software with its offers, the page,
+its breadcrumb; the FAQ adds a FAQPage, pages showing the explainer a VideoObject), a canonical,
+Open Graph and Twitter tags — see `src/lib/site/schema.ts` (pure) and `src/lib/site/aeo.ts`.
+`/sitemap.xml` and `/robots.txt` are routes read from the content, so an archived page leaves
+the sitemap. The **draft** site refuses crawlers (`Disallow: /`, `X-Robots-Tag: noindex`) because it
+serves unapproved copy. The video's published date and length come from `site.video.uploadDate`
+and `site.video.durationSeconds`, set in Sorted; blank publishes neither.
+
+```
+npx tsx scripts/test-schema.ts
+npx tsx scripts/test-seo-head.ts
+```
+
 ### Journey clips
 
 Scene clips live in `src/lib/assets/clips/Mountain/` (`start.mp4` = hero loop, `shot-2.mp4` … `shot-8.mp4` = scenes) and are listed in the content under `journey.clips`. Because clips are bundled at build time, the CMS cannot add new ones: if it names a clip this build does not have, the site keeps the build's own clip list. They are imported rather than served from `static/` so Vite fingerprints the URLs and they ship with a one-year immutable cache header. To replace a clip, overwrite the file with the same name.

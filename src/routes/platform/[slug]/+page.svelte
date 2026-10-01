@@ -9,7 +9,12 @@
 	const copy = pages.platformSpec;
 </script>
 
-<SeoHead title={pageTitle(spec.label, site.meta.title)} description={spec.pain} />
+<SeoHead
+	title={pageTitle(spec.label, site.meta.title)}
+	description={spec.pain}
+	parents={[{ name: pages.platform.meta.title, href: '/platform' }]}
+	heading={spec.label}
+/>
 
 <article class="w-full max-w-3xl pt-6 sm:pt-10">
 	<p class="mb-6">

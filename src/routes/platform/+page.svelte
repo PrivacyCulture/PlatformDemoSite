@@ -1,6 +1,8 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
+	import { explainerVideoNode, SOFTWARE_ID } from '$lib/site/aeo';
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
@@ -27,6 +29,8 @@
 	// below then skips them so they are not drawn twice.
 	const heroLogos = $derived(logosInHero(entries));
 	const bodyEntries = $derived(heroLogos ? entries.slice(1) : entries);
+	// The explainer in the hero, as structured data.
+	const video = $derived(explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript));
 </script>
 
 <SeoHead
@@ -34,6 +38,11 @@
 	description={copy.meta.description}
 	keywords={metaKeywords(copy.meta)}
 	image={copy.fit?.image?.src}
+	imageWidth={copy.fit?.image?.width}
+	imageHeight={copy.fit?.image?.height}
+	imageAlt={copy.fit?.image?.alt}
+	mainEntityId={SOFTWARE_ID(page.url.origin)}
+	schema={[video]}
 />
 
 <PageHero

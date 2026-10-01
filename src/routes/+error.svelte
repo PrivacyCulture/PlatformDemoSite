@@ -35,11 +35,7 @@
 	const links = $derived(visibleLinks(copy.whereNext.items));
 </script>
 
-<SeoHead title={pageTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} />
-
-<svelte:head>
-	<meta name="robots" content="noindex" />
-</svelte:head>
+<SeoHead title={pageTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} index={false} />
 
 <SiteShell>
 	{#if showExplainer}
