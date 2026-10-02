@@ -22,6 +22,8 @@
 		showMe,
 		onAdvance,
 		onRetreat,
+		hint = false,
+		onPreviewChange,
 		class: className = 'scene-copy',
 		style
 	}: {
@@ -34,6 +36,10 @@
 		showMe?: SceneShowMe;
 		onAdvance: () => void;
 		onRetreat: () => void;
+		/** Glow the Next arrow: the visitor has sat on this scene for a while. */
+		hint?: boolean;
+		/** The Show Me preview opened or closed. */
+		onPreviewChange?: (open: boolean) => void;
 		class?: string;
 		style?: string;
 	} = $props();
@@ -103,6 +109,10 @@
 			window.clearTimeout(whatIfTimer);
 			window.clearTimeout(showMeTimer);
 		};
+	});
+
+	$effect(() => {
+		onPreviewChange?.(previewOpen);
 	});
 
 	function togglePreview() {
@@ -191,7 +201,10 @@
 			type="button"
 			onclick={onAdvance}
 			aria-label={UI.nextScene}
-			class="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-lens text-white shadow-[0_6px_22px_rgba(0,0,0,0.45)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+			class={[
+				'next-scene flex h-11 w-11 cursor-pointer items-center justify-center rounded-full bg-lens text-white shadow-[0_6px_22px_rgba(0,0,0,0.45)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens',
+				hint && 'idle-hint'
+			]}
 		>
 			<svg
 				width="15"

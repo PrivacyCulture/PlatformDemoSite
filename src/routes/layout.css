@@ -30,6 +30,54 @@
 	height: 1120vh;
 }
 
+/* Touch devices: scrubbing is off (JourneyPage), so there is nothing to scroll. The journey
+   moves by its buttons and the idle auto-advance. */
+:root.journey-no-scrub {
+	overscroll-behavior: none;
+}
+
+:root.journey-no-scrub #scroll-space {
+	height: 0;
+}
+
+/* Idle hint on a forward button (the hero's Begin, a scene's Next arrow): a ring ripples out
+   and a halo pulses behind it. Drawn on a pseudo-element so the button's own shadow stays. */
+.idle-hint {
+	position: relative;
+}
+
+.idle-hint::after {
+	content: '';
+	position: absolute;
+	inset: -2px;
+	border-radius: 9999px;
+	pointer-events: none;
+	animation: idle-hint-ring 1.7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes idle-hint-ring {
+	0% {
+		box-shadow:
+			0 0 0 0 rgba(0, 155, 204, 0.75),
+			0 0 14px 2px rgba(0, 155, 204, 0.45);
+	}
+	70%,
+	100% {
+		box-shadow:
+			0 0 0 18px rgba(0, 155, 204, 0),
+			0 0 36px 12px rgba(0, 155, 204, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.idle-hint::after {
+		animation: none;
+		box-shadow:
+			0 0 0 3px rgba(0, 155, 204, 0.55),
+			0 0 28px 8px rgba(0, 155, 204, 0.5);
+	}
+}
+
 /* The homepage FAQ's height, and the journey's lift when it opens: the fixed layers move up by
    exactly the panel's height while the panel rises by the same amount, so the two read as one
    page scrolling down. The wrapper is itself fixed to the viewport, so while it carries a
