@@ -77,6 +77,11 @@ export type JourneyContent = {
 		showMe: JourneyShowMe;
 	};
 	scenes: JourneySceneContent[];
+	/**
+	 * How long the journey waits on a settled beat before its forward button glows and before
+	 * it moves on by itself, in seconds. Absent = the defaults in $lib/site/idle-timing.ts.
+	 */
+	idle?: { glowAfterSeconds?: number | string; beginAfterSeconds?: number | string; nextAfterSeconds?: number | string };
 	lens: {
 		eyebrow: string;
 		eyebrowLines?: string[];

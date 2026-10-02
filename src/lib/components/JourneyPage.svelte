@@ -44,6 +44,7 @@
 	} from '$lib/journey/videos';
 	import { content, sceneClassName, sceneShowMe } from '$lib/journey/content';
 	import { site } from '$lib/content';
+	import { idleTiming } from '$lib/site/idle-timing';
 
 	const SCENES = content.scenes;
 	const UI = content.ui;
@@ -67,6 +68,30 @@
 
 	/** Which way the visitor is travelling; picks which neighbouring clip to warm. */
 	let scrollDir = $state<1 | -1>(1);
+	/**
+	 * Desktop: the page scroll drives the clip frame by frame. Touch devices: scrubbing is off,
+	 * the scroll space is collapsed and progress is a value the page writes itself, so the
+	 * journey moves only by Next / Back / the scene index / the idle auto-advance.
+	 */
+	let scrubEnabled = $state(true);
+	/** Reactive mirror of `playback.nativePlay` (a clip is playing at 1x). */
+	let clipPlaying = $state(false);
+	/** Bumped by every visitor input; restarts the idle clock behind the Next hint. */
+	let idleGen = $state(0);
+	/** Scenes whose Show Me preview is open: the idle clock holds while someone is reading. */
+	let openPreviews = $state<Set<BeatId>>(new Set());
+	/** The FAQ sheet or the mobile menu is open: the idle clock holds. */
+	let sheetOpen = $state(false);
+	/** Beat whose forward button (the hero's Begin, a scene's Next arrow) is glowing. */
+	let idleHintBeat = $state<BeatId | null>(null);
+	// The idle timers are edited in the CMS (Home journey → Idle timing); 0 switches a step off.
+	const idle = idleTiming(content.idle);
+	/** Nothing happened for this long on a settled beat: its forward button glows. */
+	const IDLE_HINT_AFTER_MS = idle.glowAfterMs;
+	/** Nothing happened for this long on the hero: the journey begins by itself. */
+	const HERO_AUTO_BEGIN_AFTER_MS = idle.beginAfterMs;
+	/** Nothing happened for this long on a settled scene: the journey moves on by itself. */
+	const AUTO_ADVANCE_AFTER_MS = idle.nextAfterMs;
 	const navJumps = $derived(navJumpsFromBeats(beatDefs));
 	const activeBeatId = $derived.by(() => {
 		const on = Object.entries(activeBeats).find(([, active]) => active)?.[0] as BeatId | undefined;
@@ -138,6 +163,15 @@
 	/** Share of the gap to the scroll's frame closed each animation frame while scrubbing. */
 	const SCRUB_EASE = 0.3;
 
+	function setNativePlay(on: boolean) {
+		playback.nativePlay = on;
+		clipPlaying = on;
+	}
+
+	function noteActivity() {
+		idleGen += 1;
+	}
+
 	function setDirection(dir: 1 | -1) {
 		scrollDir = dir;
 		dirAnchor = playback.localScrollP;
@@ -166,7 +200,7 @@
 
 	function stopNativePlay() {
 		scenePlayGen += 1;
-		playback.nativePlay = false;
+		setNativePlay(false);
 		const video = videoEl;
 		if (video) {
 			video.loop = false;
@@ -224,6 +258,11 @@
 	/** Scroll the page to `p` (0–1) as the page itself rather than the visitor. */
 	function writeScroll(p: number) {
 		const clamped = Math.min(1, Math.max(0, p));
+		if (!scrubEnabled) {
+			// No scroll space on touch devices: progress lives only in the page's state.
+			syncScrollState(clamped);
+			return;
+		}
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		const top = max * clamped;
 		if (Math.abs(window.scrollY - top) > 0.5) window.scrollTo({ top, behavior: 'auto' });
@@ -249,7 +288,7 @@
 		const gen = ++scenePlayGen;
 		video.loop = false;
 		video.playbackRate = 1;
-		playback.nativePlay = true;
+		setNativePlay(true);
 		if (isPayoffBeatId(beatId)) payoffFinished = false;
 
 		await seekVideoToStart(video, gen);
@@ -278,7 +317,7 @@
 				if (gen !== scenePlayGen) return;
 
 				video.pause();
-				playback.nativePlay = false;
+				setNativePlay(false);
 				const d = video.duration;
 				const hasDur = Boolean(d) && Number.isFinite(d);
 
@@ -354,7 +393,7 @@
 		if (!(p <= 0.02 && isHeroLoopBeat(activeBeatId))) stopNativePlay();
 		if (p > 0.02) journeyStarted = true;
 		setDirection(p >= playback.localScrollP ? 1 : -1);
-		if (opts.instant || reduced) {
+		if (opts.instant || reduced || !scrubEnabled) {
 			writeScroll(p);
 			return;
 		}
@@ -384,7 +423,7 @@
 
 		video.loop = true;
 		video.playbackRate = 1;
-		playback.nativePlay = true;
+		setNativePlay(true);
 		if (video.paused) {
 			void video.play().catch(() => {
 				/* autoplay blocked — still frame is fine */
@@ -545,6 +584,7 @@
 	}
 
 	function scrollProgress(): number {
+		if (!scrubEnabled) return playback.localScrollP;
 		const max = document.documentElement.scrollHeight - window.innerHeight;
 		return max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
 	}
@@ -579,7 +619,7 @@
 			// A scene or the lens has just faded in, already on the frame the scroll maps to
 			// (`startTimeFor`). Scroll drives it from here unless a play was asked for.
 			scenePlayGen += 1;
-			playback.nativePlay = false;
+			setNativePlay(false);
 			payoffFinished = false;
 			try {
 				video.loop = false;
@@ -655,6 +695,11 @@
 			return;
 		}
 
+		// Phones and tablets: scrolling frame by frame is too rough on touch, so the journey is
+		// driven by its buttons (and the idle auto-advance) instead. Decided once, at mount.
+		scrubEnabled = !window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+		document.documentElement.classList.toggle('journey-no-scrub', !scrubEnabled);
+
 		let raf = 0;
 
 		/** The page is scrolling itself: a scene playing, Back rewinding, or a scene about to play. */
@@ -672,18 +717,19 @@
 		};
 
 		const onUserScrollIntent = () => {
-			if (pageDriving()) takeOver();
+			noteActivity();
+			if (scrubEnabled && pageDriving()) takeOver();
 		};
 
 		const onScroll = () => {
+			if (!scrubEnabled) return;
 			if (loading && !playback.ready) return;
 			// Scrollbar drags and keyboard scrolling have no wheel/touch event: spot them by the
 			// scroll moving away from where the page last put it.
-			if (
-				pageDriving() &&
-				playback.lastWrittenY >= 0 &&
-				Math.abs(window.scrollY - playback.lastWrittenY) > 4
-			) {
+			const byVisitor =
+				playback.lastWrittenY < 0 || Math.abs(window.scrollY - playback.lastWrittenY) > 4;
+			if (byVisitor) noteActivity();
+			if (pageDriving() && playback.lastWrittenY >= 0 && byVisitor) {
 				takeOver();
 			}
 
@@ -739,7 +785,20 @@
 
 		window.addEventListener('wheel', onUserScrollIntent, { passive: true });
 		window.addEventListener('touchmove', onUserScrollIntent, { passive: true });
+		window.addEventListener('pointerdown', noteActivity, { passive: true });
+		window.addEventListener('touchstart', noteActivity, { passive: true });
+		// Coming back to the tab starts the idle clock afresh rather than jumping scenes at once.
+		document.addEventListener('visibilitychange', noteActivity);
+		// The FAQ sheet and the mobile menu flag themselves on <html>; the journey waits for them.
+		const syncSheetOpen = () => {
+			const root = document.documentElement.classList;
+			sheetOpen = root.contains('faq-open') || root.contains('journey-menu-open');
+		};
+		const sheetObserver = new MutationObserver(syncSheetOpen);
+		sheetObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+		syncSheetOpen();
 		const onKeyNav = (e: KeyboardEvent) => {
+			noteActivity();
 			const tag = (e.target as HTMLElement | null)?.tagName;
 			if (tag === 'INPUT' || tag === 'TEXTAREA' || (e.target as HTMLElement | null)?.isContentEditable) {
 				return;
@@ -764,6 +823,11 @@
 		return () => {
 			window.removeEventListener('wheel', onUserScrollIntent);
 			window.removeEventListener('touchmove', onUserScrollIntent);
+			window.removeEventListener('pointerdown', noteActivity);
+			window.removeEventListener('touchstart', noteActivity);
+			document.removeEventListener('visibilitychange', noteActivity);
+			sheetObserver.disconnect();
+			document.documentElement.classList.remove('journey-no-scrub');
 			window.removeEventListener('keydown', onKeyNav);
 			window.removeEventListener('scroll', onScroll);
 			cancelAnimationFrame(raf);
@@ -821,6 +885,58 @@
 			void playActiveSceneToEnd(id);
 		}
 	});
+
+	/**
+	 * Beat that is settled, so the idle clock may run: the hero before the journey has begun,
+	 * or a scene whose clip has finished (or is parked on a frame) with its copy and arrows
+	 * showing, while nothing is rewinding or about to play.
+	 */
+	const settledBeat = $derived.by<BeatId | null>(() => {
+		if (!mounted || reduced || loading) return null;
+		if (reverseNavigating || pendingPlayBeat !== null) return null;
+		const id = activeBeatId;
+		if (id === 'beat-hero') return journeyStarted ? null : id;
+		if (!isSceneBeatId(id) || clipPlaying) return null;
+		const index = beatDefs.findIndex((b) => b.id === id);
+		if (!sceneShowsText(id, index, sceneTextAfter(id))) return null;
+		return id;
+	});
+
+	// Nothing happened for a while on a settled beat: first its forward button glows, then the
+	// journey moves on by itself (Begin on the hero, Next on a scene). Any input restarts the
+	// clock; an open preview, the FAQ sheet, the mobile menu or a hidden tab holds it.
+	$effect(() => {
+		const beat = settledBeat;
+		void idleGen;
+		const held = sheetOpen || openPreviews.size > 0;
+		idleHintBeat = null;
+		if (!beat || held) return;
+
+		const onHero = beat === 'beat-hero';
+		const goAfter = onHero ? HERO_AUTO_BEGIN_AFTER_MS : AUTO_ADVANCE_AFTER_MS;
+		// A timer set to 0 in the CMS is that step switched off, not an instant move.
+		const hint = IDLE_HINT_AFTER_MS > 0 ? window.setTimeout(() => {
+			idleHintBeat = beat;
+		}, IDLE_HINT_AFTER_MS) : 0;
+		const go = goAfter > 0 ? window.setTimeout(() => {
+			idleHintBeat = null;
+			if (document.visibilityState !== 'visible') return;
+			if (onHero) beginJourney();
+			else advance();
+		}, goAfter) : 0;
+		return () => {
+			window.clearTimeout(hint);
+			window.clearTimeout(go);
+		};
+	});
+
+	function setPreviewOpen(id: BeatId, open: boolean) {
+		if (openPreviews.has(id) === open) return;
+		const next = new Set(openPreviews);
+		if (open) next.add(id);
+		else next.delete(id);
+		openPreviews = next;
+	}
 
 	$effect(() => {
 		if (missing && loading) {
@@ -922,7 +1038,10 @@
 					<button
 						type="button"
 						onclick={beginJourney}
-						class="inline-flex max-w-full cursor-pointer items-center gap-2 rounded-full bg-lens px-6 py-3 text-center text-[14px] sm:px-7 sm:py-3.5 sm:text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+						class={[
+							'inline-flex max-w-full cursor-pointer items-center gap-2 rounded-full bg-lens px-6 py-3 text-center text-[14px] sm:px-7 sm:py-3.5 sm:text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens',
+							idleHintBeat === 'beat-hero' && 'idle-hint'
+						]}
 					>
 						{content.hero.cta}
 					</button>
@@ -972,8 +1091,10 @@
 			whatIfRest={scene.whatIfRest}
 			showMe={sceneShowMe(scene.showMe)}
 			class={sceneClassName(scene)}
+			hint={idleHintBeat === scene.id}
 			onAdvance={advance}
 			onRetreat={retreat}
+			onPreviewChange={(open) => setPreviewOpen(scene.id, open)}
 		/>
 	{/each}
 
