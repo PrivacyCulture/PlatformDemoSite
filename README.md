@@ -49,6 +49,14 @@ npx tsx scripts/test-schema.ts
 npx tsx scripts/test-seo-head.ts
 ```
 
+### Book a demo
+
+The form at `/demo` books a HubSpot meeting (`HUBSPOT_MEETING_SLUG`, with a token borrowed from Sorted or set directly as `HUBSPOT_ACCESS_TOKEN`).
+
+Every "Book a demo" button on the site is tagged with the page it was clicked on, from one hook in the root layout ([demo-link-utm.ts](src/lib/demo/demo-link-utm.ts)): the link becomes `/demo?utm_source=<page>`, where `<page>` is `home`, `platform`, `pricing`, `dsar-overload` and so on. A link that already carries a UTM is left alone. First touch wins in HubSpot, so a visitor who arrived on a campaign keeps that campaign; the page still reaches the team in the notification.
+
+When a booking succeeds the team is emailed. Set `DEMO_NOTIFY_EMAILS` to the addresses (comma separated, any number), with `SENDGRID_API_KEY` and `EMAIL_FROM` for the sender. Leave `DEMO_NOTIFY_EMAILS` empty to send nothing.
+
 ### Journey clips
 
 Scene clips live in `src/lib/assets/clips/Mountain/` (`start.mp4` = hero loop, `shot-2.mp4` … `shot-8.mp4` = scenes) and are listed in the content under `journey.clips`. Because clips are bundled at build time, the CMS cannot add new ones: if it names a clip this build does not have, the site keeps the build's own clip list. They are imported rather than served from `static/` so Vite fingerprints the URLs and they ship with a one-year immutable cache header. To replace a clip, overwrite the file with the same name.

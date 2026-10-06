@@ -14,6 +14,7 @@ import {
 	utmToContactProperties
 } from '$lib/demo/hubspotProperties';
 import { utmsFromUnknown, type DemoUtm } from '$lib/demo/utm';
+import { notifyDemoBooked } from '$lib/server/demo-notify';
 import {
 	bookMeeting,
 	getContact,
@@ -30,7 +31,10 @@ type BookBody = {
 	startTime?: number;
 	duration?: number;
 	timezone?: string;
+	/** First-touch UTMs from sessionStorage; these go to HubSpot. */
 	utms?: unknown;
+	/** The demo page's own UTMs when booked: which Book a demo button, or which campaign. */
+	pageUtms?: unknown;
 };
 
 function parseForm(raw: Partial<DemoFormValues> | undefined): DemoFormValues {
@@ -99,6 +103,7 @@ export const POST: RequestHandler = async ({ request }) => {
 	}
 
 	const utms: DemoUtm = utmsFromUnknown(body.utms);
+	const pageUtms: DemoUtm = utmsFromUnknown(body.pageUtms);
 
 	try {
 		const slug = requireMeetingSlug();
@@ -130,8 +135,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 
 		const contactId = booking.contactId != null ? String(booking.contactId) : null;
+		const routing = routeContact(form, utms);
 		if (contactId) {
-			const routing = routeContact(form, utms);
 			const incoming = {
 				...formToContactProperties(form),
 				...utmToContactProperties(utms),
@@ -155,10 +160,29 @@ export const POST: RequestHandler = async ({ request }) => {
 			}
 		}
 
+		const start = booking.start ?? new Date(startTime).toISOString();
+		const end = booking.end ?? new Date(startTime + duration).toISOString();
+
+		// The team's heads-up. Not awaited: the meeting exists, and the visitor should not wait
+		// on, or hear about, a mail service.
+		void notifyDemoBooked({
+			form,
+			start,
+			end,
+			timezone: booking.bookingTimezone ?? timezone,
+			isOffline: Boolean(booking.isOffline),
+			subject: booking.subject ?? null,
+			location: booking.location ?? null,
+			contactId,
+			utms,
+			pageUtms,
+			routing: { slaTier: routing.slaTier, isStranger: routing.isStranger }
+		}).catch((err) => console.error('[demo/notify] could not send the booking notification', err));
+
 		return json({
 			ok: true,
-			start: booking.start ?? new Date(startTime).toISOString(),
-			end: booking.end ?? new Date(startTime + duration).toISOString(),
+			start,
+			end,
 			duration: booking.duration ?? duration,
 			timezone: booking.bookingTimezone ?? timezone,
 			isOffline: Boolean(booking.isOffline),

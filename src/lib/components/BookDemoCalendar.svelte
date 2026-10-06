@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { untrack } from 'svelte';
 	import type { DemoFormValues } from '$lib/demo/fields';
-	import { readStoredUtms } from '$lib/demo/utm';
+	import { readStoredUtms, utmsFromSearch } from '$lib/demo/utm';
 	import { demoForm } from '$lib/content';
 
 	const C = demoForm.calendar;
@@ -217,7 +217,10 @@
 					startTime: selectedStart,
 					duration: durationMs,
 					timezone,
-					utms: readStoredUtms()
+					utms: readStoredUtms(),
+					// What this page's address says now: the Book a demo button that was clicked,
+					// or a campaign link. For the team's notification, not for HubSpot.
+					pageUtms: utmsFromSearch(location.search)
 				})
 			});
 			const data = (await res.json()) as {
