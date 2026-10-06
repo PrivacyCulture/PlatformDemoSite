@@ -2,12 +2,15 @@
 	import { onMount } from 'svelte';
 	import './layout.css';
 	import { captureUtmsFromLocation } from '$lib/demo/utm';
+	import { tagDemoLinks } from '$lib/demo/demo-link-utm';
 	import { site } from '$lib/content';
 
 	let { children } = $props();
 
 	onMount(() => {
 		captureUtmsFromLocation();
+		// Every Book a demo button says which page it was clicked on; see demo-link-utm.ts.
+		return tagDemoLinks();
 	});
 </script>
 
