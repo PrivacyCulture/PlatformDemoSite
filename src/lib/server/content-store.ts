@@ -186,6 +186,27 @@ function withFallbackDefaults(c: SiteContent): SiteContent {
 }
 
 /**
+ * A Features menu entry with no icon takes the build's own for the same page. Sorted's copy of
+ * the menu can predate icons (the list is taken whole, so the fallback merge never reaches into
+ * it), and an entry it has never had a chance to set should not draw an empty tile.
+ */
+function withFeatureIcons(c: SiteContent): SiteContent {
+	const items = c.site.nav.features?.items;
+	if (!Array.isArray(items)) return c;
+	const own = new Map(fallback.site.nav.features.items.map((it) => [it.href, it.icon]));
+	let changed = false;
+	const next = items.map((it) => {
+		if (!isPlainObject(it) || (typeof it.icon === 'string' && it.icon)) return it;
+		const icon = typeof it.href === 'string' ? own.get(it.href.trim()) : undefined;
+		if (!icon) return it;
+		changed = true;
+		return { ...it, icon };
+	});
+	if (!changed) return c;
+	return { ...c, site: { ...c.site, nav: { ...c.site.nav, features: { ...c.site.nav.features, items: next } } } };
+}
+
+/**
  * Clips are bundled into the build, so the CMS cannot introduce new ones. When
  * it names one the build does not have, keep the build's own clip list.
  */
@@ -221,7 +242,7 @@ async function fetchContent(): Promise<void> {
 		}
 		if (!res.ok) throw new Error(`CMS responded ${res.status} ${res.statusText}`.trim());
 		const body: unknown = await res.json();
-		const content = withBundledClips(withFallbackDefaults(validateContent(body)));
+		const content = withBundledClips(withFeatureIcons(withFallbackDefaults(validateContent(body))));
 		snapshot = { content, source: 'cms', fetchedAt: new Date().toISOString() };
 		etag = res.headers.get('etag');
 		freshUntil = Date.now() + cfg.ttlSeconds * 1000;

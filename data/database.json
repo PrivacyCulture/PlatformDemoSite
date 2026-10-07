@@ -19,10 +19,88 @@
 			"closeMenu": "Close menu",
 			"arrow": "→",
 			"links": [
+				{ "label": "Features", "href": "/platform", "menu": "features" },
 				{ "label": "The Platform", "href": "/platform" },
 				{ "label": "Pricing", "href": "/platform#pricing" }
 			],
 			"mobileOnlyLinks": [{ "label": "FAQ", "href": "/faq" }],
+			"features": {
+				"label": "Features",
+				"allLabel": "See the whole platform",
+				"allHref": "/platform",
+				"items": [
+					{
+						"label": "Single Source of Truth",
+
+						"icon": "layers",
+						"body": "One connected estate, not five tools telling you five different things.",
+						"href": "/conflicting-sources"
+					},
+					{
+						"label": "RoPA Management",
+
+						"icon": "register",
+						"body": "Records the business re-confirms as they change, not a register rebuilt at audit.",
+						"href": "/stale-ropa"
+					},
+					{
+						"label": "DPIAs and Assessments",
+
+						"icon": "assessment",
+						"body": "Every DPIA tied to the live risk it flagged, not filed and forgotten.",
+						"href": "/dpia-follow-through"
+					},
+					{
+						"label": "Third-Party Risk Management",
+
+						"icon": "vendors",
+						"body": "Vendors watched continuously, not vetted once and trusted.",
+						"href": "/vendor-drift"
+					},
+					{
+						"label": "AI Governance",
+
+						"icon": "ai",
+						"body": "Every AI tool surfaced and tied to its record, not found after it ships.",
+						"href": "/shadow-ai"
+					},
+					{
+						"label": "Board Reporting",
+
+						"icon": "board",
+						"body": "The trend, the target and the gap on one screen, not a shrug and a spreadsheet.",
+						"href": "/board-reporting"
+					},
+					{
+						"label": "DSAR Management",
+
+						"icon": "search",
+						"body": "Locate data subject records in minutes instead of weeks.",
+						"href": "/dsar-overload"
+					},
+					{
+						"label": "Targeted Training",
+
+						"icon": "training",
+						"body": "Point education at operational weak spots, not generic tick-boxes.",
+						"href": "/training-budget"
+					},
+					{
+						"label": "Breach Management",
+
+						"icon": "breach",
+						"body": "A breach on a Friday, handled – roles, clock, and an evidenced 72 hours.",
+						"href": "/breach-response"
+					},
+					{
+						"label": "Audit and Evidence",
+
+						"icon": "evidence",
+						"body": "A continuous evidence log, not a scramble before review.",
+						"href": "/audit-readiness"
+					}
+				]
+			},
 			"demo": { "label": "Book a demo", "href": "/demo" }
 		},
 		"logos": {

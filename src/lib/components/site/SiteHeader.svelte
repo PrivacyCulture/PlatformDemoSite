@@ -4,10 +4,18 @@
 	import { cubicOut } from 'svelte/easing';
 	import { site } from '$lib/site/content';
 	import { visibleLinks, isArchived } from '$lib/site/archive';
+	import FeaturesMenu from './FeaturesMenu.svelte';
+	import FeaturesAccordion from './FeaturesAccordion.svelte';
+	import { splitAtFeatures, featuresMenuFrom } from '$lib/site/features';
 
 	const nav = site.nav;
 	// A link to a page archived in the CMS is hidden while it is archived, and back when it is not.
-	const links = $derived(visibleLinks(nav.links));
+	// The Features menu is an entry in the main links (see $lib/site/features-position): split
+	// around it first, then hide archived links in each half, so archiving one never moves it.
+	const split = $derived(splitAtFeatures(nav.links));
+	const featuresMenu = $derived(featuresMenuFrom(nav.features, split.entry));
+	const linksBefore = $derived(visibleLinks(split.before));
+	const linksAfter = $derived(visibleLinks(split.after));
 	const mobileOnlyLinks = $derived(visibleLinks(nav.mobileOnlyLinks));
 	const showDemo = $derived(!isArchived(nav.demo.href));
 	const logo = site.logos.colour;
@@ -55,7 +63,7 @@
 		const options = { passive: false } as const;
 		document.addEventListener('touchmove', hold, options);
 		document.addEventListener('wheel', hold, options);
-		sheet?.querySelector<HTMLElement>('a')?.focus({ preventScroll: true });
+		sheet?.querySelector<HTMLElement>('a, button')?.focus({ preventScroll: true });
 		const desktop = matchMedia('(min-width: 64rem)');
 		const onDesktop = () => desktop.matches && close();
 		desktop.addEventListener('change', onDesktop);
@@ -66,6 +74,57 @@
 		};
 	});
 </script>
+
+{#snippet deskLink(link: { label: string; href?: string })}
+	{#if link.href}
+		<a
+			href={link.href}
+			aria-current={isCurrent(link.href) ? 'page' : undefined}
+			class="-my-3 rounded py-3 text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
+				link.href
+			)
+				? 'text-lens'
+				: 'text-ink/75 hover:text-ink'}"
+		>
+			{link.label}
+		</a>
+	{/if}
+{/snippet}
+
+{#snippet mobileRow(link: { label: string; href?: string })}
+	{@const current = !!link.href && isCurrent(link.href)}
+	<li class="border-ink/[0.06] [&:not(:first-child)]:border-t">
+		<a
+			href={link.href}
+			aria-current={current ? 'page' : undefined}
+			onclick={() => close()}
+			class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens {current
+				? 'text-lens'
+				: 'text-ink hover:bg-ink/[0.03] active:bg-ink/[0.05]'}"
+		>
+			<span class="flex items-center gap-3">
+				<span
+					class="h-1.5 w-1.5 rounded-full transition-colors {current ? 'bg-lens' : 'bg-ink/15'}"
+					aria-hidden="true"
+				></span>
+				{link.label}
+			</span>
+			<svg
+				width="16"
+				height="16"
+				viewBox="0 0 16 16"
+				fill="none"
+				aria-hidden="true"
+				class="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 {current
+					? 'text-lens'
+					: 'text-ink/35'}"
+			>
+				<path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+			</svg>
+		</a>
+	</li>
+{/snippet}
+
 
 <svelte:window
 	onscroll={() => (scrolled = window.scrollY > 8)}
@@ -104,23 +163,12 @@
 	</a>
 
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
-		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label={nav.ariaLabel} class="hidden translate-y-[5px] items-baseline gap-7 whitespace-nowrap lg:flex">
-			{#each links as link, i (i)}
-				{#if link.href}
-					<a
-						href={link.href}
-						aria-current={isCurrent(link.href) ? 'page' : undefined}
-						class="-my-3 rounded py-3 text-[14px] tracking-normal no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens {isCurrent(
-							link.href
-						)
-							? 'text-lens'
-							: 'text-ink/75 hover:text-ink'}"
-					>
-						{link.label}
-					</a>
-				{/if}
-			{/each}
+		<!-- top-[5px] lands the link baselines on the logo wordmark's baseline. An offset, not a
+		     transform: a transform would trap the Features panel under the page that follows. -->
+		<nav aria-label={nav.ariaLabel} class="relative top-[5px] hidden items-baseline gap-7 whitespace-nowrap lg:flex">
+			{#each linksBefore as link, i (i)}{@render deskLink(link)}{/each}
+			<FeaturesMenu menu={featuresMenu} arrow={nav.arrow} />
+			{#each linksAfter as link, i (i)}{@render deskLink(link)}{/each}
 		</nav>
 
 		<div class="flex items-center gap-2">
@@ -177,39 +225,9 @@
 		transition:fly={{ y: -8 * motion, duration: 200 * motion, easing: cubicOut }}
 	>
 		<ul class="flex flex-col">
-			{#each [...links.filter((l) => l.href), ...mobileOnlyLinks] as link, i (i)}
-				{@const current = !!link.href && isCurrent(link.href)}
-				<li class="border-ink/[0.06] [&:not(:first-child)]:border-t">
-					<a
-						href={link.href}
-						aria-current={current ? 'page' : undefined}
-						onclick={() => close()}
-						class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium no-underline transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens {current
-							? 'text-lens'
-							: 'text-ink hover:bg-ink/[0.03] active:bg-ink/[0.05]'}"
-					>
-						<span class="flex items-center gap-3">
-							<span
-								class="h-1.5 w-1.5 rounded-full transition-colors {current ? 'bg-lens' : 'bg-ink/15'}"
-								aria-hidden="true"
-							></span>
-							{link.label}
-						</span>
-						<svg
-							width="16"
-							height="16"
-							viewBox="0 0 16 16"
-							fill="none"
-							aria-hidden="true"
-							class="shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 {current
-								? 'text-lens'
-								: 'text-ink/35'}"
-						>
-							<path d="M6 3.5 10.5 8 6 12.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-						</svg>
-					</a>
-				</li>
-			{/each}
+			{#each linksBefore.filter((l) => l.href) as link, i (i)}{@render mobileRow(link)}{/each}
+			<FeaturesAccordion menu={featuresMenu} arrow={nav.arrow} onnavigate={() => close()} />
+			{#each [...linksAfter.filter((l) => l.href), ...mobileOnlyLinks] as link, i (i)}{@render mobileRow(link)}{/each}
 		</ul>
 
 		{#if showDemo}
