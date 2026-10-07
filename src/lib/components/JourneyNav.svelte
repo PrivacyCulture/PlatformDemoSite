@@ -4,6 +4,9 @@
 	import { site } from '$lib/content';
 	import { fade, fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
+	import FeaturesMenu from '$lib/components/site/FeaturesMenu.svelte';
+	import FeaturesAccordion from '$lib/components/site/FeaturesAccordion.svelte';
+	import { splitAtFeatures, featuresMenuFrom } from '$lib/site/features';
 
 	const logo = site.logos.colourWhite;
 
@@ -20,6 +23,7 @@
 	} = $props();
 
 	let menuOpen = $state(false);
+	let featuresOpen = $state(false);
 	let headerHeight = $state(0);
 	let toggle = $state<HTMLButtonElement>();
 	let sheet = $state<HTMLElement>();
@@ -61,7 +65,58 @@
 		else if (link.jump === 'hero') onHome();
 		menuOpen = false;
 	}
+
+	type NavLink = SiteContent['site']['nav']['links'][number];
+	// The Features menu is an entry in the main links, placed in Sorted (see $lib/site/features-position).
+	const split = $derived(splitAtFeatures(copy.links));
+	const featuresMenu = $derived(featuresMenuFrom(copy.features, split.entry));
 </script>
+
+{#snippet deskLink(link: NavLink)}
+	{#if link.href}
+		<a
+			href={link.href}
+			class="-my-3 rounded py-3 text-[14px] tracking-normal text-bone no-underline transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+			target={link.href.startsWith('http') ? '_blank' : undefined}
+			rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+		>
+			{link.label}
+		</a>
+	{:else}
+		<button
+			type="button"
+			onclick={() => handleLink(link)}
+			class="-my-3 cursor-pointer rounded py-3 text-[14px] tracking-normal text-bone transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+		>
+			{link.label}
+		</button>
+	{/if}
+{/snippet}
+
+{#snippet mobileRow(link: NavLink)}
+	<li class="border-bone/[0.08] [&:not(:first-child)]:border-t">
+		{#if link.href}
+			<a
+				href={link.href}
+				onclick={() => close()}
+				target={link.href.startsWith('http') ? '_blank' : undefined}
+				rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+				class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium text-bone no-underline transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
+			>
+				{@render row(link.label)}
+			</a>
+		{:else}
+			<button
+				type="button"
+				onclick={() => handleLink(link)}
+				class="group flex min-h-14 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl px-4 text-left text-[17px] font-medium text-bone transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
+			>
+				{@render row(link.label)}
+			</button>
+		{/if}
+	</li>
+{/snippet}
+
 
 <svelte:window
 	onkeydown={(e) => {
@@ -71,7 +126,7 @@
 
 <header
 	bind:clientHeight={headerHeight}
-	class="fixed inset-x-0 top-0 flex items-center justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5 {menuOpen ? 'z-[48]' : 'z-40'}"
+	class="fixed inset-x-0 top-0 flex items-center justify-between gap-4 px-5 py-4 sm:px-8 sm:py-5 {menuOpen || featuresOpen ? 'z-[48]' : 'z-40'}"
 >
 	<div
 		class="pointer-events-none absolute inset-0 -z-10 border-b border-bone/10 bg-ink/90 backdrop-blur-lg transition-opacity duration-200 lg:hidden {menuOpen
@@ -102,28 +157,12 @@
 	</a>
 
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
-		<!-- translate-y lands the link baselines on the logo wordmark's baseline -->
-		<nav aria-label={copy.ariaLabel} class="hidden translate-y-[5px] items-center gap-7 whitespace-nowrap lg:flex">
-			{#each copy.links as link (link.label)}
-				{#if link.href}
-					<a
-						href={link.href}
-						class="-my-3 rounded py-3 text-[14px] tracking-normal text-bone no-underline transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-						target={link.href.startsWith('http') ? '_blank' : undefined}
-						rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-					>
-						{link.label}
-					</a>
-				{:else}
-					<button
-						type="button"
-						onclick={() => handleLink(link)}
-						class="-my-3 cursor-pointer rounded py-3 text-[14px] tracking-normal text-bone transition-colors hover:text-bone/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
-					>
-						{link.label}
-					</button>
-				{/if}
-			{/each}
+		<!-- top-[5px] lands the link baselines on the logo wordmark's baseline. An offset, not a
+		     transform, as in the site header, where a transform would trap the Features panel. -->
+		<nav aria-label={copy.ariaLabel} class="relative top-[5px] hidden items-center gap-7 whitespace-nowrap lg:flex">
+			{#each split.before as link (link.label)}{@render deskLink(link)}{/each}
+			<FeaturesMenu menu={featuresMenu} arrow={copy.arrow} tone="dark" bind:open={featuresOpen} />
+			{#each split.after as link (link.label)}{@render deskLink(link)}{/each}
 		</nav>
 
 		<div class="flex items-center gap-2">
@@ -195,29 +234,9 @@
 		transition:fly={{ y: -8 * motion, duration: 200 * motion, easing: cubicOut }}
 	>
 		<ul class="flex flex-col">
-			{#each copy.links as link (link.label)}
-				<li class="border-bone/[0.08] [&:not(:first-child)]:border-t">
-					{#if link.href}
-						<a
-							href={link.href}
-							onclick={() => close()}
-							target={link.href.startsWith('http') ? '_blank' : undefined}
-							rel={link.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-							class="group flex min-h-14 items-center justify-between gap-3 rounded-2xl px-4 text-[17px] font-medium text-bone no-underline transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
-						>
-							{@render row(link.label)}
-						</a>
-					{:else}
-						<button
-							type="button"
-							onclick={() => handleLink(link)}
-							class="group flex min-h-14 w-full cursor-pointer items-center justify-between gap-3 rounded-2xl px-4 text-left text-[17px] font-medium text-bone transition-colors hover:bg-white/[0.04] active:bg-white/[0.06] focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-lens"
-						>
-							{@render row(link.label)}
-						</button>
-					{/if}
-				</li>
-			{/each}
+			{#each split.before as link (link.label)}{@render mobileRow(link)}{/each}
+			<FeaturesAccordion menu={featuresMenu} arrow={copy.arrow} tone="dark" onnavigate={() => close()} />
+			{#each split.after as link (link.label)}{@render mobileRow(link)}{/each}
 		</ul>
 
 		<div class="mt-2 p-2 sm:hidden">

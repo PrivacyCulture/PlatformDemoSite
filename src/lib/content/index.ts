@@ -28,6 +28,12 @@ export type NavLink = {
 	href?: string;
 	/** Journey-only: scroll to a beat instead of navigating. */
 	jump?: 'platform' | 'hero';
+	/**
+	 * Marks the entry that IS the Features menu: where it sits in the list is where the menu
+	 * sits, its label is the menu's name and its href is the menu's "see the whole platform"
+	 * link. Set in Sorted (Globals → Main navigation). See $lib/site/features-position.
+	 */
+	menu?: 'features';
 };
 
 export type JourneyShowMe = {
