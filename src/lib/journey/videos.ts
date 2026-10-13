@@ -1,5 +1,6 @@
 import type { BeatId } from '$lib/journey/beats';
-import { asset } from '$lib/content/assets';
+import { asset, hasBundledAsset } from '$lib/content/assets';
+import { heroPosterPaths } from '$lib/journey/hero-poster';
 import { live } from '$lib/content/runtime';
 
 // Clip paths are recorded in the site content under `journey.clips`. They point at
@@ -12,6 +13,10 @@ export type JourneyTheme = {
 	label: string;
 	/** Ambient looping plate on the landing hero. Never scrubbed. */
 	hero: string;
+	/** Frame 0 of `hero`, shown until the clip can play ('' when the build has none). */
+	heroPoster: string;
+	/** Centre crop of `heroPoster` for portrait screens ('' = use `heroPoster`). */
+	heroPosterPortrait: string;
 	/**
 	 * Individual scene clips. Order: scenes 1–6, then lens/emergence (shared last clip).
 	 * Mountains: shot-2…shot-8. Hero uses `hero` (`start.mp4`), not this list.
@@ -29,6 +34,7 @@ export const JOURNEY_THEMES: JourneyTheme[] = live(
 			id: journey.clips.themeId,
 			label: journey.clips.themeLabel,
 			hero: asset(journey.clips.hero),
+			...heroPosters(journey.clips.hero),
 			scenes: journey.clips.scenes.map(asset),
 			heroFocus: journey.clips.portraitFocus?.hero ?? '',
 			sceneFocus: journey.clips.portraitFocus?.scenes ?? []
@@ -36,6 +42,12 @@ export const JOURNEY_THEMES: JourneyTheme[] = live(
 	],
 	'array'
 );
+
+function heroPosters(hero: string): { heroPoster: string; heroPosterPortrait: string } {
+	const paths = heroPosterPaths(hero);
+	const bundled = (path: string | undefined) => (path && hasBundledAsset(path) ? asset(path) : '');
+	return { heroPoster: bundled(paths?.landscape), heroPosterPortrait: bundled(paths?.portrait) };
+}
 
 /**
  * Beat → scene index. Hero uses `theme.hero`.
