@@ -1,5 +1,12 @@
 // Article HTML for blog posts: paragraphs, two levels of heading, lists, quotes, bold, italic,
-// links and images — and nothing else. Pure; it imports only safeHref from inline-html.ts.
+// links and images — and three marked blocks: a PANEL LIST (`<ol class="panels">`, drawn as numbered
+// cards), a REPORT BOX (`<aside class="report">`, a boxed heading, list and note) and a TIMELINE
+// (`<aside class="timeline">`, the same shape drawn as dated steps). Two more ride on classes: a
+// CAPTION (`<p class="caption">`, small text that goes under an image) and ALIGNMENT on a paragraph
+// or heading (`align-center|align-right|align-justify`, left being the default and carrying none;
+// Quill's `ql-align-*` and an inline text-align are read as the same). A caption may be aligned too:
+// `<p class="caption align-center">`. Nothing else; those class values are the only attributes the
+// grammar carries besides href, src and alt. Pure; it imports only safeHref from inline-html.ts.
 // Offline test: npx tsx scripts/test-article-html.ts
 //
 // THIS FILE IS DUPLICATED, BYTE FOR BYTE, IN THE S2 SITE (VideoAI: src/lib/site/article-html.ts),
@@ -23,14 +30,22 @@ import { safeHref } from './inline-html';
 /** Nothing a person writes is this long; a paste that is gets cut, never parsed at length. */
 export const MAX_ARTICLE_HTML_CHARS = 200_000;
 
-const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'li', 'blockquote']);
+// `ol.panels` and `aside.report` are tags of their own to the stack: what each may hold, and where
+// it may sit, differs from a plain list or from any other block.
+const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'li', 'blockquote', 'aside.report', 'aside.timeline']);
+/** The boxed blocks. Both hold the same things; they differ only in how the site draws them. */
+const BOXES = ['aside.report', 'aside.timeline'];
+const LISTS = ['ul', 'ol', 'ol.panels'];
 const INLINE = new Set(['strong', 'em', 'a']);
 /** What each container may hold directly. Inline content anywhere else opens a `<p>` (or `<li>`). */
 const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
-	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'blockquote']),
+	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'blockquote', 'aside.report', 'aside.timeline']),
 	blockquote: new Set(['p']),
+	'aside.report': new Set(['p', 'h3', 'ul', 'ol']),
+	'aside.timeline': new Set(['p', 'h3', 'ul', 'ol']),
 	ul: new Set(['li']),
 	ol: new Set(['li']),
+	'ol.panels': new Set(['li']),
 	p: new Set(['#text', 'strong', 'em', 'a', 'br', 'img']),
 	// An image is allowed in a list item because the list's wrapper is an item: refusing it here
 	// would make the list close the item, reopen one, and refuse it again, for ever.
@@ -42,7 +57,36 @@ const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
 	a: new Set(['#text', 'strong', 'em', 'br', 'img'])
 };
 /** Where inline content goes when it arrives in a container that cannot hold it. */
-const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', ul: 'li', ol: 'li' };
+const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', 'aside.report': 'p', 'aside.timeline': 'p', ul: 'li', ol: 'li', 'ol.panels': 'li' };
+
+/** How a stack entry is written: the two marked blocks carry their class, everything else is bare. */
+const OPEN_TAG: Record<string, string> = { 'ol.panels': '<ol class="panels">', 'aside.report': '<aside class="report">', 'aside.timeline': '<aside class="timeline">' };
+const openTag = (tag: string, cls = '') => OPEN_TAG[tag] ?? (cls ? `<${tag} class="${cls}">` : `<${tag}>`);
+
+/** The blocks that may be aligned, and the alignments they may take (left is the default). */
+const ALIGNABLE = new Set(['p', 'h2', 'h3']);
+const ALIGNMENTS = ['center', 'right', 'justify'];
+/** `align-center`, from our class, Quill's `ql-align-center` or an inline text-align; '' for left. */
+function alignOf(attrs: string): string {
+	const classes = (attr(attrs, 'class') ?? '').split(/\s+/);
+	for (const a of ALIGNMENTS) if (classes.includes(`align-${a}`) || classes.includes(`ql-align-${a}`)) return `align-${a}`;
+	const m = /text-align\s*:\s*(center|right|justify)/i.exec(attr(attrs, 'style') ?? '');
+	return m ? `align-${m[1].toLowerCase()}` : '';
+}
+
+/** The classes a block opens with: `caption` (a paragraph only) and its alignment. */
+function blockClasses(tag: string, attrs: string): string {
+	if (!ALIGNABLE.has(tag)) return '';
+	const caption = tag === 'p' && hasClass(attrs, 'caption');
+	return [caption ? 'caption' : '', alignOf(attrs)].filter(Boolean).join(' ');
+}
+
+const closeTag = (tag: string) => `</${tag.split('.')[0]}>`;
+
+/** Whether a class attribute names `want` — `class="ql-x panels"` counts, `class="panelsy"` does not. */
+function hasClass(attrs: string, want: string): boolean {
+	return (attr(attrs, 'class') ?? '').split(/\s+/).includes(want);
+}
 
 const RENAME: Record<string, string> = { b: 'strong', i: 'em', h1: 'h2', h4: 'h3', h5: 'h3', h6: 'h3', div: 'p' };
 /** Dropped with everything inside them. */
@@ -94,7 +138,7 @@ export function cleanArticleHtml(html: string): string {
 		stack.push(tag);
 		out.push(rendered);
 	};
-	const closeTop = () => out.push(`</${stack.pop()}>`);
+	const closeTop = () => out.push(closeTag(stack.pop() as string));
 	/** Pop until `tag` may be placed here, opening the container's wrapper if it needs one. */
 	const place = (tag: string): boolean => {
 		// Bounded: every step either closes a tag or opens a wrapper that holds any inline
@@ -105,7 +149,7 @@ export function cleanArticleHtml(html: string): string {
 			if (ALLOWED_IN[here]?.has(tag)) return true;
 			const wrapper = WRAPPER[here];
 			if (wrapper && !BLOCKS.has(tag)) {
-				open(wrapper, `<${wrapper}>`);
+				open(wrapper, openTag(wrapper));
 				continue;
 			}
 			if (!stack.length) return false;
@@ -138,7 +182,21 @@ export function cleanArticleHtml(html: string): string {
 			if (!closing && !/\/\s*$/.test(m[3] ?? '')) dropping = raw;
 			continue;
 		}
-		const tag = RENAME[raw] ?? raw;
+		let tag = RENAME[raw] ?? raw;
+		// The marked blocks. An <aside> that is not a report box or a timeline is not a block we
+		// draw: it is dropped and its words kept, like any other unknown tag.
+		if (tag === 'ol' && !closing && hasClass(m[3] ?? '', 'panels')) tag = 'ol.panels';
+		if (tag === 'aside') {
+			if (closing) {
+				const i = Math.max(...BOXES.map((b) => stack.lastIndexOf(b)));
+				if (i !== -1) while (stack.length > i) closeTop();
+				continue;
+			}
+			// A box inside a box is not a thing: the outer one closes first.
+			const kind = hasClass(m[3] ?? '', 'report') ? 'aside.report' : hasClass(m[3] ?? '', 'timeline') ? 'aside.timeline' : '';
+			if (!kind) continue;
+			tag = kind;
+		}
 		if (tag === 'br') {
 			if (!closing && place('br')) out.push('<br>');
 			continue;
@@ -151,7 +209,8 @@ export function cleanArticleHtml(html: string): string {
 		}
 		if (!BLOCKS.has(tag) && !INLINE.has(tag)) continue; // unknown tag: dropped, its text kept
 		if (closing) {
-			const i = stack.lastIndexOf(tag);
+			// `</ol>` closes a panel list as well as a plain one.
+			const i = tag === 'ol' ? Math.max(stack.lastIndexOf('ol'), stack.lastIndexOf('ol.panels')) : stack.lastIndexOf(tag);
 			if (i === -1) continue;
 			while (stack.length > i) closeTop();
 			continue;
@@ -164,16 +223,16 @@ export function cleanArticleHtml(html: string): string {
 			if (place('a')) open('a', `<a href="${escapeAttr(href)}">`);
 			continue;
 		}
-		if (tag === 'li' && top() !== 'ul' && top() !== 'ol') {
+		if (tag === 'li' && !LISTS.includes(top())) {
 			// A list item with no list around it: close back to one, or open a list for it.
-			const listAt = Math.max(stack.lastIndexOf('ul'), stack.lastIndexOf('ol'));
+			const listAt = Math.max(...LISTS.map((l) => stack.lastIndexOf(l)));
 			if (listAt !== -1) while (stack.length > listAt + 1) closeTop();
 			else {
 				if (!place('ul')) continue;
 				open('ul', '<ul>');
 			}
 		}
-		if (place(tag)) open(tag, `<${tag}>`);
+		if (place(tag)) open(tag, openTag(tag, blockClasses(tag, m[3] ?? '')));
 	}
 	if (!dropping) text(s.slice(last));
 	while (stack.length) closeTop();
@@ -183,8 +242,10 @@ export function cleanArticleHtml(html: string): string {
 	for (let prev = ''; prev !== result; ) {
 		prev = result;
 		result = result
-			.replace(/<(p|h2|h3|li|strong|em|a)(?: href="[^"]*")?>(?:\s|<br>)*<\/\1>/g, '')
+			.replace(/<(p|h2|h3|li|strong|em|a)(?: (?:href|class)="[^"]*")?>(?:\s|<br>)*<\/\1>/g, '')
 			.replace(/<(ul|ol|blockquote)>\s*<\/\1>/g, '')
+			.replace(/<ol class="panels">\s*<\/ol>/g, '')
+			.replace(/<aside class="(?:report|timeline)">\s*<\/aside>/g, '')
 			.replace(/(?:<br>)+(<\/(?:p|h2|h3|li)>)/g, '$1');
 	}
 	return result.trim();
@@ -199,7 +260,7 @@ export function renderArticleHtml(html: string): string {
 export function articlePlainText(html: string): string {
 	return decodeEntities(
 		cleanArticleHtml(html)
-			.replace(/<\/(?:p|h2|h3|li|blockquote)>|<br>/g, '\n')
+			.replace(/<\/(?:p|h2|h3|li|blockquote|aside)>|<br>/g, '\n')
 			.replace(/<[^>]+>/g, '')
 	)
 		.replace(/&#(\d+);/g, (_m, n: string) => String.fromCodePoint(Number(n)))
@@ -236,7 +297,7 @@ export function headingSlug(text: string): string {
 export function headingsOf(html: string): { id: string; text: string }[] {
 	const seen = new Map<string, number>();
 	const out: { id: string; text: string }[] = [];
-	for (const m of cleanArticleHtml(html).matchAll(/<h2>([\s\S]*?)<\/h2>/g)) {
+	for (const m of cleanArticleHtml(html).matchAll(/<h2(?: class="[^"]*")?>([\s\S]*?)<\/h2>/g)) {
 		const text = decodeEntities(m[1].replace(/<br>/g, ' ').replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
 		const base = headingSlug(text);
 		const n = (seen.get(base) ?? 0) + 1;
@@ -250,5 +311,58 @@ export function headingsOf(html: string): { id: string; text: string }[] {
 export function withHeadingIds(html: string): string {
 	const ids = headingsOf(html);
 	let i = 0;
-	return cleanArticleHtml(html).replace(/<h2>/g, () => `<h2 id="${ids[i++]?.id ?? 'section'}">`);
+	return cleanArticleHtml(html).replace(/<h2( class="[^"]*")?>/g, (_m, cls: string | undefined) => `<h2 id="${ids[i++]?.id ?? 'section'}"${cls ?? ''}>`);
+}
+
+/**
+ * The cleaned body, readied for the page: in a panel list, an item that OPENS with bold text gets
+ * that text marked as the card's heading; in a timeline, each item is split into its date and its
+ * step (see timelineStep). Done here rather than with `strong:first-child` in CSS,
+ * which also matches a bold word mid-item whenever the item starts with plain text. Runs after the
+ * grammar has cleaned the body, so the one class it adds is the site's, not the author's.
+ */
+export function decorateArticleHtml(html: string): string {
+	return html
+		.replace(/<ol class="panels">([\s\S]*?)<\/ol>/g, (block) => block.replace(/<li><strong>/g, '<li><strong class="panel-title">'))
+		.replace(/<aside class="timeline">([\s\S]*?)<\/aside>/g, (box) => decorateTimeline(box));
+}
+
+/**
+ * A paragraph that opens with a bullet somebody TYPED ("• 21 May 2025: …"), as text pasted from a
+ * document arrives. Inside a timeline a run of them is the list of steps, so they are read as one;
+ * otherwise the steps render as plain paragraphs with a bullet character on the front.
+ */
+const TYPED_BULLET = /^<p>((?:<(?:strong|em)>)*)[•·▪‣◦*–-]\s+/;
+
+function decorateTimeline(box: string): string {
+	// Typed-bullet paragraphs → one list, so a pasted timeline draws like a real one.
+	let body = box.replace(/(?:<p>(?:<(?:strong|em)>)*[•·▪‣◦*–-]\s+[\s\S]*?<\/p>)+/g, (run) =>
+		'<ul>' + run.replace(/<p>([\s\S]*?)<\/p>/g, (p) => '<li>' + p.replace(TYPED_BULLET, '<p>$1').slice(3, -4) + '</li>') + '</ul>'
+	);
+	body = body.replace(/<li>([\s\S]*?)<\/li>/g, (_m, inner: string) => timelineStep(inner));
+	// The note after the steps: a short opening label ("UK readers:") is set in bold, as in the design.
+	return body.replace(/(<\/(?:ul|ol)>[\s\S]*?<p>)([^<:]{1,30}:)(\s)/g, '$1<strong>$2</strong>$3');
+}
+
+/** A date label that says the step has not happened yet: drawn with a dashed bar. */
+const PENDING_DATE = /^(?:still\s+pending|pending|expected|tbc|to\s+be\s+confirmed)\b/i;
+
+/**
+ * One timeline step. The text before the first colon is its date — plain text only, at most 40
+ * characters, and the colon followed by a space, so "10:30" or a colon inside the bold title is
+ * never mistaken for one. A step with no date is still drawn, just without a label. The item's
+ * opening bold text, after the date, is its title.
+ */
+function timelineStep(inner: string): string {
+	const m = /^([^<:]{1,40}?):\s+/.exec(inner);
+	const date = m ? m[1].trim() : '';
+	let rest = m ? inner.slice(m[0].length) : inner;
+	if (/^<strong>/.test(rest)) rest = rest.replace(/^<strong>/, '<strong class="tl-title">');
+	else {
+		// No bold title written: the step's first sentence is its title, as long as it is short.
+		const t = /^([^<]{1,90}?[.!?])(\s|$)/.exec(rest);
+		if (t) rest = `<strong class="tl-title">${t[1]}</strong>${rest.slice(t[1].length)}`;
+	}
+	const pending = PENDING_DATE.test(date);
+	return `<li class="tl-step${pending ? ' is-pending' : ''}">${date ? `<span class="tl-date">${date}</span>` : ''}${rest}</li>`;
 }

@@ -1,0 +1,172 @@
+/*
+	The article body's own stylesheet, BYTE-IDENTICAL in two repos:
+	  VideoAI  src/lib/site/article-body.css  (the /blog/<slug> page)
+	  Sorted   src/lib/article-body.css       (the blog editor's preview)
+	Both test suites assert its SHA-256, so the preview cannot drift from the page. Copy the file
+	across and update the constant in BOTH tests.
+
+	Every selector is under .article-body, and the element it sits on must NOT also carry `rt`:
+	the site's global `.rt a/strong/em` rules have the same specificity as these and would win or
+	lose on stylesheet order. The link, bold and italic rules that `rt` gave are written here.
+	It reads the site's colour tokens (--color-ink, --color-heading, --color-lens, --color-horizon,
+	--color-gold, --color-silver) and --font-mono; a host that lacks them must define them.
+*/
+
+/* The article's own typography. The grammar is fixed (p, h2, h3, lists, quotes, links,
+   images), so every element it can contain is styled here and nothing else needs to be. */
+.article-body {
+	font-size: 16.5px;
+	line-height: 1.75;
+	font-weight: 300;
+	color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+}
+.article-body > * + * { margin-top: 1.1em; }
+.article-body h2 {
+	margin-top: 2em;
+	font-size: 1.55rem;
+	line-height: 1.25;
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	color: var(--color-heading);
+	scroll-margin-top: 6rem;
+}
+.article-body h3 { margin-top: 1.6em; font-size: 1.2rem; font-weight: 700; color: var(--color-heading); }
+.article-body ul { padding-left: 1.4em; list-style: disc; }
+.article-body ul li + li { margin-top: 0.4em; }
+.article-body ul li::marker { color: var(--color-gold); }
+
+/* A numbered list is a list of STEPS: each number in a circle, the item's opening bold text as
+   its lead-in. */
+.article-body ol:not(.panels) { list-style: none; padding: 0; counter-reset: step; display: flex; flex-direction: column; gap: 1.25rem; }
+/* The number is positioned, not a grid column: an item is a run of text and inline tags, and a
+   grid would make every text run a cell of its own. */
+.article-body ol:not(.panels) > li { counter-increment: step; position: relative; padding-left: 3.25rem; padding-top: 0.2rem; min-height: 2.25rem; }
+.article-body ol:not(.panels) > li::before {
+	content: counter(step);
+	position: absolute; left: 0; top: 0;
+	display: grid; place-items: center; width: 2.25rem; height: 2.25rem; border-radius: 999px;
+	background: color-mix(in srgb, var(--color-lens) 12%, white);
+	color: var(--color-horizon); font-size: 0.95rem; font-weight: 600; line-height: 1;
+}
+.article-body ol:not(.panels) > li strong { color: var(--color-heading); }
+
+/* A PANEL list: each item a numbered card, its opening bold text the card's heading. Cards
+   share a row two or three at a time and the last row stretches, as in the design. */
+.article-body ol.panels { list-style: none; padding: 0; counter-reset: panel; display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 1.6em; margin-bottom: 0.4em; }
+.article-body ol.panels > li {
+	counter-increment: panel; flex: 1 1 15rem; box-sizing: border-box; padding: 1.4rem 1.5rem;
+	border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent); border-radius: 1rem; background: white;
+	font-size: 15px; line-height: 1.6;
+}
+.article-body ol.panels > li::before {
+	content: counter(panel, decimal-leading-zero);
+	display: block; margin-bottom: 0.5rem;
+	font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 0.85rem; font-weight: 500; color: var(--color-lens);
+}
+.article-body .panel-title { display: block; margin-bottom: 0.45rem; font-size: 1.12rem; line-height: 1.3; font-weight: 700; color: var(--color-heading); }
+
+/* A REPORT box: a boxed note of what is known — its small heading, a list, and a sources line. */
+.article-body aside.report {
+	margin-top: 2em; margin-bottom: 2em; padding: 1.6rem 1.75rem;
+	border-radius: 1rem; background: color-mix(in srgb, var(--color-silver) 55%, transparent);
+	font-size: 15.5px; line-height: 1.65;
+}
+.article-body aside.report > * + * { margin-top: 0.9em; }
+.article-body aside.report h3 {
+	margin: 0; font-size: 12px; line-height: 1.5; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+	color: color-mix(in srgb, var(--color-ink) 62%, transparent);
+}
+.article-body aside.report ul li::marker { color: var(--color-ink); }
+/* Only a paragraph AFTER the list is the sources note; one written as the box's own text reads
+   at full size, or a box with no list is all small grey print. */
+.article-body aside.report :is(ul, ol) ~ p { font-size: 14px; color: color-mix(in srgb, var(--color-ink) 58%, transparent); }
+/* A pull quote: large bold words beside a blue rule, no box. */
+.article-body blockquote {
+	margin-top: 1.8em;
+	margin-bottom: 1.8em;
+	padding: 0.15em 0 0.15em 1.75rem;
+	border-left: 4px solid var(--color-lens);
+	font-size: 1.4rem;
+	line-height: 1.4;
+	font-weight: 700;
+	letter-spacing: -0.005em;
+	color: var(--color-heading);
+}
+.article-body blockquote p + p { margin-top: 0.6em; }
+/* A TIMELINE: the report box's frame, with its list drawn as dated steps side by side — a bar
+   on top of each, solid when it has happened and dashed when it has not — and a footnote under
+   a rule. The steps wrap onto a second row in the article column, and stack on a phone. */
+.article-body aside.timeline {
+	margin-top: 2em; margin-bottom: 2em; padding: 1.6rem 1.75rem;
+	border-radius: 1rem; background: color-mix(in srgb, var(--color-silver) 55%, transparent);
+	font-size: 15.5px; line-height: 1.65;
+}
+.article-body aside.timeline > * + * { margin-top: 0.9em; }
+.article-body aside.timeline h3 {
+	margin: 0; font-family: var(--font-mono, ui-monospace, Menlo, monospace);
+	font-size: 14px; line-height: 1.5; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase;
+	color: color-mix(in srgb, var(--color-ink) 62%, transparent);
+}
+.article-body aside.timeline :is(ul, ol) {
+	list-style: none; padding: 0; margin-top: 1.3em;
+	display: grid; grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); gap: 1.5rem 1.1rem;
+}
+/* Up to five steps share ONE row, as in the design — a lone step wrapped onto a second row
+   reads as a separate timeline. Six or more wrap at the wider minimum above. */
+.article-body aside.timeline :is(ul, ol):not(:has(> li:nth-child(6))) { grid-template-columns: repeat(auto-fit, minmax(7rem, 1fr)); column-gap: 1rem; }
+.article-body aside.timeline li.tl-step {
+	margin: 0; padding-top: 0.85rem; border-top: 3px solid var(--color-lens); overflow-wrap: break-word;
+	font-size: 14px; line-height: 1.55; color: color-mix(in srgb, var(--color-ink) 80%, transparent);
+}
+.article-body aside.timeline li.tl-step.is-pending { border-top-style: dashed; border-top-color: color-mix(in srgb, var(--color-ink) 32%, transparent); }
+.article-body .tl-date {
+	display: block; margin-bottom: 0.45rem; font-family: var(--font-mono, ui-monospace, Menlo, monospace);
+	font-size: 12.5px; line-height: 1.4; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--color-horizon);
+}
+.article-body .is-pending .tl-date { color: color-mix(in srgb, var(--color-ink) 55%, transparent); }
+.article-body .tl-title { font-weight: 700; color: var(--color-ink); }
+.article-body aside.timeline :is(ul, ol) ~ p {
+	margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+	font-size: 14.5px; color: color-mix(in srgb, var(--color-ink) 75%, transparent);
+}
+.article-body aside.timeline :is(ul, ol) ~ p strong { color: var(--color-ink); }
+@media (max-width: 640px) {
+	/* Named with the same :not(:has()) as the five-in-a-row rule above, or that rule's higher
+	   specificity keeps two columns on a phone. */
+	.article-body aside.timeline :is(ul, ol),
+	.article-body aside.timeline :is(ul, ol):not(:has(> li:nth-child(6))) { grid-template-columns: 1fr; gap: 0; }
+	.article-body aside.timeline li.tl-step { border-top: 0; border-left: 3px solid var(--color-lens); padding: 0 0 1.1rem 1rem; }
+	.article-body aside.timeline li.tl-step.is-pending { border-left-style: dashed; border-left-color: color-mix(in srgb, var(--color-ink) 32%, transparent); }
+}
+
+.article-body img { display: block; width: 100%; height: auto; border-radius: 1rem; margin: 1.6em 0; }
+.article-body strong { font-weight: 600; color: var(--color-ink); }
+
+/* Links, bold and italic — what `rt` gives copy elsewhere on the site. */
+.article-body a {
+	color: var(--color-lens);
+	text-decoration: underline;
+	text-underline-offset: 0.18em;
+	text-decoration-thickness: 1px;
+	transition: color 200ms ease;
+}
+.article-body a:hover { color: var(--color-heading); }
+.article-body a:focus-visible { outline: 2px solid var(--color-lens); outline-offset: 3px; border-radius: 2px; }
+.article-body em { font-style: italic; }
+@media (prefers-reduced-motion: reduce) {
+	.article-body a { transition: none; }
+}
+
+/* Alignment on a paragraph or heading, from the toolbar's alignment picker. */
+.article-body .align-center { text-align: center; }
+.article-body .align-right { text-align: right; }
+.article-body .align-justify { text-align: justify; }
+
+/* A caption: small print, meant for the line under an image. Straight after an image it closes
+   up to it, so it reads as that image's caption rather than as the next paragraph. */
+.article-body p.caption {
+	font-size: 13.5px;
+	line-height: 1.55;
+	color: color-mix(in srgb, var(--color-ink) 58%, transparent);
+}
+.article-body p:has(> img:last-child) + p.caption { margin-top: -0.9em; }

@@ -53,7 +53,7 @@ npx tsx scripts/test-seo-head.ts
 
 Posts are written and approved in Sorted (Website → Platform → Blog) and arrive in the content as
 `blogPosts` — every approved post on the live channel, every draft too on the preview channel. `/blog`
-lays them out (newest as the hero, the next three, a pinned post as Featured research, the rest with
+lays them out (newest as the hero, the next three, a pinned post as Featured, the rest with
 Load more) and searches them on the server, body text included; `/blog/<slug>` is the article. The
 `/platform` page draws the newest as a **Latest articles** block (`articles` in its layout).
 
@@ -63,6 +63,11 @@ Load more) and searches them on the server, body text included; `/blog/<slug>` i
 - The browser is handed summaries only (`blogSummaries` in the root layout); an article's body comes
   from its own page load. Read time travels with each summary so a card renders the same on both sides.
 - The blog page's wording is `pages.blog` in `data/database.json`.
+- Three article shapes beyond prose: an ordinary `<ol>` is drawn as **steps** (numbers in circles),
+  `<ol class="panels">` as numbered **cards** (`decorateArticleHtml` marks each item's opening bold
+  text as the card heading), and `<aside class="report">` as a grey **report box**, and `<aside class="timeline">` as dated
+  **steps** (each item `Date: **Title.** text`; a date starting "Still pending", "Expected" or
+  "TBC" gets a dashed bar). The styles are in the article page.
 
 ```
 npx tsx scripts/test-blog.ts
