@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
 	import { asset } from '$lib/content/assets';
+	import { SIZES, imageAtWidth, responsive } from '$lib/site/images';
 
 	let {
 		src = site.video.src,
@@ -95,7 +96,7 @@
 				aria-label={label ? `Enlarge: ${label}` : 'Enlarge image'}
 				onclick={() => zoomEl?.showModal()}
 			>
-				<img class="block aspect-video w-full bg-white object-cover" src={posterUrl} alt={label} decoding="async" />
+				<img class="block aspect-video w-full bg-white object-cover" src={posterUrl} {...responsive(posterUrl ?? '', SIZES.explainer)} alt={label} decoding="async" />
 				<!-- Shown on hover or keyboard focus; always on touch, which has no hover to reveal it. -->
 				<span
 					class={[
@@ -125,6 +126,7 @@
 				<img
 					class="block max-h-[90vh] max-w-[94vw] rounded-xl bg-white object-contain shadow-2xl"
 					src={posterUrl}
+					{...responsive(posterUrl ?? '', SIZES.zoom)}
 					alt={label}
 					decoding="async"
 				/>
@@ -153,7 +155,7 @@
 			bind:this={videoEl}
 			class="block aspect-video w-full rounded-[inherit] bg-transparent object-cover"
 			{src}
-			poster={posterUrl}
+			poster={posterUrl ? imageAtWidth(posterUrl, 1440) : undefined}
 			controls={started || touch}
 			playsinline
 			preload="metadata"

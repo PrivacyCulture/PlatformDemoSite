@@ -12,6 +12,9 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
+			// Inline the small per-component CSS files into a <style> block so they
+			// don't each block first paint. The main Tailwind sheet stays a cached file.
+			inlineStyleThreshold: 10240,
 			adapter: adapter({
 				out: 'build',
 				precompress: true

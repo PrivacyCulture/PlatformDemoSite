@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
+	import { SIZES, responsive } from '$lib/site/images';
 	import { trustedEntries, isExternal } from '$lib/site/trusted';
 
 	const entries = $derived(trustedEntries(site.trusted.names));
@@ -40,6 +41,7 @@
 	{#if entry.src}
 		<img
 			src={entry.src}
+			{...responsive(entry.src, SIZES.logo)}
 			alt={entry.name}
 			loading="lazy"
 			decoding="async"

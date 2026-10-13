@@ -6,6 +6,7 @@
 -->
 <script lang="ts">
 	import { formatPostDate, readTimeLabel, type BlogSummary } from '$lib/site/blog';
+	import { SIZES, responsive } from '$lib/site/images';
 
 	let {
 		post,
@@ -31,6 +32,7 @@
 			{#if post.image.src}
 				<img
 					src={post.image.src}
+					{...responsive(post.image.src, SIZES.card)}
 					alt=""
 					width={post.image.width || undefined}
 					height={post.image.height || undefined}

@@ -8,6 +8,7 @@
 -->
 <script lang="ts">
 	import { page } from '$app/state';
+	import { SIZES, responsive, responsiveArticleImages } from '$lib/site/images';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
 	import BlogCard from '$lib/components/site/blog/BlogCard.svelte';
@@ -26,7 +27,7 @@
 	const copy = pages.blog;
 	const post = $derived(data.post);
 	const eyebrow = $derived(postEyebrow(post, problems));
-	const body = $derived(decorateArticleHtml(withHeadingIds(post.body)));
+	const body = $derived(responsiveArticleImages(decorateArticleHtml(withHeadingIds(post.body))));
 	const headings = $derived(headingsOf(post.body));
 	const initials = $derived(
 		(post.author.name || site.shortName || 'PC')
@@ -124,6 +125,7 @@
 			{#if post.image.src}
 				<img
 					src={post.image.src}
+					{...responsive(post.image.src, SIZES.article)}
 					alt={post.image.alt}
 					width={post.image.width || undefined}
 					height={post.image.height || undefined}

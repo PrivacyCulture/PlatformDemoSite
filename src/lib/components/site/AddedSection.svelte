@@ -10,6 +10,7 @@
 -->
 <script lang="ts">
 	import GoldCta from './GoldCta.svelte';
+	import { SIZES, responsive, sourceSrcset } from '$lib/site/images';
 	import { asset } from '$lib/content/assets';
 	import type { AddedSection, AddedImage } from '$lib/site/added-sections';
 	import { rich } from '$lib/site/rich';
@@ -23,10 +24,11 @@
 {#snippet picture(img: AddedImage, cls: string)}
 	<picture>
 		{#if img.webp}
-			<source srcset={asset(img.webp)} type="image/webp" />
+			<source srcset={sourceSrcset(asset(img.webp))} sizes={SIZES.half} type="image/webp" />
 		{/if}
 		<img
 			src={asset(img.src)}
+			{...responsive(asset(img.src), SIZES.half)}
 			alt={img.alt}
 			width={img.width > 0 ? img.width : undefined}
 			height={img.height > 0 ? img.height : undefined}

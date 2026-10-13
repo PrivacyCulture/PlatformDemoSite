@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { NAV_JUMPS } from '$lib/journey/beats';
+	import { SIZES, responsive } from '$lib/site/images';
 	import type { SiteContent } from '$lib/content';
 	import { site } from '$lib/content';
 	import { fade, fly } from 'svelte/transition';
@@ -148,6 +149,7 @@
 	>
 		<img
 			src={logo.src}
+			{...responsive(logo.src, SIZES.logo)}
 			alt={logo.alt}
 			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
 			width={logo.width}

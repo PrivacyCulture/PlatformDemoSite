@@ -5,6 +5,7 @@
 	 * to the right; `right` uses the one that fades out to the left.
 	 */
 	import { site } from '$lib/site/content';
+	import { imageAtWidth } from '$lib/site/images';
 
 	let {
 		side = 'left',
@@ -16,14 +17,17 @@
 		children: import('svelte').Snippet;
 	} = $props();
 
-	const image = $derived(
-		`url('${side === 'left' ? site.backgrounds.mountainLeft : site.backgrounds.mountainRight}')`
-	);
+	const file = $derived(side === 'left' ? site.backgrounds.mountainLeft : site.backgrounds.mountainRight);
+	// Drawn 64vw wide. A library picture has copies, so a phone takes a small one; any other
+	// file is the same address at every width.
+	const image = $derived(`url('${imageAtWidth(file, 1920)}')`);
+	const imageSmall = $derived(`url('${imageAtWidth(file, 960)}')`);
 </script>
 
 <div
 	class={['mountain-scene relative w-full py-10 sm:py-14', `scene-${side}`, className]}
 	style:--scene-image={image}
+	style:--scene-image-small={imageSmall}
 >
 	<div class="relative z-10">
 		{@render children()}
@@ -67,6 +71,13 @@
 		background-image: var(--scene-image);
 		background-position: right top;
 		filter: saturate(0.9) brightness(1.05);
+	}
+
+	@media (max-width: 767px) {
+		.scene-left::before,
+		.scene-right::before {
+			background-image: var(--scene-image-small);
+		}
 	}
 
 	/* Same wash as the hero in SiteShell; the horizontal fade runs toward the copy. */

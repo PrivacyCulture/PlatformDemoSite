@@ -8,6 +8,7 @@
 -->
 <script lang="ts">
 	import { untrack } from 'svelte';
+	import { SIZES, responsive } from '$lib/site/images';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
@@ -156,7 +157,7 @@
 		</div>
 		{#if hero.image.src}
 			<a href="/blog/{hero.slug}" class="block rounded-3xl bg-white/80 p-3 shadow-[0_24px_60px_rgba(11,18,32,0.12)] ring-1 ring-ink/5" tabindex="-1" aria-hidden="true">
-				<img src={hero.image.src} alt="" width={hero.image.width || undefined} height={hero.image.height || undefined} class="aspect-video w-full rounded-2xl object-cover" decoding="async" />
+				<img src={hero.image.src} {...responsive(hero.image.src, SIZES.blogHero)} alt="" width={hero.image.width || undefined} height={hero.image.height || undefined} class="aspect-video w-full rounded-2xl object-cover" decoding="async" />
 			</a>
 		{/if}
 	</header>
@@ -197,7 +198,7 @@
 				</div>
 				{#if f.image.src}
 					<div class="rounded-2xl bg-white p-4 sm:p-6">
-						<img src={f.image.src} alt={f.image.alt} width={f.image.width || undefined} height={f.image.height || undefined} loading="lazy" decoding="async" class="w-full rounded-xl object-contain" />
+						<img src={f.image.src} {...responsive(f.image.src, SIZES.half)} alt={f.image.alt} width={f.image.width || undefined} height={f.image.height || undefined} loading="lazy" decoding="async" class="w-full rounded-xl object-contain" />
 					</div>
 				{/if}
 			</div>

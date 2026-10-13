@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import SiteFooter from './SiteFooter.svelte';
 	import SiteHeader from './SiteHeader.svelte';
 	import { asset } from '$lib/content/assets';
@@ -9,21 +10,65 @@
 	const grain = `url('${site.shell.grain}')`;
 
 	let { children }: { children: import('svelte').Snippet } = $props();
+
+	let loopMounted = $state(false);
+	let loopPlaying = $state(false);
+
+	// The still is the hero's LCP and must paint on its own. The loop is not in the server HTML:
+	// it mounts once the page has loaded, a frame has painted and the main thread is idle, so its
+	// download never competes with the first render, then fades in over the still once playing.
+	// The painted frame matters: the third-party scripts can hold the first paint past `load`.
+	onMount(() => {
+		if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+		if ((navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData)
+			return;
+
+		let cancelled = false;
+		let frame = 0;
+		let idle = 0;
+		// Safari has no requestIdleCallback; a short timeout stands in for it.
+		const hasIdle = 'requestIdleCallback' in window;
+		const mount = () => {
+			if (!cancelled) loopMounted = true;
+		};
+		// The second frame callback runs only after the first frame has been painted.
+		const afterPaint = () => {
+			frame = requestAnimationFrame(() => {
+				frame = requestAnimationFrame(() => {
+					idle = hasIdle
+						? requestIdleCallback(mount, { timeout: 3000 })
+						: window.setTimeout(mount, 500);
+				});
+			});
+		};
+		if (document.readyState === 'complete') afterPaint();
+		else window.addEventListener('load', afterPaint, { once: true });
+
+		return () => {
+			cancelled = true;
+			window.removeEventListener('load', afterPaint);
+			cancelAnimationFrame(frame);
+			if (hasIdle) cancelIdleCallback(idle);
+			else window.clearTimeout(idle);
+		};
+	});
 </script>
 
 <div class="site-shell relative min-h-dvh overflow-x-clip bg-white text-ink" style:--site-grain={grain}>
 	<div class="site-mountain pointer-events-none absolute inset-x-0 top-0" aria-hidden="true">
-		<img src={poster} alt="" width="1280" height="720" fetchpriority="high" decoding="async" />
-		<video
-			class="site-mountain-video"
-			src={loopSrc}
-			{poster}
-			muted
-			loop
-			autoplay
-			playsinline
-			preload="auto"
-		></video>
+		<img src={poster} alt="" width="1280" height="720" fetchpriority="high" />
+		{#if loopMounted}
+			<video
+				class={['site-mountain-video', loopPlaying && 'playing']}
+				src={loopSrc}
+				muted
+				loop
+				autoplay
+				playsinline
+				preload="auto"
+				onplaying={() => (loopPlaying = true)}
+			></video>
+		{/if}
 	</div>
 	<div class="site-grain pointer-events-none absolute inset-0" aria-hidden="true"></div>
 
@@ -65,6 +110,12 @@
 	.site-mountain-video {
 		position: absolute;
 		inset: 0;
+		opacity: 0;
+		transition: opacity 0.8s ease;
+	}
+
+	.site-mountain-video.playing {
+		opacity: 1;
 	}
 
 	@media (prefers-reduced-motion: reduce) {
