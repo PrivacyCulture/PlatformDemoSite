@@ -12,9 +12,11 @@ export default defineConfig({
 				runes: ({ filename }) =>
 					filename.split(/[/\\]/).includes('node_modules') ? undefined : true
 			},
-			// Inline the small per-component CSS files into a <style> block so they
-			// don't each block first paint. The main Tailwind sheet stays a cached file.
-			inlineStyleThreshold: 10240,
+			// Inline every stylesheet, the main Tailwind sheet included (~95KB raw,
+			// ~16KB gzipped), so no CSS request blocks first paint. After the first
+			// page SvelteKit navigates client-side, so losing the separate cached
+			// file costs one landing page, not every page.
+			inlineStyleThreshold: 120000,
 			adapter: adapter({
 				out: 'build',
 				precompress: true
