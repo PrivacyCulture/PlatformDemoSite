@@ -1,6 +1,6 @@
 <!--
 	/blog. With no search: the newest post as the hero, the next three under Recent, the pinned post
-	in Featured research, then everything else under More, six at a time. With a search or a tag:
+	in Featured, then everything else under More, six at a time. With a search or a tag:
 	the matches, and a way back. Every post appears once on the page (blogIndex decides where).
 
 	The words come from pages.blog, edited in Sorted (Website → Platform → Pages → Blog); the posts
@@ -146,7 +146,7 @@
 			<h1 class="text-[clamp(2.25rem,5vw,3.5rem)] leading-[1.04] font-bold tracking-tight text-heading">{hero.title}</h1>
 			{#if hero.excerpt}<p class="mt-5 max-w-[50ch] text-[16px] leading-relaxed font-light text-ink/70">{hero.excerpt}</p>{/if}
 			<p class="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-ink/55">
-				{#if hero.author.name}<span class="font-semibold text-heading">{hero.author.name}</span>{/if}
+				{#if hero.author.name}<span><span class="font-semibold text-heading">{hero.author.name}</span>{#if hero.author.role}<span class="font-light">, {hero.author.role}</span>{/if}</span>{/if}
 				{#each heroMeta(hero) as m (m)}<span class="font-light">{m}</span>{/each}
 			</p>
 			<div class="mt-7 flex flex-wrap items-center gap-4">
@@ -190,7 +190,7 @@
 					<h2 id="featured-heading" class="text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">{f.title}</h2>
 					{#if f.excerpt}<p class="mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">{f.excerpt}</p>{/if}
 					<p class="mt-4 flex flex-wrap gap-x-5 gap-y-1 text-[13px] text-ink/55">
-						{#if f.author.name}<span>{f.author.name}</span>{/if}
+						{#if f.author.name}<span>{f.author.name}{#if f.author.role}<span class="font-light">, {f.author.role}</span>{/if}</span>{/if}
 						{#each heroMeta(f) as m (m)}<span class="font-light">{m}</span>{/each}
 					</p>
 					<div class="mt-7"><GoldCta href="/blog/{f.slug}" label={copy.featured.cta} /></div>

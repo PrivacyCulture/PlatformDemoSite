@@ -16,14 +16,17 @@
 	import { problems } from '$lib/site/problems';
 	import { rich, plain } from '$lib/site/rich';
 	import { headingsOf, withHeadingIds } from '$lib/site/article-html';
-	import { formatPostDate, postEyebrow, readTimeLabel, tagSlug } from '$lib/site/blog';
+	import { decorateArticleHtml, formatPostDate, postEyebrow, readTimeLabel, tagSlug } from '$lib/site/blog';
 	import { blogPostingNode, faqPageNode, ARTICLE_ID } from '$lib/site/schema';
+	// The body's stylesheet is shared byte for byte with Sorted's preview (both suites assert its
+	// SHA), so what an editor previews is what this page draws.
+	import '$lib/site/article-body.css';
 
 	let { data } = $props();
 	const copy = pages.blog;
 	const post = $derived(data.post);
 	const eyebrow = $derived(postEyebrow(post, problems));
-	const body = $derived(withHeadingIds(post.body));
+	const body = $derived(decorateArticleHtml(withHeadingIds(post.body)));
 	const headings = $derived(headingsOf(post.body));
 	const initials = $derived(
 		(post.author.name || site.shortName || 'PC')
@@ -88,11 +91,21 @@
 			<span aria-hidden="true" class="mx-2">/</span>
 			<span aria-current="page">{eyebrow || post.title}</span>
 		</nav>
-		{#if eyebrow}
-			<p class="mb-4 flex items-center gap-2 text-[12px] tracking-[0.22em] text-[#a8833d] uppercase">
-				<span class="size-2 bg-gold" aria-hidden="true"></span>{eyebrow}
-			</p>
-		{/if}
+		<!-- The label, the read time and the date on one line above the title, as the design has it.
+		     The read time is worked out from the page's words when the content is loaded. -->
+		<p class="mb-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] tracking-[0.22em] text-ink/60 uppercase">
+			{#if eyebrow}
+				<span class="flex items-center gap-2 text-[#a8833d]"><span class="size-2 bg-gold" aria-hidden="true"></span>{eyebrow}</span>
+			{/if}
+			{#if post.readMinutes}
+				{#if eyebrow}<span aria-hidden="true">/</span>{/if}
+				<span>{readTimeLabel(post.readMinutes)}</span>
+			{/if}
+			{#if post.publishedAt}
+				{#if eyebrow || post.readMinutes}<span aria-hidden="true">/</span>{/if}
+				<time datetime={post.publishedAt}>{formatPostDate(post.publishedAt)}</time>
+			{/if}
+		</p>
 		<h1 id="article-title" class="text-[clamp(2.1rem,5vw,3.4rem)] leading-[1.05] font-bold tracking-tight text-heading">{post.title}</h1>
 		{#if post.excerpt}<p class="mt-5 max-w-[60ch] text-[17px] leading-relaxed font-light text-ink/70">{post.excerpt}</p>{/if}
 		<div class="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2 text-[13px] text-ink/55">
@@ -103,8 +116,6 @@
 					{#if post.author.role}<span class="block text-[12px] font-light">{post.author.role}</span>{/if}
 				</span>
 			</span>
-			{#if post.publishedAt}<time datetime={post.publishedAt} class="font-light">{formatPostDate(post.publishedAt)}</time>{/if}
-			{#if post.readMinutes}<span class="font-light">{readTimeLabel(post.readMinutes)}</span>{/if}
 		</div>
 	</header>
 
@@ -133,7 +144,7 @@
 				</aside>
 			{/if}
 
-			<div class="article-body rt mt-8">{@html body}</div>
+			<div class="article-body mt-8">{@html body}</div>
 
 			{#if post.questions.length}
 				<section class="mt-12 border-t border-ink/10 pt-8" aria-labelledby="questions-heading">
@@ -209,53 +220,3 @@
 		</ul>
 	</section>
 {/if}
-
-<style>
-	/* The article's own typography. The grammar is fixed (p, h2, h3, lists, quotes, links,
-	   images), so every element it can contain is styled here and nothing else needs to be. */
-	.article-body {
-		font-size: 16.5px;
-		line-height: 1.75;
-		font-weight: 300;
-		color: color-mix(in srgb, var(--color-ink) 80%, transparent);
-	}
-	.article-body :global(> * + *) { margin-top: 1.1em; }
-	.article-body :global(h2) {
-		margin-top: 2em;
-		font-size: 1.55rem;
-		line-height: 1.25;
-		font-weight: 700;
-		letter-spacing: -0.01em;
-		color: var(--color-heading);
-		scroll-margin-top: 6rem;
-	}
-	.article-body :global(h3) { margin-top: 1.6em; font-size: 1.2rem; font-weight: 700; color: var(--color-heading); }
-	.article-body :global(ul), .article-body :global(ol) { padding-left: 1.4em; }
-	.article-body :global(ul) { list-style: disc; }
-	.article-body :global(ol) { list-style: decimal; }
-	.article-body :global(li + li) { margin-top: 0.4em; }
-	.article-body :global(li::marker) { color: var(--color-gold); }
-	.article-body :global(blockquote) {
-		position: relative;
-		margin-top: 1.8em;
-		margin-bottom: 1.8em;
-		padding: 1.4rem 1.6rem 1.4rem 3rem;
-		border-radius: 1rem;
-		background: color-mix(in srgb, var(--color-silver) 55%, transparent);
-		font-size: 1.15rem;
-		line-height: 1.5;
-		font-weight: 600;
-		color: var(--color-heading);
-	}
-	.article-body :global(blockquote::before) {
-		content: '';
-		position: absolute;
-		left: 1.4rem;
-		top: 1.75rem;
-		width: 0.55rem;
-		height: 0.55rem;
-		background: var(--color-gold);
-	}
-	.article-body :global(img) { display: block; width: 100%; height: auto; border-radius: 1rem; margin: 1.6em 0; }
-	.article-body :global(strong) { font-weight: 600; color: var(--color-ink); }
-</style>

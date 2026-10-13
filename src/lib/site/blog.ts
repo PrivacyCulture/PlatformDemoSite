@@ -9,7 +9,7 @@
 // that worked its read time out from the body would render one number on the server and zero in
 // the browser — a hydration mismatch on every page that shows a card.
 
-import { cleanArticleHtml, articlePlainText, articleWordCount, readMinutes } from './article-html';
+import { cleanArticleHtml, articlePlainText, articleWordCount } from './article-html';
 
 export type BlogImage = { src: string; webp: string; alt: string; width: number; height: number };
 
@@ -112,11 +112,22 @@ export function validBlogPosts(v: unknown): BlogPost[] {
 			publishedAt: str(p.publishedAt),
 			updatedAt: str(p.updatedAt),
 			meta: { title: str(meta.title), description: str(meta.description), keywords: str(meta.keywords) },
-			readMinutes: readMinutes(body),
+			readMinutes: 0,
 			wordCount: articleWordCount(body)
 		});
 	}
+	// Read time covers everything a reader reads on the page — the article, its key takeaways and
+	// its questions and answers — at the same 230 words a minute as the article grammar's own
+	// readMinutes. The word count stays the article's alone: it is what JSON-LD's wordCount means.
+	for (const p of out) p.readMinutes = readingMinutes(p);
 	return out.sort(byDate);
+}
+
+/** Minutes to read a post's page: article + takeaways + questions, rounded up, at least 1. */
+export function readingMinutes(p: Pick<BlogPost, 'wordCount' | 'takeaways' | 'questions'>): number {
+	const count = (t: string) => t.split(/\s+/).filter(Boolean).length;
+	const words = p.wordCount + p.takeaways.reduce((n, t) => n + count(t), 0) + p.questions.reduce((n, q) => n + count(q.q) + count(q.a), 0);
+	return words ? Math.max(1, Math.ceil(words / 230)) : 0;
 }
 
 export function toSummary(post: BlogPost): BlogSummary {
@@ -132,7 +143,7 @@ export function blogSummaries<T extends { blogPosts?: unknown }>(content: T): T 
 
 /**
  * How /blog is laid out with no search: the newest post as the hero, the next three as Recent,
- * the pinned post in Featured research, and the rest under More. Every post appears once. When
+ * the pinned post in Featured, and the rest under More. Every post appears once. When
  * the only pinned post is also the only post, it is the hero and nothing is featured.
  */
 export function blogIndex<T extends BlogSummary>(posts: readonly T[]): { hero: T | null; recent: T[]; featured: T | null; more: T[] } {
@@ -198,3 +209,6 @@ export function formatPostDate(iso: string): string {
 export function readTimeLabel(minutes: number): string {
 	return minutes > 0 ? `${minutes} min read` : '';
 }
+
+/** Moved to the shared article-html.ts so Sorted's preview decorates exactly as the page does. */
+export { decorateArticleHtml } from './article-html';

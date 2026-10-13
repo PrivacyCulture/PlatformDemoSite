@@ -6,7 +6,7 @@
 
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { validBlogPosts, blogIndex, searchPosts, relatedPosts, postEyebrow, formatPostDate, toSummary, blogSummaries, tagSlug } from '../src/lib/site/blog';
+import { decorateArticleHtml, readingMinutes, validBlogPosts, blogIndex, searchPosts, relatedPosts, postEyebrow, formatPostDate, toSummary, blogSummaries, tagSlug } from '../src/lib/site/blog';
 import { cleanArticleHtml, headingsOf, withHeadingIds } from '../src/lib/site/article-html';
 import { blogPostingNode, blogNode } from '../src/lib/site/schema';
 import { seoTags } from '../src/lib/site/seo';
@@ -24,9 +24,13 @@ function eq(name: string, a: unknown, e: unknown) {
 	check(name, JSON.stringify(a) === JSON.stringify(e), `expected ${JSON.stringify(e)}\n      got      ${JSON.stringify(a)}`);
 }
 
-const MODULE_SHA256 = 'da2cf97511067582c469557f3469e85fff611b8303dffe6bb0d6f5a44dd41c02';
+const MODULE_SHA256 = 'b1d03e1a7d44c27bf07d07f817403d1076aee3b523f849ccca00d82176283095';
 const src = readFileSync(new URL('../src/lib/site/article-html.ts', import.meta.url), 'utf8');
 check('article-html.ts is byte-identical to Sorted’s', createHash('sha256').update(src).digest('hex') === MODULE_SHA256, `now ${createHash('sha256').update(src).digest('hex')}`);
+// The article's stylesheet is shared too, so Sorted's preview draws exactly what this page draws.
+export const CSS_SHA256 = '1ba2b21bda7be64bd862879a8523d6ce2ebe9e82633f877b9acdd541d2639be7';
+const css = readFileSync(new URL('../src/lib/site/article-body.css', import.meta.url), 'utf8');
+check('article-body.css is byte-identical to Sorted’s', createHash('sha256').update(css).digest('hex') === CSS_SHA256, `now ${createHash('sha256').update(css).digest('hex')}`);
 
 const words = (n: number) => `<p>${'word '.repeat(n)}</p>`;
 const raw = [
@@ -88,6 +92,34 @@ eq('a missing date is blank', formatPostDate(''), '');
 eq('headings get ids for On this page', headingsOf('<h2>Why records drift</h2><h2>Why records drift</h2>').map((h) => h.id), ['why-records-drift', 'why-records-drift-2']);
 check('withHeadingIds puts the same ids on the headings', withHeadingIds('<h2>A b</h2>') === '<h2 id="a-b">A b</h2>');
 check('the site refuses a javascript: link even if Sorted sent one', !cleanArticleHtml('<p><a href="javascript:x">y</a></p>').includes('javascript'));
+
+eq('read time counts the takeaways and questions too', readingMinutes({ wordCount: 200, takeaways: ['one two three four five'.repeat(1)], questions: [{ q: 'why '.repeat(20), a: 'because '.repeat(20) }] }), 2);
+eq('read time of the article alone', readingMinutes({ wordCount: 1380, takeaways: [], questions: [] }), 6);
+eq('nothing to read is no read time', readingMinutes({ wordCount: 0, takeaways: [], questions: [] }), 0);
+eq('a panel item opening with bold text gets its heading marked', decorateArticleHtml('<ol class="panels"><li><strong>Which systems?</strong> Scope it.</li><li>Plain <strong>mid</strong></li></ol>'), '<ol class="panels"><li><strong class="panel-title">Which systems?</strong> Scope it.</li><li>Plain <strong>mid</strong></li></ol>');
+eq('a step list is left alone', decorateArticleHtml('<ol><li><strong>Pick three.</strong> Now.</li></ol>'), '<ol><li><strong>Pick three.</strong> Now.</li></ol>');
+
+const tl = (li: string) => decorateArticleHtml(`<aside class="timeline"><ul>${li}</ul></aside>`);
+eq('a timeline step: date split off, title marked', tl('<li>21 May 2025: <strong>Commission proposal.</strong> Omnibus IV.</li>'), '<aside class="timeline"><ul><li class="tl-step"><span class="tl-date">21 May 2025</span><strong class="tl-title">Commission proposal.</strong> Omnibus IV.</li></ul></aside>');
+eq('a pending step is marked', tl('<li>Still pending: <strong>Formal adoption.</strong> x</li>').includes('class="tl-step is-pending"'), true);
+eq('Expected and TBC count as pending', [tl('<li>Expected Q3 2026: x</li>'), tl('<li>TBC: x</li>')].every((h) => h.includes('is-pending')), true);
+eq('a real date is not pending', tl('<li>Sep 2025: x</li>').includes('is-pending'), false);
+eq('no colon: no date label, still a step', tl('<li><strong>Adopted.</strong> Done.</li>'), '<aside class="timeline"><ul><li class="tl-step"><strong class="tl-title">Adopted.</strong> Done.</li></ul></aside>');
+eq('a colon inside the bold title is not a date', tl('<li><strong>Note: this</strong> x</li>').includes('tl-date'), false);
+eq('a time is not a date separator', tl('<li>Meeting at 10:30 today</li>').includes('tl-date'), false);
+eq('a long sentence before a colon is not a date', tl('<li>This is far too long a stretch of words to be a date label: x</li>').includes('tl-date'), false);
+{
+	const typed = decorateArticleHtml('<aside class="timeline"><h3>Where things stand</h3><p>• 21 May 2025: Commission proposal. Omnibus IV extends it.</p><p>• Still pending: Formal adoption. Parliament must sign.</p><p>UK readers: these are EU changes.</p></aside>');
+	eq('typed-bullet paragraphs in a timeline become one list of steps', (typed.match(/class="tl-step/g) ?? []).length, 2);
+	eq('the typed bullet itself is gone', typed.includes('•'), false);
+	eq('an unbolded step takes its first sentence as the title', typed.includes('<span class="tl-date">21 May 2025</span><strong class="tl-title">Commission proposal.</strong> Omnibus IV'), true);
+	eq('the pending typed step is still pending', typed.includes('class="tl-step is-pending"'), true);
+	eq('the note after the steps stays a paragraph, its label bold', typed.endsWith('</ul><p><strong>UK readers:</strong> these are EU changes.</p></aside>'), true);
+	eq('the heading is untouched', typed.startsWith('<aside class="timeline"><h3>Where things stand</h3><ul>'), true);
+	eq('a typed bullet outside a timeline is left alone', decorateArticleHtml('<p>• 21 May 2025: x</p>'), '<p>• 21 May 2025: x</p>');
+	eq('a long first sentence is not made a title', tl('<li>Sep 2025: ' + 'word '.repeat(30) + 'end. More.</li>').includes('tl-title'), false);
+}
+eq('lists outside a timeline are untouched', decorateArticleHtml('<ul><li>21 May 2025: x</li></ul>'), '<ul><li>21 May 2025: x</li></ul>');
 
 const node = blogPostingNode({ origin: 'https://x.test', pathname: '/blog/a', headline: 'A', description: 'd', datePublished: '2026-01-01T09:00:00Z', keywords: ['ROPA'], authorName: '', wordCount: 300 });
 check('BlogPosting with no named author is credited to the organisation', JSON.stringify(node?.author) === '{"@id":"https://x.test/#organization"}');
