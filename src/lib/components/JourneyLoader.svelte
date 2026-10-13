@@ -3,17 +3,39 @@
 
 	let {
 		progress = 0,
-		visible = true
+		visible = true,
+		variant = 'cover'
 	}: {
 		progress?: number;
 		visible?: boolean;
+		/**
+		 * `cover` hides the page until the first clip is ready. `bar` is a thin line along the top,
+		 * used when the hero's still is on screen and there is nothing to hide.
+		 */
+		variant?: 'cover' | 'bar';
 	} = $props();
 
 	const copy = journey.ui.loader;
 	const pct = $derived(Math.min(100, Math.max(0, Math.round(progress * 100))));
 </script>
 
-{#if visible}
+{#if visible && variant === 'bar'}
+	<div
+		id="journey-loader-bar"
+		class="fixed inset-x-0 top-0 z-[60] h-0.5 bg-bone/10"
+		role="progressbar"
+		aria-label={copy.message}
+		aria-valuemin={0}
+		aria-valuemax={100}
+		aria-valuenow={pct}
+	>
+		<!-- Never drawn at 0%: a bar with nothing in it does not read as loading. -->
+		<div
+			class="h-full bg-lens shadow-[0_0_8px_rgba(0,155,204,0.7)] transition-[width] duration-200 ease-out"
+			style="width: {Math.max(pct, 8)}%"
+		></div>
+	</div>
+{:else if visible}
 	<div
 		id="journey-loader"
 		class="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-ink px-6 text-center"

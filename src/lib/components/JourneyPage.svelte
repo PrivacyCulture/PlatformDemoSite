@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import Beat from '$lib/components/Beat.svelte';
 	import JourneyLoader from '$lib/components/JourneyLoader.svelte';
 	import JourneyNav from '$lib/components/JourneyNav.svelte';
@@ -51,6 +51,12 @@
 	const PRINCIPLES = content.lens.principles;
 
 	const theme = getTheme();
+	/**
+	 * Frame 0 of the hero clip, in the server HTML so the page's largest paint is a 40KB still
+	 * rather than the clip. With one, the full-screen loader gives way to a thin bar.
+	 */
+	const heroPoster = theme.heroPoster;
+	const heroPosterPortrait = theme.heroPosterPortrait;
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let clipSrc = $state(sceneSrcForBeat(theme, 'beat-hero') ?? '');
 	let videoDuration = $state(0);
@@ -62,6 +68,8 @@
 	// The FAQ sheet's words and on/off switch, edited in the CMS (Globals → FAQ drawer).
 	const faqDrawer = $derived(faqDrawerCopy((site as unknown as { faqDrawer?: unknown }).faqDrawer));
 	let loading = $state(true);
+	/** Begin was pressed before the clip was ready: the journey starts the moment it is. */
+	let beginQueued = $state(false);
 	let loadProgress = $state(0);
 	let mounted = $state(false);
 	let journeyStarted = $state(false);
@@ -445,6 +453,14 @@
 		setDirection(1);
 	}
 
+	function onBeginClick() {
+		if (loading) {
+			beginQueued = true;
+			return;
+		}
+		beginJourney();
+	}
+
 	function beginJourney() {
 		if (loading) return;
 		if (beatDefs.some((b) => b.id === 'beat-scene-1')) {
@@ -687,6 +703,9 @@
 	onMount(() => {
 		reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 		mounted = true;
+		// The head script holds the scroll on a full page load; this covers arriving by an
+		// in-app link, where that script does not run. Reduced motion lets go just below.
+		if (loading) document.documentElement.classList.add('loading');
 
 		if (reduced) {
 			activeBeats = initialActiveBeats(true, beatDefs);
@@ -939,6 +958,12 @@
 	}
 
 	$effect(() => {
+		if (loading || !beginQueued) return;
+		beginQueued = false;
+		untrack(beginJourney);
+	});
+
+	$effect(() => {
 		if (missing && loading) {
 			loadProgress = 1;
 			firstClipLoaded = true;
@@ -991,7 +1016,24 @@
 	});
 </script>
 
-<JourneyLoader progress={loadProgress} visible={loading} />
+<svelte:head>
+	<!-- The still is fetched from the head, not when the parser reaches it, so it lands with the
+	     first paint. Desktop Chrome counts it as the LCP (phones ignore an image that fills the
+	     screen), so arriving late would make LCP worse rather than better. The media queries
+	     match the <picture> below exactly, so only one file is ever fetched. -->
+	{#if heroPoster && heroPosterPortrait}
+		<link rel="preload" as="image" href={heroPosterPortrait} media="(max-aspect-ratio: 1/1)" fetchpriority="high" />
+		<link rel="preload" as="image" href={heroPoster} media="not all and (max-aspect-ratio: 1/1)" fetchpriority="high" />
+	{:else if heroPoster}
+		<link rel="preload" as="image" href={heroPoster} fetchpriority="high" />
+	{/if}
+	<!-- Scrolling before the first clip is ready would scrub nothing, so the page holds still until
+	     it is (JourneyPage lets go). Set here so it is in force from the first paint. -->
+	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+	{@html '<script>document.documentElement.classList.add("loading")</script>'}
+</svelte:head>
+
+<JourneyLoader progress={loadProgress} visible={loading} variant={heroPoster ? 'bar' : 'cover'} />
 <!-- Every fixed layer of the journey, lifted as one when the FAQ opens, so the video moves up and
      the questions rise in beneath it (see JourneyFaq and .journey-lift in layout.css). -->
 <div class="journey-lift">
@@ -1007,6 +1049,16 @@
 		{startTimeFor}
 		onReady={handleClipReady}
 	/>
+{/if}
+{#if heroPoster}
+	<!-- Over the empty video stage, under the scrim. Fades once the clip is showing its own
+	     frame 0, which is this picture, so the hand-over is invisible. -->
+	<picture class={['journey-poster', (clipReady || missing) && 'gone']}>
+		{#if heroPosterPortrait}
+			<source media="(max-aspect-ratio: 1/1)" srcset={heroPosterPortrait} />
+		{/if}
+		<img src={heroPoster} alt="" fetchpriority="high" />
+	</picture>
 {/if}
 <!-- Three scrims crossfade by opacity; gradient backgrounds cannot be transitioned. -->
 <div id="scrim" aria-hidden="true">
@@ -1037,12 +1089,19 @@
 				<div class="mt-7 flex flex-wrap items-center gap-5 sm:mt-9">
 					<button
 						type="button"
-						onclick={beginJourney}
+						onclick={onBeginClick}
+						aria-busy={beginQueued}
 						class={[
 							'inline-flex max-w-full cursor-pointer items-center gap-2 rounded-full bg-lens px-6 py-3 text-center text-[14px] sm:px-7 sm:py-3.5 sm:text-[15px] font-semibold tracking-wide text-white shadow-[0_0_0_1px_rgba(0,155,204,0.35),0_0_32px_rgba(0,155,204,0.35),0_10px_28px_rgba(0,0,0,0.35)] transition-all hover:-translate-y-0.5 hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens',
 							idleHintBeat === 'beat-hero' && 'idle-hint'
 						]}
 					>
+						{#if beginQueued}
+							<span
+								class="loader-ring block h-3.5 w-3.5 shrink-0 rounded-full border-2 border-white/30 border-t-white"
+								aria-hidden="true"
+							></span>
+						{/if}
 						{content.hero.cta}
 					</button>
 				</div>
@@ -1065,21 +1124,22 @@
 		</div>
 	</Beat>
 
+<!-- Page chrome, so it is there from the first paint; a jump made before the clip is ready
+     does nothing (jumpTo waits for it). -->
+<JourneyNav
+	onHome={() => jumpTo(navJumps.hero, { instant: true })}
+	onJump={(p) => jumpTo(p, { instant: true })}
+	jumps={navJumps}
+	copy={site.nav}
+/>
+<JourneyLegal links={site.legal.links} ariaLabel={site.legal.ariaLabel} />
+
 {#if !loading}
-	<JourneyNav
-		onHome={() => jumpTo(navJumps.hero, { instant: true })}
-		onJump={(p) => jumpTo(p, { instant: true })}
-		jumps={navJumps}
-		copy={site.nav}
-	/>
 	<JourneySceneIndex
 		current={activeSceneNumber}
 		visible={sceneIndexVisible}
 		onSelect={jumpToScene}
 	/>
-	<JourneyLegal links={site.legal.links} ariaLabel={site.legal.ariaLabel} />
-
-
 	{#each SCENES as scene (scene.id)}
 		{@const sceneIndex = beatDefs.findIndex((b) => b.id === scene.id)}
 		{@const lead = scene.textAfterSeconds ?? SCENE_TEXT_AFTER_SECONDS}
