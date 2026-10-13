@@ -25,6 +25,10 @@ export type SeoInput = {
 	origin: string;
 	/** page.url.pathname */
 	pathname: string;
+	/** 'article' on a blog post; anything else is a 'website'. */
+	ogType?: 'website' | 'article';
+	/** The Open Graph article tags, drawn only when ogType is 'article'. */
+	article?: { publishedTime?: string; modifiedTime?: string; author?: string; section?: string; tags?: string[] };
 };
 
 export type SeoTag = { name?: string; property?: string; content: string };
@@ -87,7 +91,15 @@ export function seoTags(input: SeoInput): SeoTag[] {
 	if (keywords) tags.push({ name: 'keywords', content: keywords });
 	if (title) tags.push({ property: 'og:title', content: title });
 	if (description) tags.push({ property: 'og:description', content: description });
-	tags.push({ property: 'og:type', content: 'website' });
+	tags.push({ property: 'og:type', content: input.ogType === 'article' ? 'article' : 'website' });
+	if (input.ogType === 'article' && input.article) {
+		const a = input.article;
+		if (a.publishedTime) tags.push({ property: 'article:published_time', content: a.publishedTime });
+		if (a.modifiedTime) tags.push({ property: 'article:modified_time', content: a.modifiedTime });
+		if (a.author) tags.push({ property: 'article:author', content: plain(a.author) });
+		if (a.section) tags.push({ property: 'article:section', content: plain(a.section) });
+		for (const t of a.tags ?? []) if (t.trim()) tags.push({ property: 'article:tag', content: plain(t).trim() });
+	}
 	tags.push({ property: 'og:url', content: url });
 	if (siteName) tags.push({ property: 'og:site_name', content: siteName });
 	tags.push({ property: 'og:locale', content: LOCALE });

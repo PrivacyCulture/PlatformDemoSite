@@ -16,6 +16,7 @@ import { hasBundledAsset } from '$lib/content/assets';
 import { installContentResolver, setContent } from '$lib/content/runtime';
 import { addedSection } from '$lib/site/added-sections';
 import database from '../../../data/database.json';
+import { validBlogPosts } from '$lib/site/blog';
 
 export type ContentChannel = 'live' | 'draft';
 export type ContentSource = 'cms' | 'fallback';
@@ -97,6 +98,8 @@ export function validateContent(body: unknown): SiteContent {
 	return {
 		...c,
 		customPages: validCustomPages((body as Record<string, unknown>).customPages),
+		// Post by post, like customPages: one bad post costs only that post. Absent = no blog yet.
+		blogPosts: validBlogPosts((body as Record<string, unknown>).blogPosts),
 		// Coerced, never validated as a whole: a stray entry must not cost the site its content.
 		archivedPaths: Array.isArray(archived) ? archived.filter((x): x is string => typeof x === 'string' && x.startsWith('/')) : []
 	};

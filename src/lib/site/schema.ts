@@ -97,6 +97,34 @@ export const WEBPAGE_ID = (origin: string, pathname: string) => `${pageUrl(origi
 export const BREADCRUMB_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#breadcrumb`;
 export const VIDEO_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#video`;
 export const FAQ_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#faq`;
+export const BLOG_ID = (origin: string) => `${root(origin)}/blog#blog`;
+export const ARTICLE_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#article`;
+
+export type BlogPostingData = {
+	origin: string;
+	pathname: string;
+	headline: string;
+	description: string;
+	image?: string;
+	imageWidth?: number;
+	imageHeight?: number;
+	/** ISO 8601. */
+	datePublished?: string;
+	dateModified?: string;
+	authorName?: string;
+	authorRole?: string;
+	keywords: string[];
+	/** The related challenge's title, when there is one. */
+	section?: string;
+	wordCount?: number;
+};
+
+export type BlogData = {
+	origin: string;
+	name: string;
+	description: string;
+	posts: { url: string; headline: string; datePublished?: string }[];
+};
 
 /** Drop keys whose value is '', null, undefined, an empty array or an empty object. */
 export function prune<T extends JsonLdNode>(node: T): T {
@@ -296,6 +324,51 @@ export function faqPageNode(d: FaqData): JsonLdNode | null {
 			name: i.question,
 			acceptedAnswer: { '@type': 'Answer', text: i.answer }
 		}))
+	});
+}
+
+/**
+ * One article. The author is a Person only when the post names one — otherwise the organisation,
+ * which is true of every post and a claim nobody has to invent a name for.
+ */
+export function blogPostingNode(d: BlogPostingData): JsonLdNode | null {
+	if (!d.headline) return null;
+	return prune({
+		'@type': 'BlogPosting',
+		'@id': ARTICLE_ID(d.origin, d.pathname),
+		headline: d.headline.slice(0, 110),
+		description: d.description,
+		url: pageUrl(d.origin, d.pathname),
+		image: d.image ? { '@type': 'ImageObject', url: absoluteUrl(d.origin, d.image), width: d.imageWidth || undefined, height: d.imageHeight || undefined } : undefined,
+		datePublished: isoDate(d.datePublished),
+		dateModified: isoDate(d.dateModified) || isoDate(d.datePublished),
+		author: d.authorName
+			? { '@type': 'Person', name: d.authorName, jobTitle: d.authorRole || undefined, worksFor: { '@id': ORGANIZATION_ID(d.origin) } }
+			: { '@id': ORGANIZATION_ID(d.origin) },
+		publisher: { '@id': ORGANIZATION_ID(d.origin) },
+		keywords: d.keywords.length ? d.keywords.join(', ') : undefined,
+		articleSection: d.section,
+		wordCount: d.wordCount || undefined,
+		inLanguage: LANGUAGE,
+		mainEntityOfPage: { '@id': WEBPAGE_ID(d.origin, d.pathname) },
+		isPartOf: { '@id': BLOG_ID(d.origin) },
+		about: { '@id': SOFTWARE_ID(d.origin) }
+	});
+}
+
+/** The blog itself, listing the posts on /blog. */
+export function blogNode(d: BlogData): JsonLdNode {
+	return prune({
+		'@type': 'Blog',
+		'@id': BLOG_ID(d.origin),
+		url: pageUrl(d.origin, '/blog'),
+		name: d.name,
+		description: d.description,
+		inLanguage: LANGUAGE,
+		publisher: { '@id': ORGANIZATION_ID(d.origin) },
+		blogPost: d.posts.map((p) =>
+			prune({ '@type': 'BlogPosting', '@id': `${pageUrl(d.origin, p.url)}#article`, headline: p.headline, url: pageUrl(d.origin, p.url), datePublished: isoDate(p.datePublished) })
+		)
 	});
 }
 

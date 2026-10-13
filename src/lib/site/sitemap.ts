@@ -2,19 +2,20 @@
 // a page archived in the CMS leaves the sitemap the moment it leaves the site and a page created
 // there joins it. The 404 page is not a page and is left out; so is /demo-booked, a redirect.
 
-import { customPages } from '$lib/content';
+import { blogPosts, customPages } from '$lib/content';
 import { platformSpecs } from '$lib/journey/content';
 import { isArchived } from '$lib/site/archive';
 import { visibleProblems } from '$lib/site/problems';
 
-export const STATIC_PATHS = ['/', '/platform', '/pricing', '/faq', '/trust', '/dpa', '/demo', '/cookie-notice', '/privacy-policy'];
+export const STATIC_PATHS = ['/', '/platform', '/blog', '/pricing', '/faq', '/trust', '/dpa', '/demo', '/cookie-notice', '/privacy-policy'];
 
 export function sitemapPaths(): string[] {
 	const paths = [
 		...STATIC_PATHS,
 		...platformSpecs().map((spec) => spec.href),
 		...visibleProblems().map((p) => p.href),
-		...customPages.map((p) => `/${p.slug}`)
+		...customPages.map((p) => `/${p.slug}`),
+		...blogPosts.map((p) => `/blog/${p.slug}`)
 	];
 	const seen = new Set<string>();
 	return paths.filter((p) => {
