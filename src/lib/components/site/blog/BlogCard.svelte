@@ -6,7 +6,7 @@
 -->
 <script lang="ts">
 	import { formatPostDate, readTimeLabel, type BlogSummary } from '$lib/site/blog';
-	import { SIZES, responsive } from '$lib/site/images';
+	import { SIZES, imageSize, responsive } from '$lib/site/images';
 
 	let {
 		post,
@@ -34,8 +34,7 @@
 					src={post.image.src}
 					{...responsive(post.image.src, SIZES.card)}
 					alt=""
-					width={post.image.width || undefined}
-					height={post.image.height || undefined}
+					{...imageSize(post.image)}
 					loading="lazy"
 					decoding="async"
 					class="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"

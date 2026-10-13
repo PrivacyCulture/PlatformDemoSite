@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page as route } from '$app/state';
-	import { SIZES, responsive, sourceSrcset } from '$lib/site/images';
+	import { SIZES, imageSize, responsive, sourceSrcset } from '$lib/site/images';
 	import SeoHead from './SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import { explainerVideoNode } from '$lib/site/aeo';
@@ -112,8 +112,7 @@
 						src={page.inPlatform.image.src}
 						{...responsive(page.inPlatform.image.src, SIZES.column)}
 						alt={page.inPlatform.image.alt}
-						width={page.inPlatform.image.width}
-						height={page.inPlatform.image.height}
+						{...imageSize(page.inPlatform.image)}
 						class="block h-auto w-full drop-shadow-[0_24px_60px_rgba(11,18,32,0.14)]"
 						loading="lazy"
 						decoding="async"

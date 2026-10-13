@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
-	import { SIZES, responsive } from '$lib/site/images';
+	import { SIZES, imageSize, responsive } from '$lib/site/images';
 	import { visibleLinks } from '$lib/site/archive';
 
 	// Links to pages archived in the CMS are hidden while they are archived.
@@ -31,8 +31,7 @@
 					{...responsive(site.footer.logo.src, SIZES.logo)}
 					alt={site.footer.logo.alt}
 					class="mx-0 block h-auto w-auto max-w-[11rem] sm:max-w-[50%] md:max-w-[9rem] lg:max-w-[12vw]"
-					width={site.footer.logo.width}
-					height={site.footer.logo.height}
+					{...imageSize(site.footer.logo)}
 					decoding="async"
 				/>
 			</a>

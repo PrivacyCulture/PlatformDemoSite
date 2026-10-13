@@ -7,7 +7,7 @@
 
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
-import { responsive, sourceSrcset, imageAtWidth, responsiveArticleImages, SIZES } from '../src/lib/site/images';
+import { responsive, sourceSrcset, imageAtWidth, imageSize, responsiveArticleImages, SIZES } from '../src/lib/site/images';
 
 let failures = 0;
 function check(name: string, cond: boolean, detail?: string) {
@@ -51,6 +51,22 @@ eq(
 	`<p>a <img loading="lazy" decoding="async" srcset="${at(480)} 480w, ${at(960)} 960w, ${at(1440)} 1440w, ${lib} 1920w" sizes="736px" src="${lib}" alt="x"></p>`
 );
 eq('other article pictures are left alone', responsiveArticleImages('<p><img src="https://example.com/a.png" alt=""></p>'), '<p><img src="https://example.com/a.png" alt=""></p>');
+eq(
+	'a library picture with a known size gets its width and height',
+	responsiveArticleImages(`<img src="${lib}" alt="x">`, '736px', { [lib]: { width: 1920, height: 1080 } }),
+	`<img loading="lazy" decoding="async" width="1920" height="1080" srcset="${at(480)} 480w, ${at(960)} 960w, ${at(1440)} 1440w, ${lib} 1920w" sizes="736px" src="${lib}" alt="x">`
+);
+eq(
+	'any other picture with a known size gets them too, and nothing else',
+	responsiveArticleImages('<img src="/a.png?v=1&amp;x=2" alt="">', '736px', { '/a.png?v=1&x=2': { width: 400, height: 300 } }),
+	'<img width="400" height="300" src="/a.png?v=1&amp;x=2" alt="">'
+);
+eq('a size map cannot answer for an inherited key', responsiveArticleImages('<img src="constructor" alt="">', '736px', {}), '<img src="constructor" alt="">');
+
+eq('imageSize: both sides known', imageSize({ width: 1024, height: 838 }), { width: 1024, height: 838 });
+eq('imageSize: rounds, and reads a size written as text', imageSize({ width: '640.4', height: '360' }), { width: 640, height: 360 });
+eq('imageSize: a 0 side is no size', imageSize({ width: 500, height: 0 }), {});
+eq('imageSize: nothing is no size', imageSize(undefined), {});
 
 if (failures) {
 	console.error(`\n${failures} failed`);

@@ -10,6 +10,7 @@
 // the browser — a hydration mismatch on every page that shows a card.
 
 import { cleanArticleHtml, articlePlainText, articleWordCount } from './article-html';
+import type { ImageSizes } from './images';
 
 export type BlogImage = { src: string; webp: string; alt: string; width: number; height: number };
 
@@ -23,6 +24,11 @@ export type BlogPost = {
 	excerpt: string;
 	/** Article HTML, already cleaned to the article grammar. */
 	body: string;
+	/**
+	 * The size of each picture in the body that Sorted's library knows, by address. The grammar
+	 * carries only `src` and `alt`, so the sizes travel beside the body (see responsiveArticleImages).
+	 */
+	imageSizes: ImageSizes;
 	image: BlogImage;
 	tags: string[];
 	author: { name: string; role: string };
@@ -37,7 +43,7 @@ export type BlogPost = {
 };
 
 /** A post without the parts only its own page draws — what every other page is handed. */
-export type BlogSummary = Omit<BlogPost, 'body' | 'takeaways' | 'questions'>;
+export type BlogSummary = Omit<BlogPost, 'body' | 'imageSizes' | 'takeaways' | 'questions'>;
 
 const SLUG = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 const isObject = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -46,6 +52,20 @@ const num = (v: unknown): number => {
 	const n = typeof v === 'number' ? v : Number(v);
 	return Number.isFinite(n) && n > 0 ? Math.round(n) : 0;
 };
+/** `imageSizes` as sent: only addresses the body uses, only sizes with both sides above 0. */
+function bodyImageSizes(v: unknown, body: string): ImageSizes {
+	const out: ImageSizes = {};
+	if (!isObject(v)) return out;
+	for (const m of body.matchAll(/<img src="([^"]*)"/g)) {
+		const url = m[1].replace(/&amp;/g, '&');
+		const size = Object.hasOwn(v, url) ? v[url] : null;
+		if (!isObject(size)) continue;
+		const width = num(size.width);
+		const height = num(size.height);
+		if (width && height) out[url] = { width, height };
+	}
+	return out;
+}
 const strings = (v: unknown, max: number): string[] => (Array.isArray(v) ? v.map(str).filter(Boolean).slice(0, max) : []);
 
 /** The URL form of a tag: "Vendor risk" → "vendor-risk". The same rule as Sorted's tagSlug. */
@@ -99,6 +119,7 @@ export function validBlogPosts(v: unknown): BlogPost[] {
 			challenge: SLUG.test(str(p.challenge)) ? str(p.challenge) : '',
 			excerpt: str(p.excerpt),
 			body,
+			imageSizes: bodyImageSizes(p.imageSizes, body),
 			image: { src: str(image.src), webp: str(image.webp), alt: str(image.alt), width: num(image.width), height: num(image.height) },
 			tags,
 			author: { name: str(author.name), role: str(author.role) },
@@ -131,7 +152,7 @@ export function readingMinutes(p: Pick<BlogPost, 'wordCount' | 'takeaways' | 'qu
 }
 
 export function toSummary(post: BlogPost): BlogSummary {
-	const { body: _b, takeaways: _t, questions: _q, ...rest } = post;
+	const { body: _b, imageSizes: _i, takeaways: _t, questions: _q, ...rest } = post;
 	return structuredClone(rest);
 }
 

@@ -18,6 +18,13 @@ check('a protocol-relative logo is dropped', trustedEntries([{ name: 'A', src: '
 check('a logo with no name still draws', trustedEntries([{ name: '', src: '/a.png' }]).length === 1);
 check('an empty entry is skipped', trustedEntries(['', { name: '', src: '' }, 7, null]).length === 0);
 check('a non-list reads as empty', trustedEntries(undefined).length === 0 && trustedEntries('x').length === 0);
+const sized = trustedEntries([{ name: 'A', src: '/a.svg', width: '240', height: 80 }])[0];
+check('a logo carries its size, written as text or a number', sized.width === 240 && sized.height === 80);
+const half = trustedEntries([{ name: 'A', src: '/a.svg', width: '240', height: '' }])[0];
+check('half a size is no size', half.width === 0 && half.height === 0);
+const noLogo = trustedEntries([{ name: 'A', width: 240, height: 80 }])[0];
+check('a size with no logo is dropped', noLogo.width === 0 && noLogo.height === 0);
+check('a bare name has no size', plain[0].width === 0 && plain[0].height === 0);
 check('https links open elsewhere, site links do not', isExternal('https://a.test') && !isExternal('/pricing'));
 
 console.log(failures ? `\n${failures} failed` : '\nAll passed');
