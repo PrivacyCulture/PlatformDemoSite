@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { BeatId } from '$lib/journey/beats';
+	import { SIZES, responsive, sourceSrcset } from '$lib/site/images';
 	import type { SceneShowMe } from '$lib/journey/content';
 	import { journey, pages } from '$lib/content';
 
@@ -259,10 +260,11 @@
 				<div class="bg-white p-[10px]">
 					<picture>
 						{#if showMe.image.webp}
-							<source srcset={showMe.image.webp} type="image/webp" />
+							<source srcset={sourceSrcset(showMe.image.webp)} sizes={SIZES.preview} type="image/webp" />
 						{/if}
 						<img
 							src={showMe.image.src}
+							{...responsive(showMe.image.src, SIZES.preview)}
 							alt={showMe.image.alt}
 							width={showMe.image.width}
 							height={showMe.image.height}

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page as route } from '$app/state';
+	import { SIZES, responsive, sourceSrcset } from '$lib/site/images';
 	import SeoHead from './SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import { explainerVideoNode } from '$lib/site/aeo';
@@ -105,10 +106,11 @@
 			<figure class="mt-8 w-full sm:mt-10">
 				<picture>
 					{#if page.inPlatform.image.webp}
-						<source srcset={page.inPlatform.image.webp} type="image/webp" />
+						<source srcset={sourceSrcset(page.inPlatform.image.webp)} sizes={SIZES.column} type="image/webp" />
 					{/if}
 					<img
 						src={page.inPlatform.image.src}
+						{...responsive(page.inPlatform.image.src, SIZES.column)}
 						alt={page.inPlatform.image.alt}
 						width={page.inPlatform.image.width}
 						height={page.inPlatform.image.height}

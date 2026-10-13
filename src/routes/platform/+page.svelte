@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
+	import { SIZES, responsive } from '$lib/site/images';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import { explainerVideoNode, SOFTWARE_ID } from '$lib/site/aeo';
@@ -89,6 +90,7 @@
 					<img
 						class="aspect-video w-full object-contain"
 						src={copy.fit.image.src}
+						{...responsive(copy.fit.image.src, SIZES.half)}
 						width={copy.fit.image.width}
 						height={copy.fit.image.height}
 						loading="lazy"

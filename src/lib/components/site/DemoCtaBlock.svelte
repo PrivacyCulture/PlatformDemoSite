@@ -1,5 +1,6 @@
 <script lang="ts">
 	import GoldCta from './GoldCta.svelte';
+	import { SIZES, responsive } from '$lib/site/images';
 	import { site } from '$lib/site/content';
 	import { rich } from '$lib/site/rich';
 	import { asset } from '$lib/content/assets';
@@ -89,6 +90,7 @@
 			<div class="hidden lg:block">
 				<img
 					src={imageSrc}
+					{...responsive(imageSrc, SIZES.demoCta)}
 					alt={image.alt ?? ''}
 					width={image.width}
 					height={image.height}
