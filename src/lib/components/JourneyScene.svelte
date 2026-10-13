@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { BeatId } from '$lib/journey/beats';
-	import { SIZES, responsive, sourceSrcset } from '$lib/site/images';
+	import { SIZES, imageSize, responsive, sourceSrcset } from '$lib/site/images';
 	import type { SceneShowMe } from '$lib/journey/content';
 	import { journey, pages } from '$lib/content';
 
@@ -266,8 +266,7 @@
 							src={showMe.image.src}
 							{...responsive(showMe.image.src, SIZES.preview)}
 							alt={showMe.image.alt}
-							width={showMe.image.width}
-							height={showMe.image.height}
+							{...imageSize(showMe.image)}
 							class="block h-auto w-full"
 							loading="lazy"
 							decoding="async"

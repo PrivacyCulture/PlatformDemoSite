@@ -56,15 +56,33 @@ export function imageAtWidth(url: string, width: number): string {
 	return variantUrl(url, w);
 }
 
+/** A picture's size in pixels, keyed by its address, as Sorted serves it beside an article. */
+export type ImageSizes = Record<string, { width: number; height: number }>;
+
 /**
- * An article body with every library picture made responsive and lazy. The body has already been
- * through the article grammar, which writes each picture exactly as `<img src="…" alt="…">`.
+ * `width` and `height` for an <img>, when both are known; nothing otherwise. They let the browser
+ * hold the picture's shape before it loads, so the page does not jump. A 0 (a size nobody
+ * recorded) would hold no space at all, so a half-known size is no size.
  */
-export function responsiveArticleImages(html: string, sizes: string = SIZES.article): string {
+export function imageSize(img: { width?: unknown; height?: unknown } | null | undefined): { width?: number; height?: number } {
+	const w = Number(img?.width);
+	const h = Number(img?.height);
+	return Number.isFinite(w) && Number.isFinite(h) && w > 0 && h > 0 ? { width: Math.round(w), height: Math.round(h) } : {};
+}
+
+/**
+ * An article body with every library picture made responsive and lazy, and every picture whose
+ * size Sorted sent (`imageSizes`) given its width and height. The body has already been through
+ * the article grammar, which writes each picture exactly as `<img src="…" alt="…">`.
+ */
+export function responsiveArticleImages(html: string, sizes: string = SIZES.article, imageSizes: ImageSizes = {}): string {
 	return html.replace(/<img src="([^"]*)"/g, (whole, raw: string) => {
-		const srcset = responsiveSrcset(raw.replace(/&amp;/g, '&'));
-		if (!srcset) return whole;
+		const url = raw.replace(/&amp;/g, '&');
+		const size = imageSize(Object.hasOwn(imageSizes, url) ? imageSizes[url] : null);
+		const dims = size.width ? ` width="${size.width}" height="${size.height}"` : '';
+		const srcset = responsiveSrcset(url);
+		if (!srcset) return dims ? `<img${dims} src="${raw}"` : whole;
 		const attr = (v: string) => v.replace(/&/g, '&amp;').replace(/"/g, '&quot;');
-		return `<img loading="lazy" decoding="async" srcset="${attr(srcset)}" sizes="${attr(sizes)}" src="${raw}"`;
+		return `<img loading="lazy" decoding="async"${dims} srcset="${attr(srcset)}" sizes="${attr(sizes)}" src="${raw}"`;
 	});
 }

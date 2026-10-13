@@ -19,6 +19,8 @@ Content paths that start with `/src/lib/assets/` are bundled by Vite (fingerprin
 
 Pictures from Sorted's media library are stored as WebP copies at several widths, and their address names the largest (`…--w1920.webp`). `src/lib/site/images.ts` turns such an address into a `srcset` with a `sizes` hint (`SIZES`), so each browser downloads only the copy it needs; any other address is drawn exactly as before. The naming rules are `src/lib/site/responsive-image.ts`, a **byte-identical copy** of Sorted's `src/lib/responsive-image.ts` (SHA-256 asserted in both repos), so copy it across, never edit one side. Sorted's **Optimise site images** (Platform → Media) moves the pictures in `static/` into the library and points the content at them as edits to approve. The files stay in `static/` for `data/database.json`, which still names them.
 
+Every `<img>` takes its `width` and `height` through `imageSize` (`src/lib/site/images.ts`), which gives none unless both are above 0, so the browser holds each picture's shape before it loads. Content images carry the size beside `src` (Sorted fills it in when a picture is picked, trusted-by logos included); pictures inside an article body get theirs from the post's `imageSizes`, which Sorted adds from its media library when it serves the post.
+
 ```
 npx tsx scripts/test-responsive-image.ts
 ```

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { site } from '$lib/site/content';
-	import { SIZES, responsive } from '$lib/site/images';
-	import { trustedEntries, isExternal } from '$lib/site/trusted';
+	import { SIZES, imageSize, responsive } from '$lib/site/images';
+	import { trustedEntries, isExternal, type TrustedEntry } from '$lib/site/trusted';
 
 	const entries = $derived(trustedEntries(site.trusted.names));
 </script>
@@ -37,12 +37,13 @@
 	</ul>
 </div>
 
-{#snippet mark(entry: { name: string; src: string })}
+{#snippet mark(entry: TrustedEntry)}
 	{#if entry.src}
 		<img
 			src={entry.src}
 			{...responsive(entry.src, SIZES.logo)}
 			alt={entry.name}
+			{...imageSize(entry)}
 			loading="lazy"
 			decoding="async"
 			class="logo-img h-7 w-auto max-w-[9rem] object-contain opacity-60 grayscale transition sm:h-8"

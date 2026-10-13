@@ -54,9 +54,23 @@ eq('read time is worked out at validation (460 words = 2 min)', posts.find((p) =
 eq('the body is cleaned again on the site', posts.find((p) => p.slug === 'mid')!.body, '<h2>Why</h2><p>Vendor <strong>drift</strong></p>');
 eq('tags dedupe case-insensitively', validBlogPosts([{ slug: 'x', title: 'X', tags: ['ROPA', 'ropa', 'DPIA'] }])[0].tags, ['ROPA', 'DPIA']);
 eq('absent blogPosts = no posts', validBlogPosts(undefined), []);
+const pic = 'https://cdn.test/platform-media/images/a--w1920.webp';
+eq(
+	'body picture sizes keep only pictures the body uses, with both sides known',
+	validBlogPosts([
+		{
+			slug: 'sized',
+			title: 'Sized',
+			body: `<p><img src="${pic}" alt=""><img src="/b.png" alt=""><img src="/c.png" alt=""></p>`,
+			imageSizes: { [pic]: { width: 1920, height: 1080 }, '/b.png': { width: 400, height: 0 }, '/c.png': 'big', '/unused.png': { width: 1, height: 1 } }
+		}
+	])[0].imageSizes,
+	{ [pic]: { width: 1920, height: 1080 } }
+);
+eq('no body picture sizes = none', validBlogPosts([{ slug: 'x', title: 'X' }])[0].imageSizes, {});
 
 const summary = toSummary(posts[0]);
-check('a summary has no body, takeaways or questions', !('body' in summary) && !('takeaways' in summary) && !('questions' in summary));
+check('a summary has no body, picture sizes, takeaways or questions', !('body' in summary) && !('imageSizes' in summary) && !('takeaways' in summary) && !('questions' in summary));
 check('a summary keeps its read time (the browser cannot work it out)', 'readMinutes' in summary);
 const stripped = blogSummaries({ blogPosts: posts, other: 1 }) as { blogPosts: object[]; other: number };
 check('blogSummaries strips every post and keeps the rest', stripped.other === 1 && stripped.blogPosts.every((p) => !('body' in p)));

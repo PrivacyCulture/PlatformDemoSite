@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
-	import { SIZES, responsive } from '$lib/site/images';
+	import { SIZES, imageSize, responsive } from '$lib/site/images';
 	import { fade, fly } from 'svelte/transition';
 	import { cubicOut } from 'svelte/easing';
 	import { site } from '$lib/site/content';
@@ -158,8 +158,7 @@
 			{...responsive(logo.src, SIZES.logo)}
 			alt={logo.alt}
 			class="h-6 w-auto max-w-full object-contain object-left sm:h-8"
-			width={logo.width}
-			height={logo.height}
+			{...imageSize(logo)}
 			decoding="async"
 		/>
 	</a>
