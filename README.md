@@ -49,6 +49,25 @@ npx tsx scripts/test-schema.ts
 npx tsx scripts/test-seo-head.ts
 ```
 
+### Blog
+
+Posts are written and approved in Sorted (Website → Platform → Blog) and arrive in the content as
+`blogPosts` — every approved post on the live channel, every draft too on the preview channel. `/blog`
+lays them out (newest as the hero, the next three, a pinned post as Featured research, the rest with
+Load more) and searches them on the server, body text included; `/blog/<slug>` is the article. The
+`/platform` page draws the newest as a **Latest articles** block (`articles` in its layout).
+
+- Bodies are article HTML in one grammar, `src/lib/site/article-html.ts` — a **byte-identical copy**
+  of Sorted's `src/lib/article-html.ts`, SHA-256 asserted in both repos. Copy it across; never edit
+  one side. It is cleaned again here before `{@html}`.
+- The browser is handed summaries only (`blogSummaries` in the root layout); an article's body comes
+  from its own page load. Read time travels with each summary so a card renders the same on both sides.
+- The blog page's wording is `pages.blog` in `data/database.json`.
+
+```
+npx tsx scripts/test-blog.ts
+```
+
 ### Book a demo
 
 The form at `/demo` books a HubSpot meeting (`HUBSPOT_MEETING_SLUG`, with a token borrowed from Sorted or set directly as `HUBSPOT_ACCESS_TOKEN`).

@@ -513,6 +513,62 @@
 		}
 	},
 	"pages": {
+		"blog": {
+			"meta": {
+				"title": "Blog",
+				"description": "Practical notes for privacy teams on keeping a privacy estate live: records, assessments, vendors, AI and reporting.",
+				"keywords": ""
+			},
+			"hero": {
+				"eyebrow": "Latest article",
+				"readLabel": "Read the article",
+				"browseLabel": "Browse all articles"
+			},
+			"search": {
+				"label": "Search articles",
+				"placeholder": "Try ROPA, DPIA or vendor risk",
+				"button": "Search",
+				"resultsTitle": "Search results",
+				"noResults": "No articles match that search.",
+				"clear": "Clear search"
+			},
+			"recent": {
+				"eyebrow": "The blog",
+				"title": "Recent articles."
+			},
+			"featured": {
+				"eyebrow": "Featured research",
+				"cta": "Read the findings"
+			},
+			"archive": {
+				"eyebrow": "From the archive",
+				"title": "More articles.",
+				"loadMore": "Load more articles"
+			},
+			"article": {
+				"readMore": "Read",
+				"onThisPage": "On this page",
+				"takeaways": "Key takeaways",
+				"questions": "Questions this article answers",
+				"relatedChallenge": "Related challenge",
+				"relatedLink": "See how the platform helps",
+				"share": "Share",
+				"copyLink": "Copy link",
+				"copied": "Link copied",
+				"tags": "Topics",
+				"keepReadingEyebrow": "Keep reading",
+				"keepReadingTitle": "More on running a live privacy estate.",
+				"allArticles": "All articles",
+				"sideCtaEyebrow": "Next step",
+				"sideCtaTitle": "See the Visual ROPA View in action.",
+				"sideCtaBody": "A 25-minute live walkthrough of the platform.",
+				"sideCtaLabel": "Book a demo"
+			},
+			"empty": {
+				"title": "No articles yet.",
+				"body": "The first articles are on their way."
+			}
+		},
 		"platform": {
 			"meta": {
 				"title": "The Platform",

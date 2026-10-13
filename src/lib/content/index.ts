@@ -9,6 +9,7 @@ import type { BeatId } from '$lib/journey/beats';
 import type raw from '../../../data/database.json';
 import { live } from './runtime';
 import type { AddedSection } from '$lib/site/added-sections';
+import type { BlogPost } from '$lib/site/blog';
 
 export type { AddedSection } from '$lib/site/added-sections';
 
@@ -202,6 +203,12 @@ export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site'> & {
 	customPages?: CustomPage[];
 	/** Addresses archived in the CMS: answered with "not found", and links to them hidden. */
 	archivedPaths?: string[];
+	/**
+	 * Blog posts approved in Sorted (all of them, approved or not, on the draft site). Newest
+	 * first. In the BROWSER each one is a summary without its body — see blogSummaries — so a page
+	 * that draws an article reads it from its own load, never from here.
+	 */
+	blogPosts?: BlogPost[];
 };
 
 export const content = live((c) => c);
@@ -215,6 +222,7 @@ export const demoForm = live((c) => c.demoForm);
 export const aeo = live((c) => c.aeo);
 export const customPages = live((c) => c.customPages ?? [], 'array');
 export const archivedPaths = live((c) => c.archivedPaths ?? [], 'array');
+export const blogPosts = live((c) => c.blogPosts ?? [], 'array');
 
 /** A page created in the CMS, or undefined. Read inside a load, after `await parent()`. */
 export function customPageBySlug(slug: string): CustomPage | undefined {

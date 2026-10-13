@@ -12,8 +12,11 @@
 	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
 	import LogoStrip from '$lib/components/site/LogoStrip.svelte';
 	import { platformLayout, logosInHero } from '$lib/site/page-layout';
-	import { pages, pageTitle } from '$lib/content';
-	import { visibleProblems } from '$lib/site/problems';
+	import { blogPosts, pages, pageTitle } from '$lib/content';
+	import BlogCard from '$lib/components/site/blog/BlogCard.svelte';
+	import { postEyebrow } from '$lib/site/blog';
+	import LensCta from '$lib/components/site/LensCta.svelte';
+	import { visibleProblems, problems as problemItems } from '$lib/site/problems';
 	import { rich } from '$lib/site/rich';
 
 	const copy = pages.platform;
@@ -29,6 +32,11 @@
 	// below then skips them so they are not drawn twice.
 	const heroLogos = $derived(logosInHero(entries));
 	const bodyEntries = $derived(heroLogos ? entries.slice(1) : entries);
+	// The Latest articles block. Its words are optional leaves in the CMS (absent = these defaults);
+	// the cards are the newest blog posts, six at a time.
+	const articlesCopy = $derived((copy as { articles?: { eyebrow?: string; title?: string; loadMore?: string } }).articles ?? {});
+	const ARTICLE_STEP = 6;
+	let articlesShown = $state(ARTICLE_STEP);
 	// The explainer in the hero, as structured data.
 	const video = $derived(explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript));
 </script>
@@ -154,6 +162,33 @@
 	</MountainScene>
 {/snippet}
 
+{#snippet articlesBlock()}
+	<!-- Nothing at all with no posts: an empty heading would read as a broken section. -->
+	{#if blogPosts.length}
+		<section class="mt-16 w-full sm:mt-24" aria-labelledby="latest-articles-heading">
+			<div class="flex flex-wrap items-end justify-between gap-4">
+				<div>
+					<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{articlesCopy.eyebrow?.trim() || 'Latest articles'}</p>
+					<h2 id="latest-articles-heading" class="max-w-[24ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+						{articlesCopy.title?.trim() || 'Practical notes for privacy teams.'}
+					</h2>
+				</div>
+				<a href="/blog" class="text-[13px] text-ink/55 no-underline hover:text-lens hover:underline">{blogPosts.length} {blogPosts.length === 1 ? 'article' : 'articles'}</a>
+			</div>
+			<ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				{#each blogPosts.slice(0, articlesShown) as post (post.slug)}
+					<li><BlogCard {post} eyebrow={postEyebrow(post, problemItems)} readLabel={pages.blog.article.readMore} variant="compact" /></li>
+				{/each}
+			</ul>
+			{#if articlesShown < blogPosts.length}
+				<div class="mt-8 flex justify-center">
+					<LensCta label={articlesCopy.loadMore?.trim() || pages.blog.archive.loadMore} onclick={() => (articlesShown += ARTICLE_STEP)} />
+				</div>
+			{/if}
+		</section>
+	{/if}
+{/snippet}
+
 {#snippet ctaBlock()}
 	<div class="mt-10 w-full">
 		<DemoCtaBlock />
@@ -167,6 +202,7 @@
 	{:else if entry.id === 'problems'}{@render problemsBlock()}
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
+	{:else if entry.id === 'articles'}{@render articlesBlock()}
 	{:else if entry.id === 'explainer'}
 		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo {...explainerProps} /></div></section>
 	{:else if entry.id === 'trusted'}

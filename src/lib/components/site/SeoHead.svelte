@@ -23,6 +23,9 @@
 		schema?: (JsonLdNode | null | undefined)[];
 		/** False on a page that must not be indexed. It then carries no canonical and no schema. */
 		index?: boolean;
+		/** 'article' on a blog post, with its Open Graph article tags. */
+		ogType?: 'website' | 'article';
+		article?: { publishedTime?: string; modifiedTime?: string; author?: string; section?: string; tags?: string[] };
 	};
 	let {
 		title,
@@ -36,7 +39,9 @@
 		heading = null,
 		mainEntityId = null,
 		schema = [],
-		index = true
+		index = true,
+		ogType = 'website',
+		article = undefined
 	}: Props = $props();
 
 	// The draft (preview) site serves unapproved copy under its own hostname and must never be
@@ -55,7 +60,9 @@
 		siteName: site.brand,
 		noindex,
 		origin: page.url.origin,
-		pathname: page.url.pathname
+		pathname: page.url.pathname,
+		ogType,
+		article
 	});
 	const tags = $derived(seoTags(input));
 	const canonical = $derived(canonicalUrl(input));

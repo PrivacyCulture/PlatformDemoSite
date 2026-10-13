@@ -13,11 +13,12 @@
  */
 import { addedSections, type AddedSection } from './added-sections';
 
-export const PLATFORM_BLOCKS = ['fit', 'problems', 'pricing', 'cta', 'explainer', 'trusted'] as const;
+export const PLATFORM_BLOCKS = ['fit', 'problems', 'pricing', 'cta', 'explainer', 'trusted', 'articles'] as const;
 export type PlatformBlockId = (typeof PLATFORM_BLOCKS)[number];
 // `trusted` leads: first, it is drawn INSIDE the hero exactly as it always was (see
-// logosInHero); moved anywhere else, it becomes a band of its own there.
-export const PLATFORM_DEFAULT_LAYOUT: readonly PlatformBlockId[] = ['trusted', 'fit', 'problems', 'pricing', 'cta'];
+// logosInHero); moved anywhere else, it becomes a band of its own there. `articles` is the newest
+// blog posts; with none published it draws nothing.
+export const PLATFORM_DEFAULT_LAYOUT: readonly PlatformBlockId[] = ['trusted', 'fit', 'problems', 'articles', 'pricing', 'cta'];
 
 export type LayoutEntry<B extends string> = { kind: 'block'; id: B } | { kind: 'section'; id: string; section: AddedSection };
 
