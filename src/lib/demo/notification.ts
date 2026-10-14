@@ -57,7 +57,9 @@ export type DemoNotificationInput = {
 	contactId?: string | null;
 	/** First-touch UTMs, the ones HubSpot keeps. */
 	utms: DemoUtm;
-	/** The demo page's own UTMs at the moment of booking: which button, or which campaign. */
+	/** The page whose Book a demo button was clicked (the demo page's from=), or empty. */
+	from?: string;
+	/** The demo page's own UTMs at the moment of booking: which campaign, if any. */
 	pageUtms: DemoUtm;
 	routing?: { slaTier: string; isStranger: boolean } | null;
 };
@@ -107,12 +109,11 @@ function formatEndTime(iso: string, timeZone: string): string {
 }
 
 /**
- * Where the booking came from: the page whose Book a demo button was clicked (utm_source is
- * the page name), or the campaign the demo page was opened from. Empty when the address
- * carried nothing.
+ * Where the booking came from: the page whose Book a demo button was clicked (from=), then
+ * the campaign the demo page was opened from. Empty when the address carried nothing.
  */
-export function describeOrigin(pageUtms: DemoUtm): string {
-	const parts = [pageUtms.utm_source, pageUtms.utm_medium, pageUtms.utm_campaign, pageUtms.utm_content, pageUtms.utm_term]
+export function describeOrigin(from: string | undefined, pageUtms: DemoUtm): string {
+	const parts = [from, pageUtms.utm_source, pageUtms.utm_medium, pageUtms.utm_campaign, pageUtms.utm_content, pageUtms.utm_term]
 		.filter((v): v is string => Boolean(v));
 	return parts.join(' / ');
 }
@@ -132,7 +133,7 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 	const visitorWhen = formatWhen(input.start, input.timezone);
 	const visitorEnd = formatEndTime(input.end, input.timezone);
 	const teamWhen = input.timezone !== TEAM_TIMEZONE ? formatWhen(input.start, TEAM_TIMEZONE) : '';
-	const origin = describeOrigin(input.pageUtms);
+	const origin = describeOrigin(input.from, input.pageUtms);
 	const firstTouch = utmLine(input.utms);
 
 	const subject = `Demo booked: ${name}${company ? ` at ${company}` : ''}, ${formatWhen(input.start, TEAM_TIMEZONE)}`;

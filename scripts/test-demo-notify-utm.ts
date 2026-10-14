@@ -1,4 +1,4 @@
-import { demoPageId, utmsFromSearch, withDemoLinkUtms } from '../src/lib/demo/utm';
+import { demoFromSearch, demoPageId, utmsFromSearch, withDemoLinkFrom } from '../src/lib/demo/utm';
 import {
 	buildDemoNotification,
 	describeOrigin,
@@ -20,22 +20,25 @@ ok('a problem page', demoPageId('/dsar-overload/'), 'dsar-overload');
 ok('a nested path joins with dashes', demoPageId('/platform/Visual%20ROPA'), 'platform-visual-ropa');
 
 // ── the link ──────────────────────────────────────────────────────────────────
-ok('the demo link gets the page as its source', withDemoLinkUtms('/demo', 'home'), '/demo?utm_source=home');
-ok('a hash survives', withDemoLinkUtms('/demo#book', 'pricing'), '/demo?utm_source=pricing#book');
-ok('a link that is not the demo page is untouched', withDemoLinkUtms('/pricing', 'home'), '/pricing');
-ok('a demo link already tagged keeps its own values', withDemoLinkUtms('/demo?utm_source=linkedin', 'home'), '/demo?utm_source=linkedin');
-ok('an external link is untouched', withDemoLinkUtms('https://hubspot.com/demo', 'home'), 'https://hubspot.com/demo');
+ok('the demo link gets the page as from=', withDemoLinkFrom('/demo', 'home'), '/demo?from=home');
+ok('a hash survives', withDemoLinkFrom('/demo#book', 'pricing'), '/demo?from=pricing#book');
+ok('a link that is not the demo page is untouched', withDemoLinkFrom('/pricing', 'home'), '/pricing');
+ok('a demo link already tagged keeps its own value', withDemoLinkFrom('/demo?from=webinar', 'home'), '/demo?from=webinar');
+ok('a campaign link keeps its UTMs and gains the page', withDemoLinkFrom('/demo?utm_source=linkedin', 'home'), '/demo?utm_source=linkedin&from=home');
+ok('an external link is untouched', withDemoLinkFrom('https://hubspot.com/demo', 'home'), 'https://hubspot.com/demo');
 ok(
 	'an absolute same-site link, with the site as base',
-	withDemoLinkUtms('https://www.example.com/demo', 'faq', 'https://www.example.com'),
-	'/demo?utm_source=faq'
+	withDemoLinkFrom('https://www.example.com/demo', 'faq', 'https://www.example.com'),
+	'/demo?from=faq'
 );
 
 // ── what the demo page's address says at booking time ────────────────────────
+ok('the page is read from from=', demoFromSearch('?from=home&x=1'), 'home');
+ok('no from=, no page', demoFromSearch('?utm_source=home'), '');
 ok(
 	'the page UTMs are read from the query string',
-	utmsFromSearch('?utm_source=home&x=1'),
-	{ utm_source: 'home' }
+	utmsFromSearch('?utm_source=linkedin&from=home'),
+	{ utm_source: 'linkedin' }
 );
 ok('no query, no UTMs', utmsFromSearch(''), {});
 
@@ -46,9 +49,10 @@ ok('commas', parseRecipientList('a@x.com,b@y.org'), ['a@x.com', 'b@y.org']);
 ok('any separator, trimmed, deduped, non-addresses dropped', parseRecipientList(' a@x.com; B@y.org\n<a@X.com> nonsense c@z'), ['a@x.com', 'B@y.org']);
 
 // ── the email ─────────────────────────────────────────────────────────────────
-ok('the button shows its page', describeOrigin({ utm_source: 'home' }), 'home');
-ok('a campaign is listed', describeOrigin({ utm_source: 'linkedin', utm_campaign: 'q4' }), 'linkedin / q4');
-ok('nothing is nothing', describeOrigin({}), '');
+ok('the button shows its page', describeOrigin('home', {}), 'home');
+ok('a campaign is listed', describeOrigin('', { utm_source: 'linkedin', utm_campaign: 'q4' }), 'linkedin / q4');
+ok('the page comes before a campaign', describeOrigin('pricing', { utm_source: 'linkedin' }), 'pricing / linkedin');
+ok('nothing is nothing', describeOrigin(undefined, {}), '');
 
 const mail = buildDemoNotification({
 	form: {
@@ -72,7 +76,8 @@ const mail = buildDemoNotification({
 	location: null,
 	contactId: '123',
 	utms: { utm_source: 'linkedin', utm_campaign: 'q4' },
-	pageUtms: { utm_source: 'pricing' },
+	from: 'pricing',
+	pageUtms: {},
 	routing: { slaTier: 'P2', isStranger: false }
 });
 ok('subject names who, where and when in team time', mail.subject, 'Demo booked: Ada Lovelace at Analytical <Engines>, Wednesday, 14 October 2026 at 10:00 BST');

@@ -1,4 +1,4 @@
-import { demoPageId, withDemoLinkUtms } from './utm';
+import { demoPageId, withDemoLinkFrom } from './utm';
 
 /**
  * Tags every link to the demo page with the page it was clicked on, from one place.
@@ -20,7 +20,7 @@ export function tagDemoLinks(root: Document = document): () => void {
 		if (anchor.origin !== location.origin) return;
 		const href = anchor.getAttribute('href');
 		if (!href) return;
-		const next = withDemoLinkUtms(href, demoPageId(location.pathname), location.origin);
+		const next = withDemoLinkFrom(href, demoPageId(location.pathname), location.origin);
 		if (next !== href) anchor.setAttribute('href', next);
 	};
 
