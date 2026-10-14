@@ -13,7 +13,7 @@ import {
 	routeContact,
 	utmToContactProperties
 } from '$lib/demo/hubspotProperties';
-import { utmsFromUnknown, type DemoUtm } from '$lib/demo/utm';
+import { cleanDemoFrom, utmsFromUnknown, type DemoUtm } from '$lib/demo/utm';
 import { notifyDemoBooked } from '$lib/server/demo-notify';
 import {
 	bookMeeting,
@@ -33,7 +33,9 @@ type BookBody = {
 	timezone?: string;
 	/** First-touch UTMs from sessionStorage; these go to HubSpot. */
 	utms?: unknown;
-	/** The demo page's own UTMs when booked: which Book a demo button, or which campaign. */
+	/** The page whose Book a demo button was clicked, from the demo page's from= parameter. */
+	from?: unknown;
+	/** The demo page's own UTMs when booked: which campaign link, if any. */
 	pageUtms?: unknown;
 };
 
@@ -104,6 +106,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 	const utms: DemoUtm = utmsFromUnknown(body.utms);
 	const pageUtms: DemoUtm = utmsFromUnknown(body.pageUtms);
+	const from = cleanDemoFrom(body.from);
 
 	try {
 		const slug = requireMeetingSlug();
@@ -175,6 +178,7 @@ export const POST: RequestHandler = async ({ request }) => {
 			location: booking.location ?? null,
 			contactId,
 			utms,
+			from,
 			pageUtms,
 			routing: { slaTier: routing.slaTier, isStranger: routing.isStranger }
 		}).catch((err) => console.error('[demo/notify] could not send the booking notification', err));
