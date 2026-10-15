@@ -324,10 +324,25 @@ export function withHeadingIds(html: string): string {
  * grammar has cleaned the body, so the one class it adds is the site's, not the author's.
  */
 export function decorateArticleHtml(html: string): string {
-	return html
+	return joinComparisons(html)
 		.replace(/<ol class="panels">([\s\S]*?)<\/ol>/g, (block) => block.replace(/<li><strong>/g, '<li><strong class="panel-title">'))
 		.replace(/<aside class="timeline">([\s\S]*?)<\/aside>/g, (box) => decorateTimeline(box))
 		.replace(/<aside class="compare">([\s\S]*?)<\/aside>/g, (_m, inner: string) => decorateCompare(inner));
+}
+
+/**
+ * Two comparisons with nothing between them are ONE: an author who marks each side on its own,
+ * with a blank line between, gets two boxes once the blank line is cleaned away — and each would
+ * be drawn as a lone first side, full width and green. Boxes never nest, so a box's own `</aside>`
+ * is the first one after it opens.
+ */
+function joinComparisons(html: string): string {
+	const touching = /(<aside class="compare">(?:(?!<\/aside>)[\s\S])*)<\/aside>\s*<aside class="compare">/g;
+	for (let prev = ''; prev !== html; ) {
+		prev = html;
+		html = html.replace(touching, '$1');
+	}
+	return html;
 }
 
 /**
