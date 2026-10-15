@@ -79,7 +79,8 @@ Load more) and searches them on the server, body text included; `/blog/<slug>` i
   a card beside the others, the first tinted green and the second red (`Company A: Heading` puts
   "Company A" above the heading as its label; each list item's opening bold text is its row's term),
   and `<aside class="cta">` as a dark **CTA banner**: lines typed as Normal become eyebrow, heading and
-  text, and a line of nothing but `[Label]`s becomes its buttons (a link on a label is the button's
+  text, and a line of nothing but `[Label]`s becomes a row of its buttons (one row in the right half,
+  two or more stacked in the right third; a link on a label is the button's
   address; an unlinked one goes to `/demo`, which the click-time tagging marks with the post).
   The styles are in `src/lib/site/article-body.css`, a
   **byte-identical copy** of Sorted's `src/lib/article-body.css` (SHA-256 asserted in both repos).

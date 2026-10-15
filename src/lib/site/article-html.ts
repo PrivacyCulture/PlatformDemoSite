@@ -424,18 +424,20 @@ export const CTA_DEFAULT_HREF = '/demo';
 
 /**
  * A CTA: a dark banner, its words on the left and its buttons on the right. A paragraph made of
- * nothing but `[Label]`s (and links) is its row of BUTTONS, wherever it sits. Of the rest, the first
+ * nothing but `[Label]`s (and links) is a row of BUTTONS, wherever it sits, and the rows are kept as
+ * they were typed: one row is drawn as a row in the right half, two or more stacked in the right
+ * third (`cta-stacked`). The first button of all is the white one. Of the rest, the first
  * `<h3>` is the heading and any line before it the small EYEBROW above it. Written with no heading —
  * every line typed as Normal — the second of three or more lines is the heading (the first its
  * eyebrow), else the first line.
  */
 function decorateCta(inner: string): string {
 	const text: string[] = [];
-	const buttons: string[] = [];
+	const rows: string[][] = [];
 	for (const block of inner.match(/<(p|h3|ul|ol)(?: class="[^"]*")?>[\s\S]*?<\/\1>/g) ?? []) {
 		const row = /^<p(?: class="[^"]*")?>([\s\S]*)<\/p>$/.exec(block);
 		const found = row ? ctaButtons(row[1]) : null;
-		if (found) buttons.push(...found);
+		if (found) rows.push(found);
 		else text.push(block);
 	}
 	let head = text.findIndex((b) => b.startsWith('<h3'));
@@ -444,8 +446,9 @@ function decorateCta(inner: string): string {
 		if (text[head]?.startsWith('<p')) text[head] = text[head].replace(/^<p(?: class="[^"]*")?>/, '<h3>').replace(/<\/p>$/, '</h3>');
 	}
 	for (let i = 0; i < head; i++) text[i] = text[i].replace(/^<p(?: class="[^"]*")?>/, '<p class="cta-eyebrow">');
-	const actions = buttons.map((b, i) => b.replace('class="cta-btn"', `class="cta-btn${i === 0 ? ' cta-primary' : ''}"`)).join('');
-	return `<aside class="cta"><div class="cta-text">${text.join('')}</div>${actions ? `<div class="cta-actions">${actions}</div>` : ''}</aside>`;
+	if (rows.length) rows[0][0] = rows[0][0].replace('class="cta-btn"', 'class="cta-btn cta-primary"');
+	const actions = rows.length ? `<div class="cta-actions${rows.length > 1 ? ' cta-stacked' : ''}">${rows.map((r) => `<div class="cta-row">${r.join('')}</div>`).join('')}</div>` : '';
+	return `<aside class="cta"><div class="cta-text">${text.join('')}</div>${actions}</aside>`;
 }
 
 /**

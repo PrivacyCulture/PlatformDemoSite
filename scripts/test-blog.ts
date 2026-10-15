@@ -24,11 +24,11 @@ function eq(name: string, a: unknown, e: unknown) {
 	check(name, JSON.stringify(a) === JSON.stringify(e), `expected ${JSON.stringify(e)}\n      got      ${JSON.stringify(a)}`);
 }
 
-const MODULE_SHA256 = 'ea5bf400dbe9d6b34a030c850dcf23b2be272d1ba35f1f0e13757fac9af377e4';
+const MODULE_SHA256 = '98c2a43cacbd775350d47737a163ffa30341144bb228879f1f34cfe6c9eeb67e';
 const src = readFileSync(new URL('../src/lib/site/article-html.ts', import.meta.url), 'utf8');
 check('article-html.ts is byte-identical to Sorted’s', createHash('sha256').update(src).digest('hex') === MODULE_SHA256, `now ${createHash('sha256').update(src).digest('hex')}`);
 // The article's stylesheet is shared too, so Sorted's preview draws exactly what this page draws.
-export const CSS_SHA256 = '130ca6ce902ac7c7e7585c177dcfcaa69522e8508bb01b5d3cc7a4723f1ed63e';
+export const CSS_SHA256 = '1251ba4113514aff6470dc8a4c5c96adeb55f8d83396a0f9feb8ad4a02693429';
 const css = readFileSync(new URL('../src/lib/site/article-body.css', import.meta.url), 'utf8');
 check('article-body.css is byte-identical to Sorted’s', createHash('sha256').update(css).digest('hex') === CSS_SHA256, `now ${createHash('sha256').update(css).digest('hex')}`);
 
@@ -136,7 +136,7 @@ eq('a long sentence before a colon is not a date', tl('<li>This is far too long 
 eq('lists outside a timeline are untouched', decorateArticleHtml('<ul><li>21 May 2025: x</li></ul>'), '<ul><li>21 May 2025: x</li></ul>');
 {
 	const cmp = decorateArticleHtml('<aside class="compare"><h3>Company A: Kept a light, living RoPA</h3><ul><li><strong>Suffers a breach</strong> Minutes.</li></ul><h3>Company B: Dropped it at 600 staff</h3><ul><li>Suffers a breach: Days.</li></ul></aside>');
-	eq('a CTA: eyebrow, heading, text and buttons, an unlinked one to /demo', decorateArticleHtml('<aside class="cta"><p>IAPP · Brussels</p><p>Keep your RoPA.</p><p>Find us.</p><p>[Book a demo] [<a href="/m">Meet us</a>]</p></aside>'), '<aside class="cta"><div class="cta-text"><p class="cta-eyebrow">IAPP · Brussels</p><h3>Keep your RoPA.</h3><p>Find us.</p></div><div class="cta-actions"><a class="cta-btn cta-primary" href="/demo">Book a demo</a><a class="cta-btn" href="/m">Meet us</a></div></aside>');
+	eq('a CTA: eyebrow, heading, text and buttons, an unlinked one to /demo', decorateArticleHtml('<aside class="cta"><p>IAPP · Brussels</p><p>Keep your RoPA.</p><p>Find us.</p><p>[Book a demo] [<a href="/m">Meet us</a>]</p></aside>'), '<aside class="cta"><div class="cta-text"><p class="cta-eyebrow">IAPP · Brussels</p><h3>Keep your RoPA.</h3><p>Find us.</p></div><div class="cta-actions"><div class="cta-row"><a class="cta-btn cta-primary" href="/demo">Book a demo</a><a class="cta-btn" href="/m">Meet us</a></div></div></aside>');
 	eq('a comparison draws each side as a card, first good then bad', cmp, '<aside class="compare"><div class="cmp-sides"><div class="cmp-side cmp-good"><span class="cmp-label">Company A</span><h3>Kept a light, living RoPA</h3><ul><li><strong class="cmp-term">Suffers a breach</strong> Minutes.</li></ul></div><div class="cmp-side cmp-bad"><span class="cmp-label">Company B</span><h3>Dropped it at 600 staff</h3><ul><li><strong class="cmp-term">Suffers a breach</strong>Days.</li></ul></div></div></aside>');
 }
 

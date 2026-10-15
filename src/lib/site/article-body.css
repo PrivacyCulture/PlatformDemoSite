@@ -170,38 +170,45 @@
 
 /* A CTA: a dark banner (decorateArticleHtml splits it into .cta-text and .cta-actions) — a small
    monospace eyebrow, a white heading and its text on the left, its buttons on the right, the first
-   white and the rest outlined. The buttons drop under the words when the column is narrow. */
+   white and the rest outlined. Button rows are kept as typed: one row takes the right HALF, right
+   aligned; two or more (.cta-stacked) the right THIRD, one under another at its full width. On a
+   phone the buttons go under the words. */
 .article-body aside.cta {
 	margin-top: 2.2em; margin-bottom: 2.2em; padding: 1.9rem 2rem; border-radius: 1rem;
-	display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.4rem 2rem;
+	display: flex; align-items: center; gap: 2rem;
 	background: var(--color-ink); color: color-mix(in srgb, white 74%, transparent);
 	font-size: 15px; line-height: 1.6; font-weight: 400;
 }
-.article-body .cta-text { flex: 1 1 17rem; min-width: 0; overflow-wrap: break-word; }
+.article-body .cta-text { flex: 1 1 0; min-width: 0; overflow-wrap: break-word; }
 .article-body .cta-text > * + * { margin-top: 0.7em; }
 .article-body .cta-text > .cta-eyebrow + * { margin-top: 0.55em; }
-.article-body .cta-eyebrow {
+.article-body aside.cta strong { color: white; }
+.article-body aside.cta .cta-text a { color: white; }
+/* The eyebrow keeps its colour when the author made it bold or a link: those are white elsewhere in the banner. */
+.article-body aside.cta .cta-eyebrow, .article-body aside.cta .cta-eyebrow :is(strong, em, a) {
 	font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 12px; line-height: 1.5;
 	font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-lens) 50%, white);
 }
 .article-body aside.cta h3 { margin: 0; font-size: 1.5rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; color: white; }
-.article-body aside.cta strong { color: white; }
-.article-body aside.cta .cta-text a { color: white; }
 .article-body aside.cta ul li::marker { color: var(--color-lens); }
-.article-body .cta-actions { flex: none; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.article-body .cta-actions { flex: 0 0 50%; min-width: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+.article-body .cta-actions.cta-stacked { flex-basis: 33.333%; }
+.article-body .cta-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem; }
+.article-body .cta-stacked a.cta-btn { flex: 1 1 100%; }
 .article-body a.cta-btn {
 	display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 2.75rem; padding: 0.6rem 1.2rem;
 	border: 1px solid color-mix(in srgb, white 30%, transparent); border-radius: 0.5rem; background: transparent;
-	font-size: 14.5px; line-height: 1.2; font-weight: 600; color: white; text-decoration: none; white-space: nowrap;
+	font-size: 14.5px; line-height: 1.2; font-weight: 600; text-align: center; color: white; text-decoration: none;
 	transition: background-color 200ms ease, border-color 200ms ease;
 }
 .article-body a.cta-btn:hover { border-color: white; color: white; }
 .article-body a.cta-btn.cta-primary { background: white; border-color: white; color: var(--color-ink); }
 .article-body a.cta-btn.cta-primary:hover { background: color-mix(in srgb, var(--color-lens) 14%, white); color: var(--color-ink); }
 @media (max-width: 640px) {
-	.article-body aside.cta { padding: 1.5rem 1.35rem; }
-	.article-body .cta-actions { width: 100%; }
-	.article-body a.cta-btn { flex: 1 1 auto; white-space: normal; text-align: center; }
+	.article-body aside.cta { flex-direction: column; align-items: stretch; gap: 1.4rem; padding: 1.5rem 1.35rem; }
+	.article-body .cta-text { flex: none; }
+	.article-body .cta-actions, .article-body .cta-actions.cta-stacked { flex: none; }
+	.article-body .cta-row a.cta-btn { flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) {
 	.article-body a.cta-btn { transition: none; }
