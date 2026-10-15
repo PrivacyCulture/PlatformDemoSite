@@ -24,11 +24,11 @@ function eq(name: string, a: unknown, e: unknown) {
 	check(name, JSON.stringify(a) === JSON.stringify(e), `expected ${JSON.stringify(e)}\n      got      ${JSON.stringify(a)}`);
 }
 
-const MODULE_SHA256 = 'b1d03e1a7d44c27bf07d07f817403d1076aee3b523f849ccca00d82176283095';
+const MODULE_SHA256 = 'dc99744120cd8a8691a4feaf3992e1b4fac1df7750dc5f767696e989eeb5a27d';
 const src = readFileSync(new URL('../src/lib/site/article-html.ts', import.meta.url), 'utf8');
 check('article-html.ts is byte-identical to Sorted’s', createHash('sha256').update(src).digest('hex') === MODULE_SHA256, `now ${createHash('sha256').update(src).digest('hex')}`);
 // The article's stylesheet is shared too, so Sorted's preview draws exactly what this page draws.
-export const CSS_SHA256 = '1ba2b21bda7be64bd862879a8523d6ce2ebe9e82633f877b9acdd541d2639be7';
+export const CSS_SHA256 = 'd7dfa71f2839f9bcbb5e3135c488b5d30a6c4c7ded244d2629b3d60b891940a0';
 const css = readFileSync(new URL('../src/lib/site/article-body.css', import.meta.url), 'utf8');
 check('article-body.css is byte-identical to Sorted’s', createHash('sha256').update(css).digest('hex') === CSS_SHA256, `now ${createHash('sha256').update(css).digest('hex')}`);
 
@@ -134,6 +134,10 @@ eq('a long sentence before a colon is not a date', tl('<li>This is far too long 
 	eq('a long first sentence is not made a title', tl('<li>Sep 2025: ' + 'word '.repeat(30) + 'end. More.</li>').includes('tl-title'), false);
 }
 eq('lists outside a timeline are untouched', decorateArticleHtml('<ul><li>21 May 2025: x</li></ul>'), '<ul><li>21 May 2025: x</li></ul>');
+{
+	const cmp = decorateArticleHtml('<aside class="compare"><h3>Company A: Kept a light, living RoPA</h3><ul><li><strong>Suffers a breach</strong> Minutes.</li></ul><h3>Company B: Dropped it at 600 staff</h3><ul><li>Suffers a breach: Days.</li></ul></aside>');
+	eq('a comparison draws each side as a card, first good then bad', cmp, '<aside class="compare"><div class="cmp-sides"><div class="cmp-side cmp-good"><span class="cmp-label">Company A</span><h3>Kept a light, living RoPA</h3><ul><li><strong class="cmp-term">Suffers a breach</strong> Minutes.</li></ul></div><div class="cmp-side cmp-bad"><span class="cmp-label">Company B</span><h3>Dropped it at 600 staff</h3><ul><li><strong class="cmp-term">Suffers a breach</strong>Days.</li></ul></div></div></aside>');
+}
 
 const node = blogPostingNode({ origin: 'https://x.test', pathname: '/blog/a', headline: 'A', description: 'd', datePublished: '2026-01-01T09:00:00Z', keywords: ['ROPA'], authorName: '', wordCount: 300 });
 check('BlogPosting with no named author is credited to the organisation', JSON.stringify(node?.author) === '{"@id":"https://x.test/#organization"}');
