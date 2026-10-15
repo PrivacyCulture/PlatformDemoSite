@@ -1,7 +1,8 @@
 // Article HTML for blog posts: paragraphs, two levels of heading, lists, quotes, bold, italic,
-// links and images — and three marked blocks: a PANEL LIST (`<ol class="panels">`, drawn as numbered
-// cards), a REPORT BOX (`<aside class="report">`, a boxed heading, list and note) and a TIMELINE
-// (`<aside class="timeline">`, the same shape drawn as dated steps). Two more ride on classes: a
+// links and images — and four marked blocks: a PANEL LIST (`<ol class="panels">`, drawn as numbered
+// cards), a REPORT BOX (`<aside class="report">`, a boxed heading, list and note), a TIMELINE
+// (`<aside class="timeline">`, the same shape drawn as dated steps) and a COMPARISON
+// (`<aside class="compare">`, the same parts drawn as cards side by side, one per h3). Two more ride on classes: a
 // CAPTION (`<p class="caption">`, small text that goes under an image) and ALIGNMENT on a paragraph
 // or heading (`align-center|align-right|align-justify`, left being the default and carrying none;
 // Quill's `ql-align-*` and an inline text-align are read as the same). A caption may be aligned too:
@@ -32,17 +33,18 @@ export const MAX_ARTICLE_HTML_CHARS = 200_000;
 
 // `ol.panels` and `aside.report` are tags of their own to the stack: what each may hold, and where
 // it may sit, differs from a plain list or from any other block.
-const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'li', 'blockquote', 'aside.report', 'aside.timeline']);
-/** The boxed blocks. Both hold the same things; they differ only in how the site draws them. */
-const BOXES = ['aside.report', 'aside.timeline'];
+const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'li', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare']);
+/** The boxed blocks. All hold the same things; they differ only in how the site draws them. */
+const BOXES = ['aside.report', 'aside.timeline', 'aside.compare'];
 const LISTS = ['ul', 'ol', 'ol.panels'];
 const INLINE = new Set(['strong', 'em', 'a']);
 /** What each container may hold directly. Inline content anywhere else opens a `<p>` (or `<li>`). */
 const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
-	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'blockquote', 'aside.report', 'aside.timeline']),
+	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare']),
 	blockquote: new Set(['p']),
 	'aside.report': new Set(['p', 'h3', 'ul', 'ol']),
 	'aside.timeline': new Set(['p', 'h3', 'ul', 'ol']),
+	'aside.compare': new Set(['p', 'h3', 'ul', 'ol']),
 	ul: new Set(['li']),
 	ol: new Set(['li']),
 	'ol.panels': new Set(['li']),
@@ -57,10 +59,10 @@ const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
 	a: new Set(['#text', 'strong', 'em', 'br', 'img'])
 };
 /** Where inline content goes when it arrives in a container that cannot hold it. */
-const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', 'aside.report': 'p', 'aside.timeline': 'p', ul: 'li', ol: 'li', 'ol.panels': 'li' };
+const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', 'aside.report': 'p', 'aside.timeline': 'p', 'aside.compare': 'p', ul: 'li', ol: 'li', 'ol.panels': 'li' };
 
-/** How a stack entry is written: the two marked blocks carry their class, everything else is bare. */
-const OPEN_TAG: Record<string, string> = { 'ol.panels': '<ol class="panels">', 'aside.report': '<aside class="report">', 'aside.timeline': '<aside class="timeline">' };
+/** How a stack entry is written: the marked blocks carry their class, everything else is bare. */
+const OPEN_TAG: Record<string, string> = { 'ol.panels': '<ol class="panels">', 'aside.report': '<aside class="report">', 'aside.timeline': '<aside class="timeline">', 'aside.compare': '<aside class="compare">' };
 const openTag = (tag: string, cls = '') => OPEN_TAG[tag] ?? (cls ? `<${tag} class="${cls}">` : `<${tag}>`);
 
 /** The blocks that may be aligned, and the alignments they may take (left is the default). */
@@ -183,7 +185,7 @@ export function cleanArticleHtml(html: string): string {
 			continue;
 		}
 		let tag = RENAME[raw] ?? raw;
-		// The marked blocks. An <aside> that is not a report box or a timeline is not a block we
+		// The marked blocks. An <aside> that is not a report box, a timeline or a comparison is not a block we
 		// draw: it is dropped and its words kept, like any other unknown tag.
 		if (tag === 'ol' && !closing && hasClass(m[3] ?? '', 'panels')) tag = 'ol.panels';
 		if (tag === 'aside') {
@@ -193,7 +195,7 @@ export function cleanArticleHtml(html: string): string {
 				continue;
 			}
 			// A box inside a box is not a thing: the outer one closes first.
-			const kind = hasClass(m[3] ?? '', 'report') ? 'aside.report' : hasClass(m[3] ?? '', 'timeline') ? 'aside.timeline' : '';
+			const kind = BOXES.find((b) => hasClass(m[3] ?? '', b.slice('aside.'.length))) ?? '';
 			if (!kind) continue;
 			tag = kind;
 		}
@@ -245,7 +247,7 @@ export function cleanArticleHtml(html: string): string {
 			.replace(/<(p|h2|h3|li|strong|em|a)(?: (?:href|class)="[^"]*")?>(?:\s|<br>)*<\/\1>/g, '')
 			.replace(/<(ul|ol|blockquote)>\s*<\/\1>/g, '')
 			.replace(/<ol class="panels">\s*<\/ol>/g, '')
-			.replace(/<aside class="(?:report|timeline)">\s*<\/aside>/g, '')
+			.replace(/<aside class="(?:report|timeline|compare)">\s*<\/aside>/g, '')
 			.replace(/(?:<br>)+(<\/(?:p|h2|h3|li)>)/g, '$1');
 	}
 	return result.trim();
@@ -317,14 +319,45 @@ export function withHeadingIds(html: string): string {
 /**
  * The cleaned body, readied for the page: in a panel list, an item that OPENS with bold text gets
  * that text marked as the card's heading; in a timeline, each item is split into its date and its
- * step (see timelineStep). Done here rather than with `strong:first-child` in CSS,
+ * step (see timelineStep); a comparison is cut into its sides (see decorateCompare). Done here rather than with `strong:first-child` in CSS,
  * which also matches a bold word mid-item whenever the item starts with plain text. Runs after the
  * grammar has cleaned the body, so the one class it adds is the site's, not the author's.
  */
 export function decorateArticleHtml(html: string): string {
 	return html
 		.replace(/<ol class="panels">([\s\S]*?)<\/ol>/g, (block) => block.replace(/<li><strong>/g, '<li><strong class="panel-title">'))
-		.replace(/<aside class="timeline">([\s\S]*?)<\/aside>/g, (box) => decorateTimeline(box));
+		.replace(/<aside class="timeline">([\s\S]*?)<\/aside>/g, (box) => decorateTimeline(box))
+		.replace(/<aside class="compare">([\s\S]*?)<\/aside>/g, (_m, inner: string) => decorateCompare(inner));
+}
+
+/**
+ * A comparison: every `<h3>` in it opens a SIDE, drawn as a card of its own beside the others —
+ * the first tinted as the one that went well, the second as the one that did not, any more plain.
+ * Text before the first heading is the comparison's introduction, across the full width. A
+ * heading's text before its first `: ` (plain, at most 40 characters) is the side's small label —
+ * "Company A: Kept a light, living RoPA" — by the timeline's date rule. Each list item is a row: its
+ * opening bold text, or failing that its text before the first `: `, is the row's term, set above
+ * the rest. A comparison with no heading in it is left as written.
+ */
+function decorateCompare(inner: string): string {
+	const at = inner.search(/<h3[ >]/);
+	if (at === -1) return `<aside class="compare">${inner}</aside>`;
+	const sides = inner
+		.slice(at)
+		.split(/(?=<h3[ >])/)
+		.map((side, i) => {
+			const tone = i === 0 ? ' cmp-good' : i === 1 ? ' cmp-bad' : '';
+			const labelled = side.replace(/^<h3( class="[^"]*")?>([^<:]{1,40}?):\s+/, (_h, cls: string | undefined, label: string) => `<span class="cmp-label">${label.trim()}</span><h3${cls ?? ''}>`);
+			return `<div class="cmp-side${tone}">${labelled.replace(/<li>([\s\S]*?)<\/li>/g, (_li, item: string) => `<li>${compareRow(item)}</li>`)}</div>`;
+		});
+	return `<aside class="compare">${inner.slice(0, at)}<div class="cmp-sides">${sides.join('')}</div></aside>`;
+}
+
+/** One row of a side: its term marked, and a colon after a bold term dropped, as the term sits on its own line. */
+function compareRow(item: string): string {
+	if (/^<strong>/.test(item)) return item.replace(/^<strong>([\s\S]*?)<\/strong>:?/, (_s, term: string) => `<strong class="cmp-term">${term.replace(/:\s*$/, '')}</strong>`);
+	const m = /^([^<:]{1,60}?):\s+/.exec(item);
+	return m ? `<strong class="cmp-term">${m[1].trim()}</strong>${item.slice(m[0].length)}` : item;
 }
 
 /**

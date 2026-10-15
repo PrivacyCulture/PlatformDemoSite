@@ -71,11 +71,14 @@ Load more) and searches them on the server, body text included; `/blog/<slug>` i
 - The browser is handed summaries only (`blogSummaries` in the root layout); an article's body comes
   from its own page load. Read time travels with each summary so a card renders the same on both sides.
 - The blog page's wording is `pages.blog` in `data/database.json`.
-- Four article shapes beyond prose: an ordinary `<ol>` is drawn as **steps** (numbers in circles),
+- Five article shapes beyond prose: an ordinary `<ol>` is drawn as **steps** (numbers in circles),
   `<ol class="panels">` as numbered **cards** (`decorateArticleHtml` marks each item's opening bold
   text as the card heading), `<aside class="report">` as a grey **report box**, and `<aside class="timeline">` as dated
   **steps** (each item `Date: **Title.** text`; a date starting "Still pending", "Expected" or
-  "TBC" gets a dashed bar). The styles are in `src/lib/site/article-body.css`, a
+  "TBC" gets a dashed bar), and `<aside class="compare">` as a **comparison**: each `<h3>` in it opens
+  a card beside the others, the first tinted green and the second red (`Company A: Heading` puts
+  "Company A" above the heading as its label; each list item's opening bold text is its row's term).
+  The styles are in `src/lib/site/article-body.css`, a
   **byte-identical copy** of Sorted's `src/lib/article-body.css` (SHA-256 asserted in both repos).
 
 ```
