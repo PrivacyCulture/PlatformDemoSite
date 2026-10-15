@@ -1,8 +1,9 @@
 // Article HTML for blog posts: paragraphs, two levels of heading, lists, quotes, bold, italic,
 // links and images — and four marked blocks: a PANEL LIST (`<ol class="panels">`, drawn as numbered
 // cards), a REPORT BOX (`<aside class="report">`, a boxed heading, list and note), a TIMELINE
-// (`<aside class="timeline">`, the same shape drawn as dated steps) and a COMPARISON
-// (`<aside class="compare">`, the same parts drawn as cards side by side, one per h3). Two more ride on classes: a
+// (`<aside class="timeline">`, the same shape drawn as dated steps), a COMPARISON
+// (`<aside class="compare">`, the same parts drawn as cards side by side, one per h3) and a CTA
+// (`<aside class="cta">`, a dark banner: eyebrow, heading, text and `[Label]` buttons). Two more ride on classes: a
 // CAPTION (`<p class="caption">`, small text that goes under an image) and ALIGNMENT on a paragraph
 // or heading (`align-center|align-right|align-justify`, left being the default and carrying none;
 // Quill's `ql-align-*` and an inline text-align are read as the same). A caption may be aligned too:
@@ -33,18 +34,19 @@ export const MAX_ARTICLE_HTML_CHARS = 200_000;
 
 // `ol.panels` and `aside.report` are tags of their own to the stack: what each may hold, and where
 // it may sit, differs from a plain list or from any other block.
-const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'li', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare']);
+const BLOCKS = new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'li', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare', 'aside.cta']);
 /** The boxed blocks. All hold the same things; they differ only in how the site draws them. */
-const BOXES = ['aside.report', 'aside.timeline', 'aside.compare'];
+const BOXES = ['aside.report', 'aside.timeline', 'aside.compare', 'aside.cta'];
 const LISTS = ['ul', 'ol', 'ol.panels'];
 const INLINE = new Set(['strong', 'em', 'a']);
 /** What each container may hold directly. Inline content anywhere else opens a `<p>` (or `<li>`). */
 const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
-	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare']),
+	'': new Set(['p', 'h2', 'h3', 'ul', 'ol', 'ol.panels', 'blockquote', 'aside.report', 'aside.timeline', 'aside.compare', 'aside.cta']),
 	blockquote: new Set(['p']),
 	'aside.report': new Set(['p', 'h3', 'ul', 'ol']),
 	'aside.timeline': new Set(['p', 'h3', 'ul', 'ol']),
 	'aside.compare': new Set(['p', 'h3', 'ul', 'ol']),
+	'aside.cta': new Set(['p', 'h3', 'ul', 'ol']),
 	ul: new Set(['li']),
 	ol: new Set(['li']),
 	'ol.panels': new Set(['li']),
@@ -59,10 +61,10 @@ const ALLOWED_IN: Record<string, ReadonlySet<string>> = {
 	a: new Set(['#text', 'strong', 'em', 'br', 'img'])
 };
 /** Where inline content goes when it arrives in a container that cannot hold it. */
-const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', 'aside.report': 'p', 'aside.timeline': 'p', 'aside.compare': 'p', ul: 'li', ol: 'li', 'ol.panels': 'li' };
+const WRAPPER: Record<string, string> = { '': 'p', blockquote: 'p', 'aside.report': 'p', 'aside.timeline': 'p', 'aside.compare': 'p', 'aside.cta': 'p', ul: 'li', ol: 'li', 'ol.panels': 'li' };
 
 /** How a stack entry is written: the marked blocks carry their class, everything else is bare. */
-const OPEN_TAG: Record<string, string> = { 'ol.panels': '<ol class="panels">', 'aside.report': '<aside class="report">', 'aside.timeline': '<aside class="timeline">', 'aside.compare': '<aside class="compare">' };
+const OPEN_TAG: Record<string, string> = { 'ol.panels': '<ol class="panels">', 'aside.report': '<aside class="report">', 'aside.timeline': '<aside class="timeline">', 'aside.compare': '<aside class="compare">', 'aside.cta': '<aside class="cta">' };
 const openTag = (tag: string, cls = '') => OPEN_TAG[tag] ?? (cls ? `<${tag} class="${cls}">` : `<${tag}>`);
 
 /** The blocks that may be aligned, and the alignments they may take (left is the default). */
@@ -185,7 +187,7 @@ export function cleanArticleHtml(html: string): string {
 			continue;
 		}
 		let tag = RENAME[raw] ?? raw;
-		// The marked blocks. An <aside> that is not a report box, a timeline or a comparison is not a block we
+		// The marked blocks. An <aside> that is not one of the BOXES is not a block we
 		// draw: it is dropped and its words kept, like any other unknown tag.
 		if (tag === 'ol' && !closing && hasClass(m[3] ?? '', 'panels')) tag = 'ol.panels';
 		if (tag === 'aside') {
@@ -247,7 +249,7 @@ export function cleanArticleHtml(html: string): string {
 			.replace(/<(p|h2|h3|li|strong|em|a)(?: (?:href|class)="[^"]*")?>(?:\s|<br>)*<\/\1>/g, '')
 			.replace(/<(ul|ol|blockquote)>\s*<\/\1>/g, '')
 			.replace(/<ol class="panels">\s*<\/ol>/g, '')
-			.replace(/<aside class="(?:report|timeline|compare)">\s*<\/aside>/g, '')
+			.replace(/<aside class="(?:report|timeline|compare|cta)">\s*<\/aside>/g, '')
 			.replace(/(?:<br>)+(<\/(?:p|h2|h3|li)>)/g, '$1');
 	}
 	return result.trim();
@@ -319,25 +321,27 @@ export function withHeadingIds(html: string): string {
 /**
  * The cleaned body, readied for the page: in a panel list, an item that OPENS with bold text gets
  * that text marked as the card's heading; in a timeline, each item is split into its date and its
- * step (see timelineStep); a comparison is cut into its sides (see decorateCompare). Done here rather than with `strong:first-child` in CSS,
+ * step (see timelineStep); a comparison is cut into its sides (see decorateCompare); a CTA into its
+ * text and its buttons (see decorateCta). Done here rather than with `strong:first-child` in CSS,
  * which also matches a bold word mid-item whenever the item starts with plain text. Runs after the
  * grammar has cleaned the body, so the one class it adds is the site's, not the author's.
  */
 export function decorateArticleHtml(html: string): string {
-	return joinComparisons(html)
+	return joinTouching(joinTouching(html, 'compare'), 'cta')
 		.replace(/<ol class="panels">([\s\S]*?)<\/ol>/g, (block) => block.replace(/<li><strong>/g, '<li><strong class="panel-title">'))
 		.replace(/<aside class="timeline">([\s\S]*?)<\/aside>/g, (box) => decorateTimeline(box))
-		.replace(/<aside class="compare">([\s\S]*?)<\/aside>/g, (_m, inner: string) => decorateCompare(inner));
+		.replace(/<aside class="compare">([\s\S]*?)<\/aside>/g, (_m, inner: string) => decorateCompare(inner))
+		.replace(/<aside class="cta">([\s\S]*?)<\/aside>/g, (_m, inner: string) => decorateCta(inner));
 }
 
 /**
- * Two comparisons with nothing between them are ONE: an author who marks each side on its own,
- * with a blank line between, gets two boxes once the blank line is cleaned away — and each would
- * be drawn as a lone first side, full width and green. Boxes never nest, so a box's own `</aside>`
- * is the first one after it opens.
+ * Two comparisons (or two CTAs) with nothing between them are ONE: an author who marks each side
+ * on its own, with a blank line between, gets two boxes once the blank line is cleaned away — and
+ * each would be drawn as a lone first side, full width and green. Boxes never nest, so a box's own
+ * `</aside>` is the first one after it opens.
  */
-function joinComparisons(html: string): string {
-	const touching = /(<aside class="compare">(?:(?!<\/aside>)[\s\S])*)<\/aside>\s*<aside class="compare">/g;
+function joinTouching(html: string, kind: 'compare' | 'cta'): string {
+	const touching = new RegExp(`(<aside class="${kind}">(?:(?!<\\/aside>)[\\s\\S])*)<\\/aside>\\s*<aside class="${kind}">`, 'g');
 	for (let prev = ''; prev !== html; ) {
 		prev = html;
 		html = html.replace(touching, '$1');
@@ -413,4 +417,50 @@ function timelineStep(inner: string): string {
 	}
 	const pending = PENDING_DATE.test(date);
 	return `<li class="tl-step${pending ? ' is-pending' : ''}">${date ? `<span class="tl-date">${date}</span>` : ''}${rest}</li>`;
+}
+
+/** Where a CTA button with no link of its own goes: the site's demo page, tagged with its page at click time. */
+export const CTA_DEFAULT_HREF = '/demo';
+
+/**
+ * A CTA: a dark banner, its words on the left and its buttons on the right. A paragraph made of
+ * nothing but `[Label]`s (and links) is its row of BUTTONS, wherever it sits. Of the rest, the first
+ * `<h3>` is the heading and any line before it the small EYEBROW above it. Written with no heading —
+ * every line typed as Normal — the second of three or more lines is the heading (the first its
+ * eyebrow), else the first line.
+ */
+function decorateCta(inner: string): string {
+	const text: string[] = [];
+	const buttons: string[] = [];
+	for (const block of inner.match(/<(p|h3|ul|ol)(?: class="[^"]*")?>[\s\S]*?<\/\1>/g) ?? []) {
+		const row = /^<p(?: class="[^"]*")?>([\s\S]*)<\/p>$/.exec(block);
+		const found = row ? ctaButtons(row[1]) : null;
+		if (found) buttons.push(...found);
+		else text.push(block);
+	}
+	let head = text.findIndex((b) => b.startsWith('<h3'));
+	if (head === -1) {
+		head = text.length >= 3 ? 1 : 0;
+		if (text[head]?.startsWith('<p')) text[head] = text[head].replace(/^<p(?: class="[^"]*")?>/, '<h3>').replace(/<\/p>$/, '</h3>');
+	}
+	for (let i = 0; i < head; i++) text[i] = text[i].replace(/^<p(?: class="[^"]*")?>/, '<p class="cta-eyebrow">');
+	const actions = buttons.map((b, i) => b.replace('class="cta-btn"', `class="cta-btn${i === 0 ? ' cta-primary' : ''}"`)).join('');
+	return `<aside class="cta"><div class="cta-text">${text.join('')}</div>${actions ? `<div class="cta-actions">${actions}</div>` : ''}</aside>`;
+}
+
+/**
+ * A paragraph's buttons, or null when it is not a row of them. A button is `[Label]`, linked by a
+ * link round it (`<a>[Label]</a>`) or inside it (`[<a>Label</a>]`); a bare link counts too. Only
+ * spaces, `·` and `|` may sit between them — "Visit stand [X] to see…" is a sentence, not a button.
+ */
+function ctaButtons(p: string): string[] | null {
+	const found: string[] = [];
+	const rest = p.replace(/<a href="([^"]*)">\s*\[([^\]]*)\]\s*<\/a>|\[([^\[\]]*)\]|<a href="([^"]*)">([\s\S]*?)<\/a>/g, (_m, outer?: string, outerLabel?: string, bracketed?: string, bare?: string, bareLabel?: string) => {
+		const label = outerLabel ?? bracketed ?? bareLabel ?? '';
+		const href = outer ?? bare ?? /<a href="([^"]*)">/.exec(label)?.[1] ?? CTA_DEFAULT_HREF;
+		const words = label.replace(/<[^>]+>/g, '').trim();
+		if (words) found.push(`<a class="cta-btn" href="${href}">${words}</a>`);
+		return '';
+	});
+	return found.length && !rest.replace(/<\/?(?:strong|em)>|<br>|[\s·|]/g, '') ? found : null;
 }
