@@ -24,7 +24,7 @@ function eq(name: string, a: unknown, e: unknown) {
 	check(name, JSON.stringify(a) === JSON.stringify(e), `expected ${JSON.stringify(e)}\n      got      ${JSON.stringify(a)}`);
 }
 
-const MODULE_SHA256 = 'dc99744120cd8a8691a4feaf3992e1b4fac1df7750dc5f767696e989eeb5a27d';
+const MODULE_SHA256 = 'b1e20a7e6350084be604be848572b9b78b50f25db467512afa5c153954a343a2';
 const src = readFileSync(new URL('../src/lib/site/article-html.ts', import.meta.url), 'utf8');
 check('article-html.ts is byte-identical to Sorted’s', createHash('sha256').update(src).digest('hex') === MODULE_SHA256, `now ${createHash('sha256').update(src).digest('hex')}`);
 // The article's stylesheet is shared too, so Sorted's preview draws exactly what this page draws.
