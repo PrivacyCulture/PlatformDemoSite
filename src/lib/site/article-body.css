@@ -168,6 +168,45 @@
 .article-body aside.compare .cmp-side :is(ul, ol) > li::before { content: none; }
 .article-body .cmp-term { display: block; margin-bottom: 0.15rem; font-weight: 600; color: var(--color-ink); }
 
+/* A CTA: a dark banner (decorateArticleHtml splits it into .cta-text and .cta-actions) — a small
+   monospace eyebrow, a white heading and its text on the left, its buttons on the right, the first
+   white and the rest outlined. The buttons drop under the words when the column is narrow. */
+.article-body aside.cta {
+	margin-top: 2.2em; margin-bottom: 2.2em; padding: 1.9rem 2rem; border-radius: 1rem;
+	display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.4rem 2rem;
+	background: var(--color-ink); color: color-mix(in srgb, white 74%, transparent);
+	font-size: 15px; line-height: 1.6; font-weight: 400;
+}
+.article-body .cta-text { flex: 1 1 17rem; min-width: 0; overflow-wrap: break-word; }
+.article-body .cta-text > * + * { margin-top: 0.7em; }
+.article-body .cta-text > .cta-eyebrow + * { margin-top: 0.55em; }
+.article-body .cta-eyebrow {
+	font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 12px; line-height: 1.5;
+	font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: color-mix(in srgb, var(--color-lens) 50%, white);
+}
+.article-body aside.cta h3 { margin: 0; font-size: 1.5rem; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; color: white; }
+.article-body aside.cta strong { color: white; }
+.article-body aside.cta .cta-text a { color: white; }
+.article-body aside.cta ul li::marker { color: var(--color-lens); }
+.article-body .cta-actions { flex: none; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.article-body a.cta-btn {
+	display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; min-height: 2.75rem; padding: 0.6rem 1.2rem;
+	border: 1px solid color-mix(in srgb, white 30%, transparent); border-radius: 0.5rem; background: transparent;
+	font-size: 14.5px; line-height: 1.2; font-weight: 600; color: white; text-decoration: none; white-space: nowrap;
+	transition: background-color 200ms ease, border-color 200ms ease;
+}
+.article-body a.cta-btn:hover { border-color: white; color: white; }
+.article-body a.cta-btn.cta-primary { background: white; border-color: white; color: var(--color-ink); }
+.article-body a.cta-btn.cta-primary:hover { background: color-mix(in srgb, var(--color-lens) 14%, white); color: var(--color-ink); }
+@media (max-width: 640px) {
+	.article-body aside.cta { padding: 1.5rem 1.35rem; }
+	.article-body .cta-actions { width: 100%; }
+	.article-body a.cta-btn { flex: 1 1 auto; white-space: normal; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.article-body a.cta-btn { transition: none; }
+}
+
 .article-body img { display: block; width: 100%; height: auto; border-radius: 1rem; margin: 1.6em 0; }
 .article-body strong { font-weight: 600; color: var(--color-ink); }
 
