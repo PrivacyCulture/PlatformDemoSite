@@ -173,35 +173,91 @@
 		},
 		"pricing": {
 			"eyebrow": "Clear pricing",
-			"title": "Clear pricing for mid-market privacy teams.",
-			"micro": "From £800/month · 12-month agreement · All launch modules included",
-			"footnote": "12-month agreement. All launch modules included. Assisted onboarding included. Billing terms confirmed in the order form.",
+			"title": "Clear pricing for privacy management software.",
+			"intro": "Choose the plan that matches your headcount and needs. Every one comes with the full set of launch modules.",
+			"micro": "From £500/month · 12-month agreement · All launch modules included",
+			"footnote": "Prices are from, for a single legal entity in GDPR-focused jurisdictions. 12-month agreement. All launch modules included. Billing terms confirmed in the order form.",
 			"featuredLabel": "Most teams start here",
 			"offerDescriptionSuffix": "12-month agreement · all launch modules included",
-			"tiers": [
+			"plans": [
 				{
-					"band": "1,001–2,500 employees",
+					"bandLabel": "Employees",
+					"band": "Up to 750",
+					"lead": "from",
+					"rate": "£500",
+					"period": "/month",
+					"billed": "£6,000 billed annually",
+					"features": [
+						"10 user accounts",
+						"All launch modules"
+					],
+					"cta": "Book a demo",
+					"href": "/demo",
+					"style": "standard"
+				},
+				{
+					"bandLabel": "Employees",
+					"band": "751–1,500",
+					"lead": "from",
 					"rate": "£800",
 					"period": "/month",
+					"billed": "£9,600 billed annually",
+					"features": [
+						"25 user accounts",
+						"All launch modules",
+						"Assisted onboarding"
+					],
 					"cta": "Book a demo",
 					"href": "/demo",
-					"featured": true
+					"style": "featured"
 				},
 				{
-					"band": "2,501–5,000",
-					"rate": "£1,600",
+					"bandLabel": "Employees",
+					"band": "1,501–3,000",
+					"lead": "from",
+					"rate": "£1,250",
 					"period": "/month",
+					"billed": "£15,000 billed annually",
+					"features": [
+						"50 user accounts",
+						"All launch modules",
+						"Assisted onboarding"
+					],
 					"cta": "Book a demo",
 					"href": "/demo",
-					"featured": false
+					"style": "standard"
 				},
 				{
-					"band": "Above 5,000",
-					"rate": "Talk to us",
+					"bandLabel": "Employees",
+					"band": "3,001–5,000",
+					"lead": "from",
+					"rate": "£1,667",
+					"period": "/month",
+					"billed": "£20,000 billed annually",
+					"features": [
+						"100 user accounts",
+						"All launch modules",
+						"Assisted onboarding"
+					],
+					"cta": "Book a demo",
+					"href": "/demo",
+					"style": "standard"
+				},
+				{
+					"bandLabel": "Employees",
+					"band": "Enterprise",
+					"lead": "5,000+ or complex groups",
+					"rate": "POA",
 					"period": "",
+					"billed": "Price on application",
+					"features": [
+						"User accounts to suit",
+						"Multi-entity, multi-jurisdiction",
+						"Procurement & security review support"
+					],
 					"cta": "Talk to us",
 					"href": "/demo",
-					"featured": false
+					"style": "enterprise"
 				}
 			]
 		},
@@ -694,7 +750,7 @@
 				},
 				{
 					"q": "How much does it cost?",
-					"a": "Pricing starts at £800 per month for organisations with up to 2,500 employees and £1,600 per month for 2,501 to 5,000 employees. Pricing is based on a 12-month agreement and includes all launch modules."
+					"a": "Pricing starts at £500 per month for organisations with up to 750 employees, then £800 for 751–1,500, £1,250 for 1,501–3,000 and £1,667 for 3,001–5,000, each billed annually. Above 5,000 employees, or for complex groups, pricing is on application. Every plan is a 12-month agreement and includes all launch modules."
 				},
 				{
 					"q": "What security assurances are available?",
@@ -719,7 +775,33 @@
 		"pricing": {
 			"meta": {
 				"title": "Pricing",
-				"description": "Transparent rates scaled to organisation size. 12-month agreement. All launch modules included. Assisted onboarding included."
+				"description": "Clear pricing for privacy management software, from £500 a month. Plans by headcount, every launch module included, 12-month agreement."
+			},
+			"notes": [
+				{
+					"title": "What “from” covers",
+					"body": "Prices assume a single legal entity operating in GDPR-focused jurisdictions (UK GDPR and EU GDPR)."
+				},
+				{
+					"title": "What can increase the price",
+					"body": "Multiple legal entities, additional jurisdictions beyond GDPR, or more user accounts than your plan includes, SSO integration. We’ll confirm your price in a written quote before you commit."
+				},
+				{
+					"title": "Terms",
+					"body": "12-month agreement. All launch modules included. Billing terms confirmed in the order form."
+				}
+			],
+			"modules": {
+				"title": "View our launch modules",
+				"intro": "Every plan includes all six, connected on one estate rather than sold as separate tiers.",
+				"items": [
+					{ "title": "Tasks", "body": "Automated task routing that assigns owners, chases deadlines and records who did what." },
+					{ "title": "ROPA", "body": "Your record of processing as a live, visual map of data flows and the systems behind them." },
+					{ "title": "Incidents", "body": "Log incidents and DSARs, track the clock and keep the evidence in one place." },
+					{ "title": "Vendors", "body": "Vendor and sub-processor records with due diligence, re-attestation and risk." },
+					{ "title": "Operational Assessments", "body": "DPIAs and assessments that follow through into tasks instead of sitting in a folder." },
+					{ "title": "Risks", "body": "A risk register tied to the processing, vendors and assessments each risk comes from." }
+				]
 			}
 		},
 		"trust": {
@@ -2280,7 +2362,7 @@
 			},
 			{
 				"question": "What is the best GDPR compliance software for mid-market UK companies?",
-				"answer": "The right fit depends on size and operating model. Privacy Culture Platform is built for mid-market UK privacy teams that have outgrown spreadsheets but do not want a heavyweight enterprise suite. All launch modules are included together, data is hosted in the AWS UK Region, and pricing starts at £800 per month for 1,001–2,500 employees."
+				"answer": "The right fit depends on size and operating model. Privacy Culture Platform is built for mid-market UK privacy teams that have outgrown spreadsheets but do not want a heavyweight enterprise suite. All launch modules are included together, data is hosted in the AWS UK Region, and pricing starts at £500 per month for organisations with up to 750 employees."
 			},
 			{
 				"question": "What is a good OneTrust alternative for a mid-sized company?",
@@ -2288,7 +2370,7 @@
 			},
 			{
 				"question": "How much does privacy management software cost in the UK?",
-				"answer": "Privacy Culture Platform pricing starts at £800 per month for organisations with 1,001–2,500 employees and £1,600 per month for 2,501–5,000 employees. Above 5,000 employees, pricing is quoted. Rates are a 12-month agreement and include all launch modules plus assisted onboarding."
+				"answer": "Privacy Culture Platform pricing starts at £500 per month for up to 750 employees, then £800 for 751–1,500, £1,250 for 1,501–3,000 and £1,667 for 3,001–5,000, each billed annually. Above 5,000 employees, or for complex groups, pricing is on application. Every plan is a 12-month agreement with all launch modules included."
 			},
 			{
 				"question": "What software keeps a Record of Processing Activities (ROPA) up to date?",
