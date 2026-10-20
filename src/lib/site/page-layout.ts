@@ -8,7 +8,7 @@
  * duplicate {#each} key, which throws during hydration and takes the client router down.
  *
  * Keep in step with the CMS: PLATFORM_LAYOUT_BLOCKS / PLATFORM_LAYOUT_DEFAULT,
- * PROBLEM_LAYOUT_BLOCKS and FAQ_LAYOUT_BLOCKS in Sorted's platform-structure.ts. A block the site does not know is
+ * PROBLEM_LAYOUT_BLOCKS, FAQ_LAYOUT_BLOCKS and PRICING_LAYOUT_BLOCKS in Sorted's platform-structure.ts. A block the site does not know is
  * skipped here, silently.
  */
 import { addedSections, type AddedSection } from './added-sections';
@@ -64,6 +64,18 @@ export type FaqBlockId = (typeof FAQ_BLOCKS)[number];
 
 export function faqLayout(copy: unknown): LayoutEntry<FaqBlockId>[] {
 	return pageLayout(copy, FAQ_BLOCKS, FAQ_BLOCKS);
+}
+
+/**
+ * /pricing's blocks under the plans: the launch modules and the call to action. The plans are not
+ * a block — they carry the page's heading, so they are always first and cannot be taken off.
+ * Keep in step with PRICING_LAYOUT_BLOCKS in Sorted's platform-structure.ts.
+ */
+export const PRICING_BLOCKS = ['modules', 'cta'] as const;
+export type PricingBlockId = (typeof PRICING_BLOCKS)[number];
+
+export function pricingLayout(copy: unknown): LayoutEntry<PricingBlockId>[] {
+	return pageLayout(copy, PRICING_BLOCKS, PRICING_BLOCKS);
 }
 
 /** Whether the logo strip stays in the hero: only while it is the first block, as it always was. */
