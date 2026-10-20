@@ -37,7 +37,12 @@ type BookBody = {
 	from?: unknown;
 	/** The demo page's own UTMs when booked: which campaign link, if any. */
 	pageUtms?: unknown;
+	/** The path of the page the form was submitted on. */
+	page?: unknown;
 };
+
+/** How the team email names this site, so a booking here is never mistaken for one on privacyculture.com. */
+const SITE_NAME = 'Privacy Culture Platform website';
 
 function parseForm(raw: Partial<DemoFormValues> | undefined): DemoFormValues {
 	const base = emptyDemoForm();
@@ -60,7 +65,7 @@ const PRESERVE_SOURCE_KEYS = [
 	HUBSPOT_CONTACT_PROPS.utmContent
 ] as const;
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ request, url }) => {
 	let body: BookBody;
 	try {
 		body = (await request.json()) as BookBody;
@@ -107,6 +112,8 @@ export const POST: RequestHandler = async ({ request }) => {
 	const utms: DemoUtm = utmsFromUnknown(body.utms);
 	const pageUtms: DemoUtm = utmsFromUnknown(body.pageUtms);
 	const from = cleanDemoFrom(body.from);
+	const bookingPath =
+		typeof body.page === 'string' && body.page.startsWith('/') ? body.page.slice(0, 200) : '/demo';
 
 	try {
 		const slug = requireMeetingSlug();
@@ -180,7 +187,9 @@ export const POST: RequestHandler = async ({ request }) => {
 			utms,
 			from,
 			pageUtms,
-			routing: { slaTier: routing.slaTier, isStranger: routing.isStranger }
+			routing: { slaTier: routing.slaTier, isStranger: routing.isStranger },
+			site: { name: SITE_NAME, origin: url.origin },
+			bookingPath
 		}).catch((err) => console.error('[demo/notify] could not send the booking notification', err));
 
 		return json({

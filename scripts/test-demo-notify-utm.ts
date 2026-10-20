@@ -1,7 +1,9 @@
 import { demoFromSearch, demoPageId, utmsFromSearch, withDemoLinkFrom } from '../src/lib/demo/utm';
 import {
 	buildDemoNotification,
-	describeOrigin,
+	bookingPageUrl,
+	describeCampaign,
+	describeFromPage,
 	parseRecipientList
 } from '../src/lib/demo/notification';
 
@@ -49,10 +51,12 @@ ok('commas', parseRecipientList('a@x.com,b@y.org'), ['a@x.com', 'b@y.org']);
 ok('any separator, trimmed, deduped, non-addresses dropped', parseRecipientList(' a@x.com; B@y.org\n<a@X.com> nonsense c@z'), ['a@x.com', 'B@y.org']);
 
 // ── the email ─────────────────────────────────────────────────────────────────
-ok('the button shows its page', describeOrigin('home', {}), 'home');
-ok('a campaign is listed', describeOrigin('', { utm_source: 'linkedin', utm_campaign: 'q4' }), 'linkedin / q4');
-ok('the page comes before a campaign', describeOrigin('pricing', { utm_source: 'linkedin' }), 'pricing / linkedin');
-ok('nothing is nothing', describeOrigin(undefined, {}), '');
+ok('the home button reads as the home page', describeFromPage('home'), 'Home page');
+ok('another button shows its page', describeFromPage('pricing'), 'pricing');
+ok('no from= says the page was opened directly', describeFromPage(undefined), 'None, the booking page was opened directly');
+ok('a campaign is listed', describeCampaign({ utm_source: 'linkedin', utm_campaign: 'q4' }), 'linkedin / q4');
+ok('no campaign is nothing', describeCampaign({}), '');
+ok('booking page is a full address', bookingPageUrl('https://platform.example.com', '/demo'), 'https://platform.example.com/demo');
 
 const mail = buildDemoNotification({
 	form: {
@@ -78,12 +82,16 @@ const mail = buildDemoNotification({
 	utms: { utm_source: 'linkedin', utm_campaign: 'q4' },
 	from: 'pricing',
 	pageUtms: {},
-	routing: { slaTier: 'P2', isStranger: false }
+	routing: { slaTier: 'P2', isStranger: false },
+	site: { name: 'Privacy Culture Platform website', origin: 'https://platform.example.com' },
+	bookingPath: '/demo'
 });
-ok('subject names who, where and when in team time', mail.subject, 'Demo booked: Ada Lovelace at Analytical <Engines>, Wednesday, 14 October 2026 at 10:00 BST');
+ok('subject names who, where and when in team time', mail.subject, 'Demo booked on platform.example.com: Ada Lovelace at Analytical <Engines>, Wednesday, 14 October 2026 at 10:00 BST');
 ok('html escapes what the visitor typed', mail.html.includes('Analytical &lt;Engines&gt;') && !mail.html.includes('<Engines>'), true);
 ok('both time zones', mail.text.includes('(America/New_York)') && mail.text.includes('Team time: Wednesday, 14 October 2026 at 10:00 BST'), true);
-ok('says which page', mail.text.includes('Booked from: pricing'), true);
+ok('says which page', mail.text.includes('Came from page: pricing'), true);
+ok('says which website', mail.text.includes('Website: Privacy Culture Platform website (platform.example.com)'), true);
+ok('says which booking page', mail.text.includes('Booking page: https://platform.example.com/demo'), true);
 ok('keeps the first touch', mail.text.includes('First touch: utm_source=linkedin, utm_campaign=q4'), true);
 ok('phone and ISO left out when blank', !mail.text.includes('Phone:') && !mail.text.includes('ISO / SOC'), true);
 
