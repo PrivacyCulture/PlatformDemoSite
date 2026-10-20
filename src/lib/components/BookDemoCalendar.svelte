@@ -221,7 +221,8 @@
 					// What this page's address says now: the page whose Book a demo button was
 					// clicked (from=), and any campaign link. For the team's notification, not HubSpot.
 					from: demoFromSearch(location.search),
-					pageUtms: utmsFromSearch(location.search)
+					pageUtms: utmsFromSearch(location.search),
+					page: location.pathname
 				})
 			});
 			const data = (await res.json()) as {

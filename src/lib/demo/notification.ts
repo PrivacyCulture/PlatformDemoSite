@@ -62,6 +62,10 @@ export type DemoNotificationInput = {
 	/** The demo page's own UTMs at the moment of booking: which campaign, if any. */
 	pageUtms: DemoUtm;
 	routing?: { slaTier: string; isStranger: boolean } | null;
+	/** Which site took the booking, so the team can tell this one from privacyculture.com. */
+	site: { name: string; origin: string };
+	/** The path of the page the form was submitted on, e.g. /demo. */
+	bookingPath?: string;
 };
 
 export type DemoNotification = { subject: string; html: string; text: string };
@@ -109,13 +113,38 @@ function formatEndTime(iso: string, timeZone: string): string {
 }
 
 /**
- * Where the booking came from: the page whose Book a demo button was clicked (from=), then
- * the campaign the demo page was opened from. Empty when the address carried nothing.
+ * The page whose Book a demo button was clicked, from its from= name ("home", "pricing").
+ * No from= means nobody clicked a tagged button: the address was typed, bookmarked or shared.
  */
-export function describeOrigin(from: string | undefined, pageUtms: DemoUtm): string {
-	const parts = [from, pageUtms.utm_source, pageUtms.utm_medium, pageUtms.utm_campaign, pageUtms.utm_content, pageUtms.utm_term]
-		.filter((v): v is string => Boolean(v));
-	return parts.join(' / ');
+export function describeFromPage(from: string | undefined): string {
+	if (!from) return 'None, the booking page was opened directly';
+	return from === 'home' ? 'Home page' : from;
+}
+
+/** The campaign the demo page itself was opened from; empty when its address had none. */
+export function describeCampaign(pageUtms: DemoUtm): string {
+	return [pageUtms.utm_source, pageUtms.utm_medium, pageUtms.utm_campaign, pageUtms.utm_content, pageUtms.utm_term]
+		.filter((v): v is string => Boolean(v))
+		.join(' / ');
+}
+
+/** "www.example.com" from an origin, or '' when it will not parse. */
+function hostOf(origin: string): string {
+	try {
+		return new URL(origin).host;
+	} catch {
+		return '';
+	}
+}
+
+/** The booking page as a full address, from the site's origin and the page's path. */
+export function bookingPageUrl(origin: string, path: string | undefined): string {
+	if (!origin) return path || '';
+	try {
+		return new URL(path || '/', origin).toString();
+	} catch {
+		return path || '';
+	}
 }
 
 function utmLine(utms: DemoUtm): string {
@@ -133,10 +162,12 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 	const visitorWhen = formatWhen(input.start, input.timezone);
 	const visitorEnd = formatEndTime(input.end, input.timezone);
 	const teamWhen = input.timezone !== TEAM_TIMEZONE ? formatWhen(input.start, TEAM_TIMEZONE) : '';
-	const origin = describeOrigin(input.from, input.pageUtms);
+	const campaign = describeCampaign(input.pageUtms);
 	const firstTouch = utmLine(input.utms);
+	const host = hostOf(input.site.origin);
+	const siteLabel = host ? `${input.site.name} (${host})` : input.site.name;
 
-	const subject = `Demo booked: ${name}${company ? ` at ${company}` : ''}, ${formatWhen(input.start, TEAM_TIMEZONE)}`;
+	const subject = `Demo booked on ${host || input.site.name}: ${name}${company ? ` at ${company}` : ''}, ${formatWhen(input.start, TEAM_TIMEZONE)}`;
 
 	type Row = [label: string, value: string];
 	const whenRows: Row[] = [
@@ -159,7 +190,10 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 		...(form.improve ? [['Wants to improve', form.improve] as Row] : [])
 	];
 	const sourceRows: Row[] = [
-		...(origin ? [['Booked from', origin] as Row] : []),
+		['Website', siteLabel],
+		['Booking page', bookingPageUrl(input.site.origin, input.bookingPath)],
+		['Came from page', describeFromPage(input.from)],
+		...(campaign ? [['Campaign', campaign] as Row] : []),
 		...(firstTouch ? [['First touch', firstTouch] as Row] : []),
 		...(input.routing
 			? [['Routing', `${input.routing.slaTier}${input.routing.isStranger ? ', stranger' : ''}`] as Row]
@@ -187,7 +221,7 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 	const html = `
 	<div style="font-family:-apple-system,Segoe UI,Helvetica,Arial,sans-serif;max-width:580px;margin:0 auto;color:#0b1220;">
 		<h2 style="margin:0 0 4px;font-size:20px;color:#0b1220;">Demo booked</h2>
-		<p style="margin:0;font-size:15px;color:#374151;">${escapeHtml(name)}${company ? ` from <strong>${escapeHtml(company)}</strong>` : ''} booked a demo through the website.</p>
+		<p style="margin:0;font-size:15px;color:#374151;">${escapeHtml(name)}${company ? ` from <strong>${escapeHtml(company)}</strong>` : ''} booked a demo through the ${escapeHtml(siteLabel)}.</p>
 		${section('When', whenRows)}
 		${section('Who', whoRows)}
 		${section('Source', sourceRows)}
@@ -197,7 +231,7 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 	const textRows = (rows: Row[]) => rows.map(([label, value]) => `${label}: ${value}`).join('\n');
 	const text = [
 		`Demo booked`,
-		`${name}${company ? ` from ${company}` : ''} booked a demo through the website.`,
+		`${name}${company ? ` from ${company}` : ''} booked a demo through the ${siteLabel}.`,
 		'',
 		textRows(whenRows),
 		'',
