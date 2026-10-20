@@ -1,6 +1,6 @@
 <script lang="ts">
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
-	import { pages, pageTitle, site } from '$lib/content';
+	import { pages, brandedTitle, site } from '$lib/content';
 	import { platformSpecs } from '$lib/journey/content';
 
 	let { data } = $props();
@@ -10,7 +10,7 @@
 </script>
 
 <SeoHead
-	title={pageTitle(spec.label, site.meta.title)}
+	title={brandedTitle(spec.label, site.meta.title)}
 	description={spec.pain}
 	parents={[{ name: pages.platform.meta.title, href: '/platform' }]}
 	heading={spec.label}

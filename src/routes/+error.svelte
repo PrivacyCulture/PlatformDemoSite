@@ -12,7 +12,7 @@
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import SiteShell from '$lib/components/site/SiteShell.svelte';
-	import { pages, pageTitle } from '$lib/content';
+	import { pages, brandedTitle } from '$lib/content';
 	import { isArchived, visibleLinks } from '$lib/site/archive';
 	import { explainerFor } from '$lib/site/explainer';
 	import { plain, rich } from '$lib/site/rich';
@@ -35,7 +35,7 @@
 	const links = $derived(visibleLinks(copy.whereNext.items));
 </script>
 
-<SeoHead title={pageTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} index={false} />
+<SeoHead title={brandedTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} index={false} />
 
 <SiteShell>
 	{#if showExplainer}

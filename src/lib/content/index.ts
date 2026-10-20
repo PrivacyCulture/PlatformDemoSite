@@ -229,7 +229,16 @@ export function customPageBySlug(slug: string): CustomPage | undefined {
 	return customPages.find((p) => p.slug === slug);
 }
 
-/** "<page title> — <brand>", the pattern every marketing page's <title> follows. */
-export function pageTitle(title: string, suffix: string = site.brand): string {
+/**
+ * A page's <title>: its search title exactly as typed in Sorted. Nothing is appended — an editor
+ * who wants "— Privacy Culture Platform" on the end writes it into the title. Keep in step with
+ * searchListing() in Sorted's platform-seo.ts, which previews it.
+ */
+export function pageTitle(title: string): string {
+	return title;
+}
+
+/** "<title> — <suffix>", for the few titles nobody can type in Sorted (the error page, scene pages). */
+export function brandedTitle(title: string, suffix: string = site.brand): string {
 	return `${title}${site.titleSeparator}${suffix}`;
 }
