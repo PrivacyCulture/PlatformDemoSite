@@ -11,7 +11,7 @@
  * section, never the page.
  */
 
-export const SECTION_TEMPLATE_IDS = ['text', 'copyImage', 'cards', 'quote', 'cta', 'image'] as const;
+export const SECTION_TEMPLATE_IDS = ['text', 'copyImage', 'cards', 'quote', 'cta', 'image', 'foldout'] as const;
 export type SectionTemplateId = (typeof SECTION_TEMPLATE_IDS)[number];
 
 /** An image as an added section holds it. `src` blank = no image is drawn. */
@@ -23,7 +23,8 @@ export type AddedSection =
 	| { template: 'cards'; id: string; eyebrow: string; title: string; body: string; items: { title: string; body: string }[] }
 	| { template: 'quote'; id: string; title: string; quote: string; attribution: string }
 	| { template: 'cta'; id: string; eyebrow: string; title: string; body: string; label: string; href: string }
-	| { template: 'image'; id: string; title: string; image: AddedImage; caption: string };
+	| { template: 'image'; id: string; title: string; image: AddedImage; caption: string }
+	| { template: 'foldout'; id: string; title: string; intro: string; items: { title: string; body: string }[] };
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.round(v) : typeof v === 'string' && /^\d+$/.test(v) ? Number(v) : 0);
@@ -48,6 +49,9 @@ export function addedSection(v: unknown): AddedSection | null {
 	if (!isObject(v)) return null;
 	const id = str(v.id).trim();
 	if (!id) return null;
+	// A section linked to the CMS's library is swapped for the library's content before it is
+	// served. One that arrives as the bare link has nothing to draw, so it is not drawn.
+	if (typeof v.link === 'string') return null;
 	const template = str(v.template) || 'text';
 	const title = str(v.title);
 	switch (template) {
@@ -73,6 +77,10 @@ export function addedSection(v: unknown): AddedSection | null {
 			return { template, id, eyebrow: str(v.eyebrow), title, body: str(v.body), label: str(v.label), href: safeHref(str(v.href)) };
 		case 'image':
 			return { template, id, title, image: image(v.image), caption: str(v.caption) };
+		case 'foldout': {
+			const items = Array.isArray(v.items) ? v.items.filter(isObject).map((it) => ({ title: str(it.title), body: str(it.body) })) : [];
+			return { template, id, title, intro: str(v.intro), items };
+		}
 		default:
 			return null;
 	}

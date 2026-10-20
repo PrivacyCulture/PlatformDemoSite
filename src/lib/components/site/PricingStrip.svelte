@@ -2,21 +2,19 @@
 	import GoldCta from './GoldCta.svelte';
 	import LensCta from './LensCta.svelte';
 	import { site } from '$lib/site/content';
+	import { pages } from '$lib/content';
 	import { rich } from '$lib/site/rich';
-	import { featureParts, pricingPlans } from '$lib/site/pricing';
+	import { featureParts, pricingNotes, pricingPlans } from '$lib/site/pricing';
 
-	let {
-		asPage = false,
-		showFootnote = true
-	}: {
-		asPage?: boolean;
-		/** /pricing carries its own notes panel, which says what the footnote says and more. */
-		showFootnote?: boolean;
-	} = $props();
+	let { asPage = false }: { asPage?: boolean } = $props();
 
 	const plans = $derived(pricingPlans(site.pricing));
 	// Read loosely: content served before Sorted is synced has no intro.
 	const intro = $derived((site.pricing as { intro?: string }).intro ?? '');
+	// The three notes under the cards are edited once, on the Pricing page in Sorted, and drawn
+	// wherever the cards are. They say what the old footnote said and more, so the footnote is
+	// only the fallback for content that has no notes yet.
+	const notes = $derived(pricingNotes((pages.pricing as { notes?: unknown }).notes));
 </script>
 
 <section id="pricing" class={['w-full scroll-mt-24', asPage && 'pt-6 sm:pt-10']}>
@@ -121,7 +119,24 @@
 		{/each}
 	</ul>
 
-	{#if showFootnote && site.pricing.footnote}
+	{#if notes.length}
+		<div
+			class="mt-6 grid w-full gap-8 rounded-2xl border border-ink/10 bg-white/80 p-7 backdrop-blur-sm sm:p-9 md:grid-cols-3"
+		>
+			{#each notes as note, i (i)}
+				<div>
+					{#if note.title}
+						<svelte:element this={asPage ? 'h2' : 'h3'} class="text-[1.05rem] font-bold tracking-tight text-heading">
+							{note.title}
+						</svelte:element>
+					{/if}
+					{#if note.body}
+						<p class="rt mt-2.5 text-[14.5px] leading-relaxed font-light text-ink/70">{@html rich(note.body)}</p>
+					{/if}
+				</div>
+			{/each}
+		</div>
+	{:else if site.pricing.footnote}
 		<p class="rt mt-5 max-w-[64ch] text-[13px] leading-relaxed font-light text-ink/55">
 			{@html rich(site.pricing.footnote)}
 		</p>
