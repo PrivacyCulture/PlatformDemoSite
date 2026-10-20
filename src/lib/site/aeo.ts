@@ -7,6 +7,7 @@
 // read from content that is also drawn on a visible page.
 
 import { aeo, pages, site } from '$lib/content';
+import { pricingPlans, planPrice } from './pricing';
 import { live } from '$lib/content/runtime';
 import type { ExplainerProps } from './explainer';
 import { plain } from './rich';
@@ -63,13 +64,20 @@ function credentials(): { name: string; recognizedBy: string }[] {
 
 /** The organisation, the website and the software — on every page. */
 export function siteGraph(origin: string): JsonLdNode[] {
-	const tiers = site.pricing.tiers.map((tier) => ({
-		name: plain(tier.band),
-		price: tier.rate.replace(/[^\d.]/g, ''),
-		period: tier.period,
-		url: tier.href,
-		description: `${plain(tier.band)} · ${tier.rate}${tier.period} · ${site.pricing.offerDescriptionSuffix}`
-	}));
+	// A plan with no number in its price ("POA") carries no price, and the software node
+	// leaves it out of the offers rather than publishing a guess.
+	const tiers = pricingPlans(site.pricing).map((plan) => {
+		const name = plain(plan.bandLabel) ? `${plain(plan.band)} · ${plain(plan.bandLabel)}` : plain(plan.band);
+		return {
+			name,
+			price: planPrice(plan.rate),
+			period: plan.period,
+			url: plan.href,
+			description: [name, `${plan.rate}${plan.period}`, plain(plan.billed), site.pricing.offerDescriptionSuffix]
+				.filter(Boolean)
+				.join(' · ')
+		};
+	});
 	return [
 		organizationNode({
 			origin,
