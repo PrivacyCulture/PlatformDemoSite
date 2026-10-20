@@ -171,7 +171,8 @@
 /* A CTA: a dark banner (decorateArticleHtml splits it into .cta-text and .cta-actions) — a small
    monospace eyebrow, a white heading and its text on the left, its buttons on the right, the first
    white and the rest outlined. Button rows are kept as typed: one row takes the right HALF, right
-   aligned; two or more (.cta-stacked) the right THIRD, one under another at its full width. On a
+   aligned, and a lone button (.cta-single) the right QUARTER; two or more rows (.cta-stacked) the
+   right THIRD, one under another at its full width. On a
    phone the buttons go under the words. */
 .article-body aside.cta {
 	margin-top: 2.2em; margin-bottom: 2.2em; padding: 1.9rem 2rem; border-radius: 1rem;
@@ -193,6 +194,7 @@
 .article-body aside.cta ul li::marker { color: var(--color-lens); }
 .article-body .cta-actions { flex: 0 0 50%; min-width: 0; display: flex; flex-direction: column; gap: 0.75rem; }
 .article-body .cta-actions.cta-stacked { flex-basis: 33.333%; }
+.article-body .cta-actions.cta-single { flex-basis: 25%; }
 .article-body .cta-row { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.75rem; }
 .article-body .cta-stacked a.cta-btn { flex: 1 1 100%; }
 .article-body a.cta-btn {
@@ -207,7 +209,7 @@
 @media (max-width: 640px) {
 	.article-body aside.cta { flex-direction: column; align-items: stretch; gap: 1.4rem; padding: 1.5rem 1.35rem; }
 	.article-body .cta-text { flex: none; }
-	.article-body .cta-actions, .article-body .cta-actions.cta-stacked { flex: none; }
+	.article-body .cta-actions, .article-body .cta-actions:is(.cta-stacked, .cta-single) { flex: none; }
 	.article-body .cta-row a.cta-btn { flex: 1 1 auto; }
 }
 @media (prefers-reduced-motion: reduce) {

@@ -425,8 +425,8 @@ export const CTA_DEFAULT_HREF = '/demo';
 /**
  * A CTA: a dark banner, its words on the left and its buttons on the right. A paragraph made of
  * nothing but `[Label]`s (and links) is a row of BUTTONS, wherever it sits, and the rows are kept as
- * they were typed: one row is drawn as a row in the right half, two or more stacked in the right
- * third (`cta-stacked`). The first button of all is the white one. Of the rest, the first
+ * they were typed: one row is drawn as a row in the right half, a lone button in the right quarter
+ * (`cta-single`), two or more rows stacked in the right third (`cta-stacked`). The first button of all is the white one. Of the rest, the first
  * `<h3>` is the heading and any line before it the small EYEBROW above it. Written with no heading —
  * every line typed as Normal — the second of three or more lines is the heading (the first its
  * eyebrow), else the first line.
@@ -447,7 +447,8 @@ function decorateCta(inner: string): string {
 	}
 	for (let i = 0; i < head; i++) text[i] = text[i].replace(/^<p(?: class="[^"]*")?>/, '<p class="cta-eyebrow">');
 	if (rows.length) rows[0][0] = rows[0][0].replace('class="cta-btn"', 'class="cta-btn cta-primary"');
-	const actions = rows.length ? `<div class="cta-actions${rows.length > 1 ? ' cta-stacked' : ''}">${rows.map((r) => `<div class="cta-row">${r.join('')}</div>`).join('')}</div>` : '';
+	const shape = rows.length > 1 ? ' cta-stacked' : rows[0]?.length === 1 ? ' cta-single' : '';
+	const actions = rows.length ? `<div class="cta-actions${shape}">${rows.map((r) => `<div class="cta-row">${r.join('')}</div>`).join('')}</div>` : '';
 	return `<aside class="cta"><div class="cta-text">${text.join('')}</div>${actions}</aside>`;
 }
 

@@ -24,11 +24,11 @@ function eq(name: string, a: unknown, e: unknown) {
 	check(name, JSON.stringify(a) === JSON.stringify(e), `expected ${JSON.stringify(e)}\n      got      ${JSON.stringify(a)}`);
 }
 
-const MODULE_SHA256 = '98c2a43cacbd775350d47737a163ffa30341144bb228879f1f34cfe6c9eeb67e';
+const MODULE_SHA256 = '1b4ff10c2b82737d030208a81cc9dd19bdf3da27694d6926a745a33e27e6bc23';
 const src = readFileSync(new URL('../src/lib/site/article-html.ts', import.meta.url), 'utf8');
 check('article-html.ts is byte-identical to Sorted’s', createHash('sha256').update(src).digest('hex') === MODULE_SHA256, `now ${createHash('sha256').update(src).digest('hex')}`);
 // The article's stylesheet is shared too, so Sorted's preview draws exactly what this page draws.
-export const CSS_SHA256 = '1251ba4113514aff6470dc8a4c5c96adeb55f8d83396a0f9feb8ad4a02693429';
+export const CSS_SHA256 = '84f8c960fd5844ed8f9ac14b23fc83f3ae4cb822fd57f021ab626f4629e6e30e';
 const css = readFileSync(new URL('../src/lib/site/article-body.css', import.meta.url), 'utf8');
 check('article-body.css is byte-identical to Sorted’s', createHash('sha256').update(css).digest('hex') === CSS_SHA256, `now ${createHash('sha256').update(css).digest('hex')}`);
 
