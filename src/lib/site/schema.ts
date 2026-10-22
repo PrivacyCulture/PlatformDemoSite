@@ -99,6 +99,7 @@ export const VIDEO_ID = (origin: string, pathname: string) => `${pageUrl(origin,
 export const FAQ_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#faq`;
 export const BLOG_ID = (origin: string) => `${root(origin)}/blog#blog`;
 export const ARTICLE_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#article`;
+export const TAKEAWAYS_ID = (origin: string, pathname: string) => `${pageUrl(origin, pathname)}#key-takeaways`;
 
 export type BlogPostingData = {
 	origin: string;
@@ -117,6 +118,17 @@ export type BlogPostingData = {
 	/** The related challenge's title, when there is one. */
 	section?: string;
 	wordCount?: number;
+	/** The key takeaways the page draws, as plain text — published as the article's abstract. */
+	takeaways?: string[];
+	/** True when the page also carries a FAQPage of the article's questions. */
+	hasFaq?: boolean;
+};
+
+export type KeyTakeawaysData = {
+	origin: string;
+	pathname: string;
+	name: string;
+	items: string[];
 };
 
 export type BlogData = {
@@ -333,6 +345,7 @@ export function faqPageNode(d: FaqData): JsonLdNode | null {
  */
 export function blogPostingNode(d: BlogPostingData): JsonLdNode | null {
 	if (!d.headline) return null;
+	const takeaways = (d.takeaways ?? []).map((t) => t.trim()).filter(Boolean);
 	return prune({
 		'@type': 'BlogPosting',
 		'@id': ARTICLE_ID(d.origin, d.pathname),
@@ -349,10 +362,31 @@ export function blogPostingNode(d: BlogPostingData): JsonLdNode | null {
 		keywords: d.keywords.length ? d.keywords.join(', ') : undefined,
 		articleSection: d.section,
 		wordCount: d.wordCount || undefined,
+		abstract: takeaways.length ? takeaways.join(' ') : undefined,
+		// What a voice assistant should read out: the title, then the takeaways the page draws
+		// under #key-takeaways (the id on the aside in the article route).
+		speakable: takeaways.length ? { '@type': 'SpeakableSpecification', cssSelector: ['#article-title', '#key-takeaways'] } : undefined,
+		hasPart: d.hasFaq ? [{ '@id': FAQ_ID(d.origin, d.pathname) }] : undefined,
 		inLanguage: LANGUAGE,
 		mainEntityOfPage: { '@id': WEBPAGE_ID(d.origin, d.pathname) },
 		isPartOf: { '@id': BLOG_ID(d.origin) },
 		about: { '@id': SOFTWARE_ID(d.origin) }
+	});
+}
+
+/** An article's key takeaways as an ordered list, about the article itself. */
+export function keyTakeawaysNode(d: KeyTakeawaysData, articleId: string): JsonLdNode | null {
+	const items = d.items.map((t) => t.trim()).filter(Boolean);
+	if (!items.length) return null;
+	return prune({
+		'@type': 'ItemList',
+		'@id': TAKEAWAYS_ID(d.origin, d.pathname),
+		name: d.name,
+		itemListOrder: 'https://schema.org/ItemListOrderAscending',
+		numberOfItems: items.length,
+		itemListElement: items.map((t, i) => ({ '@type': 'ListItem', position: i + 1, name: t })),
+		about: { '@id': articleId },
+		mainEntityOfPage: { '@id': WEBPAGE_ID(d.origin, d.pathname) }
 	});
 }
 
