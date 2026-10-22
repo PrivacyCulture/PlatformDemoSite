@@ -18,7 +18,7 @@
 	import { rich, plain } from '$lib/site/rich';
 	import { headingsOf, withHeadingIds } from '$lib/site/article-html';
 	import { decorateArticleHtml, formatPostDate, postEyebrow, readTimeLabel, tagSlug } from '$lib/site/blog';
-	import { blogPostingNode, faqPageNode, ARTICLE_ID } from '$lib/site/schema';
+	import { blogPostingNode, faqPageNode, keyTakeawaysNode, ARTICLE_ID } from '$lib/site/schema';
 	// The body's stylesheet is shared byte for byte with Sorted's preview (both suites assert its
 	// SHA), so what an editor previews is what this page draws.
 	import '$lib/site/article-body.css';
@@ -54,8 +54,15 @@
 			authorRole: post.author.role,
 			keywords: post.tags,
 			section: data.challenge?.title,
-			wordCount: post.wordCount
+			wordCount: post.wordCount,
+			takeaways: post.takeaways.map(plain),
+			hasFaq: post.questions.length > 0
 		}),
+		// The key takeaways the page draws above the article, as a list about the article.
+		keyTakeawaysNode(
+			{ origin: page.url.origin, pathname: page.url.pathname, name: plain(copy.article.takeaways) || 'Key takeaways', items: post.takeaways.map(plain) },
+			ARTICLE_ID(page.url.origin, page.url.pathname)
+		),
 		// Only when the article itself draws the questions — every answer here is on the page.
 		post.questions.length
 			? faqPageNode({
@@ -135,7 +142,7 @@
 			{/if}
 
 			{#if post.takeaways.length}
-				<aside class="mt-8 rounded-2xl border border-gold/30 bg-[#fbf7ee] p-6" aria-labelledby="takeaways-heading">
+				<aside id="key-takeaways" class="mt-8 rounded-2xl border border-gold/30 bg-[#fbf7ee] p-6" aria-labelledby="takeaways-heading">
 					<h2 id="takeaways-heading" class="text-[12px] tracking-[0.2em] text-[#8a6a2c] uppercase">{copy.article.takeaways}</h2>
 					<ul class="mt-3 space-y-2">
 						{#each post.takeaways as t, i (i)}

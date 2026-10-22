@@ -8,7 +8,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { decorateArticleHtml, readingMinutes, validBlogPosts, blogIndex, searchPosts, relatedPosts, postEyebrow, formatPostDate, toSummary, blogSummaries, tagSlug } from '../src/lib/site/blog';
 import { cleanArticleHtml, headingsOf, withHeadingIds } from '../src/lib/site/article-html';
-import { blogPostingNode, blogNode } from '../src/lib/site/schema';
+import { blogPostingNode, blogNode, keyTakeawaysNode } from '../src/lib/site/schema';
 import { seoTags } from '../src/lib/site/seo';
 
 let failures = 0;
@@ -147,6 +147,16 @@ const named = blogPostingNode({ origin: 'https://x.test', pathname: '/blog/a', h
 check('a named author is a Person', (named?.author as { '@type': string; name: string; jobTitle: string })['@type'] === 'Person' && (named?.author as { name: string }).name === 'Jo Bloggs');
 check('no keywords key when there are no tags', !('keywords' in (named ?? {})));
 check('no headline, no node', blogPostingNode({ origin: 'https://x.test', pathname: '/blog/a', headline: '', description: '', keywords: [] }) === null);
+{
+	const withParts = blogPostingNode({ origin: 'https://x.test', pathname: '/blog/a', headline: 'A', description: '', keywords: [], takeaways: ['One.', ' ', 'Two.'], hasFaq: true }) as Record<string, any>;
+	check('takeaways become the abstract, blanks dropped', withParts.abstract === 'One. Two.');
+	check('takeaways are speakable by id', JSON.stringify(withParts.speakable?.cssSelector) === '["#article-title","#key-takeaways"]');
+	check('the FAQ is part of the article', withParts.hasPart?.[0]?.['@id'] === 'https://x.test/blog/a#faq');
+	check('no abstract, speakable or hasPart without takeaways or questions', !('abstract' in (named ?? {})) && !('speakable' in (named ?? {})) && !('hasPart' in (named ?? {})));
+	const list = keyTakeawaysNode({ origin: 'https://x.test', pathname: '/blog/a', name: 'Key takeaways', items: ['One.', '', 'Two.'] }, 'https://x.test/blog/a#article') as Record<string, any>;
+	check('takeaways are an ordered ItemList about the article', list['@type'] === 'ItemList' && list.numberOfItems === 2 && list.itemListElement[1].position === 2 && list.itemListElement[1].name === 'Two.' && list.about['@id'] === 'https://x.test/blog/a#article');
+	check('no takeaways, no list', keyTakeawaysNode({ origin: 'https://x.test', pathname: '/blog/a', name: 'K', items: [' '] }, 'x') === null);
+}
 const blog = blogNode({ origin: 'https://x.test', name: 'Blog', description: 'd', posts: [{ url: '/blog/a', headline: 'A' }] });
 check('the Blog node lists its posts', Array.isArray(blog.blogPost) && (blog.blogPost as { url: string }[])[0].url === 'https://x.test/blog/a');
 
