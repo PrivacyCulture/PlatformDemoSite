@@ -161,8 +161,8 @@ export function stripBrand(title: string): string {
 
 /**
  * The explainer a page shows, as a VideoObject. Null when the page draws a still (no file) or
- * nothing. The default video's recorded date, length and transcript come from Site globals when
- * someone has entered them; a page's own film carries none unless its content does.
+ * nothing. The date and length are the film's own (`explainerFor` resolves them); the default
+ * video's description and transcript come from Site globals.
  */
 export function explainerVideoNode(
 	origin: string,
@@ -172,7 +172,7 @@ export function explainerVideoNode(
 ): JsonLdNode | null {
 	if (explainer.image || !explainer.src) return null;
 	const isDefault = explainer.src === site.video.src;
-	const video = site.video as { uploadDate?: unknown; durationSeconds?: unknown; caption?: unknown };
+	const video = site.video as { caption?: unknown };
 	return videoObjectNode({
 		origin,
 		pathname,
@@ -180,8 +180,8 @@ export function explainerVideoNode(
 		description: isDefault ? plain(typeof video.caption === 'string' ? video.caption : '') : '',
 		contentUrl: explainer.src,
 		thumbnailUrl: explainer.poster,
-		uploadDate: isDefault ? isoDate(video.uploadDate) : undefined,
-		duration: isDefault ? isoDuration(video.durationSeconds) || undefined : undefined,
+		uploadDate: isoDate(explainer.uploadDate) || undefined,
+		duration: isoDuration(explainer.durationSeconds) || undefined,
 		transcript: isDefault ? transcript?.trim() || undefined : undefined
 	});
 }
