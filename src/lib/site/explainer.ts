@@ -16,17 +16,44 @@ import { site } from '$lib/site/content';
  * behind someone else's still: `image` is true, there is nothing to play, and the label (blank =
  * none, never the default's "Watch…") is its alt text and caption.
  */
-export type ExplainerProps = { src: string; poster: string; captions: string; label: string; image: boolean };
+export type ExplainerProps = {
+	src: string;
+	poster: string;
+	captions: string;
+	label: string;
+	image: boolean;
+	/** What the VideoObject says about the film: the day it was published (YYYY-MM-DD) and its
+	 *  length in seconds, as written in the CMS ('' = not given). They follow the FILE, like the
+	 *  thumbnail: a page's own film never borrows the default video's date. Sorted fills both when
+	 *  a video is chosen from its library. */
+	uploadDate: string;
+	durationSeconds: string;
+};
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
+/** A length may arrive as a number (a synced file) or a string (an optional leaf in the CMS). */
+const num = (v: unknown): string => (typeof v === 'number' && Number.isFinite(v) ? String(v) : str(v));
 
 export function explainerFor(page: unknown): ExplainerProps {
 	const rec = page && typeof page === 'object' ? ((page as Record<string, unknown>).explainer as Record<string, unknown> | undefined) : undefined;
 	const own = rec && typeof rec === 'object' ? rec : {};
 	const src = str(own.src);
 	const poster = str(own.poster);
-	if (!src && poster) return { src: '', poster, captions: '', label: str(own.label), image: true };
+	if (!src && poster) return { src: '', poster, captions: '', label: str(own.label), image: true, uploadDate: '', durationSeconds: '' };
 	const label = str(own.label) || site.video.label;
-	if (!src) return { src: site.video.src, poster: site.video.poster, captions: site.video.captions, label, image: false };
-	return { src, poster, captions: str(own.captions), label, image: false };
+	const video = site.video as { uploadDate?: unknown; durationSeconds?: unknown };
+	const defaultMeta = { uploadDate: str(video.uploadDate), durationSeconds: num(video.durationSeconds) };
+	if (!src) return { src: site.video.src, poster: site.video.poster, captions: site.video.captions, label, image: false, ...defaultMeta };
+	// A page that names the default file is showing the default film, so its date is the default's
+	// unless the page gives its own.
+	const borrowed = src === site.video.src ? defaultMeta : { uploadDate: '', durationSeconds: '' };
+	return {
+		src,
+		poster,
+		captions: str(own.captions),
+		label,
+		image: false,
+		uploadDate: str(own.uploadDate) || borrowed.uploadDate,
+		durationSeconds: num(own.durationSeconds) || borrowed.durationSeconds
+	};
 }
