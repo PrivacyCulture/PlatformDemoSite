@@ -1,5 +1,6 @@
 import { env } from '$env/dynamic/private';
 import { normaliseLeadDays } from '../booking-lead-time';
+import { parseRecipientList } from '../demo/notification';
 import {
 	selectMeetingFormFields,
 	type MeetingFieldValues,
@@ -111,38 +112,57 @@ async function borrowTokenFromSorted(): Promise<string> {
 }
 
 /**
- * The booking settings Sorted owns. Cached briefly rather than for the life of a token: this
- * carries no secret, and a notice period changed in Settings should take effect in minutes.
- *
- * A failure returns 0 — no restriction — on purpose. The alternative, refusing every slot when
- * Sorted is briefly unreachable, turns a settings outage into a form that shows nothing and
- * says nothing; showing the calendar HubSpot itself is willing to book is the safer failure.
+ * The booking settings Sorted owns: the notice period and who is emailed about a booking.
+ * Cached briefly rather than for the life of a token: this carries no secret, and a change
+ * made in Settings should take effect in minutes. A failure is not cached, so the next
+ * request asks again; null means Sorted is not configured or could not be read.
  */
-let demoConfig: { leadDays: number; fetchedAtMs: number } | null = null;
+type DemoConfig = { leadDays: number; notifyEmails: string[] };
+let demoConfig: { value: DemoConfig; fetchedAtMs: number } | null = null;
 const DEMO_CONFIG_TTL_MS = 5 * 60_000;
 
-export async function getBookingLeadDays(): Promise<number> {
+async function getDemoConfig(): Promise<DemoConfig | null> {
 	if (demoConfig && Date.now() - demoConfig.fetchedAtMs < DEMO_CONFIG_TTL_MS) {
-		return demoConfig.leadDays;
+		return demoConfig.value;
 	}
 
 	const base = (env.SORTED_API_URL || env.CONTENT_API_URL)?.trim().replace(/\/$/, '');
 	const secret = env.CONTENT_API_TOKEN?.trim();
-	if (!base || !secret) return 0;
+	if (!base || !secret) return null;
 
 	try {
 		const res = await fetch(`${base}/api/platform-demo-config`, {
 			headers: { Authorization: `Bearer ${secret}` }
 		});
 		if (!res.ok) throw new Error(`status ${res.status}`);
-		const body = (await res.json()) as { leadDays?: unknown };
-		const leadDays = normaliseLeadDays(body?.leadDays);
-		demoConfig = { leadDays, fetchedAtMs: Date.now() };
-		return leadDays;
+		const body = (await res.json()) as { leadDays?: unknown; notifyEmails?: unknown };
+		const value: DemoConfig = {
+			leadDays: normaliseLeadDays(body?.leadDays),
+			notifyEmails: Array.isArray(body?.notifyEmails)
+				? parseRecipientList(body.notifyEmails.filter((e) => typeof e === 'string').join(','))
+				: []
+		};
+		demoConfig = { value, fetchedAtMs: Date.now() };
+		return value;
 	} catch (err) {
-		console.error('[demo] could not read booking settings from Sorted, continuing with no notice period', err);
-		return 0;
+		console.error('[demo] could not read booking settings from Sorted, continuing with the defaults', err);
+		return null;
 	}
+}
+
+/**
+ * Days' notice a booking needs. A failure returns 0 — no restriction — on purpose. The
+ * alternative, refusing every slot when Sorted is briefly unreachable, turns a settings outage
+ * into a form that shows nothing and says nothing; showing the calendar HubSpot itself is
+ * willing to book is the safer failure.
+ */
+export async function getBookingLeadDays(): Promise<number> {
+	return (await getDemoConfig())?.leadDays ?? 0;
+}
+
+/** Who Settings says to email about a booking; [] when unset or Sorted could not be read. */
+export async function getDemoNotifyEmails(): Promise<string[]> {
+	return (await getDemoConfig())?.notifyEmails ?? [];
 }
 
 async function requireToken(): Promise<string> {
