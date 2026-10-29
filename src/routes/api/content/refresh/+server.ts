@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import { contentStore, isAuthorised } from '$lib/server/content-store';
+import { clearTrackingConfigCache } from '$lib/server/tracking-config';
 import type { RequestHandler } from './$types';
 
 /** Called by the CMS whenever content changes: `{ channel, reason, docKey? }`. */
@@ -17,6 +18,9 @@ export const POST: RequestHandler = async ({ request }) => {
 		);
 	}
 
+	// Ad tracking settings are read separately from content; a ping from Sorted means either may
+	// have changed, so the next page asks again.
+	clearTrackingConfigCache();
 	const snap = await contentStore.refresh();
 	// A failed fetch keeps serving the last good content, which may still be
 	// from the CMS, so `source` alone would report a failed refresh as a success.
