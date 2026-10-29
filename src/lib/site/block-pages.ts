@@ -495,6 +495,100 @@ function applyLegal(copy: Rec, page: BlockPage): void {
 	if (cta && isRec(copy.cta)) copy.cta = { ...rec(copy.cta), eyebrow: str(cta.data.eyebrow), title: cta.header.heading, body: cta.header.body, micro: str(cta.data.micro) };
 }
 
+/**
+ * The wording a fixed-shape block holds, by block type, as paths into the page's content. Keep in
+ * step with PLATFORM_WORDING in Sorted's src/lib/page-builder/sites/platform.ts.
+ */
+const WORDING: Record<string, string[]> = {
+	booking: [
+		'steps.qualify.eyebrow', 'steps.qualify.title', 'steps.qualify.intro',
+		'steps.calendar.eyebrow', 'steps.calendar.title', 'steps.calendar.intro',
+		'steps.confirm.eyebrow', 'steps.confirm.title',
+		'confirmation.eyebrow', 'confirmation.onlineBefore', 'confirmation.onlineAfter', 'confirmation.offline',
+		'confirmation.backLabel', 'confirmation.backHref'
+	],
+	'blog-index': [
+		'recent.eyebrow', 'recent.title', 'hero.eyebrow', 'hero.readLabel', 'hero.browseLabel',
+		'featured.eyebrow', 'featured.cta', 'archive.eyebrow', 'archive.title', 'archive.loadMore',
+		'search.label', 'search.placeholder', 'search.button', 'search.resultsTitle', 'search.noResults', 'search.clear',
+		'empty.title', 'empty.body'
+	],
+	'blog-article': [
+		'article.readMore', 'article.onThisPage', 'article.takeaways', 'article.questions', 'article.relatedChallenge',
+		'article.relatedLink', 'article.tags', 'article.share', 'article.copyLink', 'article.copied',
+		'article.keepReadingEyebrow', 'article.keepReadingTitle', 'article.allArticles',
+		'article.sideCtaEyebrow', 'article.sideCtaTitle', 'article.sideCtaBody', 'article.sideCtaLabel'
+	]
+};
+
+/**
+ * Writes a block's wording over the page's own. A path whose parent is missing is created; a blank
+ * value where the page had none is not written, so an unedited page comes back exactly as it was.
+ */
+function applyWording(copy: Rec, b: BlockPageBlock | undefined): void {
+	if (!b) return;
+	for (const path of WORDING[b.type] ?? []) {
+		if (!(path in b.data)) continue;
+		const value = str(b.data[path]);
+		const keys = path.split('.');
+		let target = copy;
+		for (const k of keys.slice(0, -1)) {
+			if (!isRec(target[k])) target[k] = {};
+			target = target[k] as Rec;
+		}
+		const last = keys[keys.length - 1];
+		if (value || last in target) target[last] = value;
+	}
+}
+
+function applyDemo(copy: Rec, page: BlockPage): void {
+	seo(copy, page);
+	const hero = byId(page, 'hero', 'hero');
+	if (hero) copy.hero = { ...rec(copy.hero), title: hero.header.heading, body: hero.header.body };
+	applyWording(copy, byId(page, 'form', 'booking'));
+	const aside = byId(page, 'aside', 'cards');
+	if (aside) copy.aside = { ...rec(copy.aside), eyebrow: str(aside.data.eyebrow), items: items(aside.data.items) };
+}
+
+function applyBlog(copy: Rec, page: BlockPage): void {
+	seo(copy, page);
+	applyWording(copy, byId(page, 'index', 'blog-index'));
+	applyWording(copy, byId(page, 'article', 'blog-article'));
+}
+
+function applyNotFound(copy: Rec, page: BlockPage): void {
+	seo(copy, page);
+	const hero = byId(page, 'hero', 'hero');
+	if (hero) {
+		const h: Rec = clone(rec(copy.hero));
+		h.eyebrow = str(hero.data.eyebrow);
+		h.title = hero.header.heading;
+		h.body = hero.header.body;
+		if (str(hero.data.micro) || 'micro' in h) h.micro = str(hero.data.micro);
+		const [primary, secondary] = hero.header.buttons;
+		// The error page always draws both buttons, so one taken off in the builder is left blank, not absent.
+		h.primary = button(primary ?? { label: '', url: '' }, h.primary);
+		h.secondary = button(secondary ?? { label: '', url: '' }, h.secondary);
+		const show = hero.data.showExplainer === true;
+		h.sharedElement = show ? 'explainer-video' : 'none';
+		copy.hero = h;
+		explainer(copy, show ? hero.data : { ...hero.data, video: null, poster: null });
+	}
+	const where = byId(page, 'whereNext', 'link-cards');
+	if (where) {
+		copy.whereNext = {
+			...rec(copy.whereNext),
+			eyebrow: str(where.data.eyebrow),
+			title: where.header.heading,
+			items: arr(where.data.items)
+				.filter(isRec)
+				.map((i) => ({ label: str(i.title), body: str(i.body), href: str(i.buttonUrl) }))
+		};
+	}
+	const error = byId(page, 'error', 'error');
+	if (error) copy.error = { ...rec(copy.error), eyebrow: str(error.data.eyebrow), title: error.header.heading, body: error.header.body };
+}
+
 function applyCustom(copy: Rec, page: BlockPage): void {
 	seo(copy, page);
 	if (page.title) copy.title = page.title;
@@ -544,6 +638,9 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 			} else if (key === 'faq' && isRec(pages.faq)) applyFaq(pages.faq, page);
 			else if (key === 'pricing' && isRec(pages.pricing)) applyPricing(pages.pricing, page);
 			else if (key === 'trust' && isRec(pages.trust)) applyTrust(pages.trust, page);
+			else if (key === 'demo' && isRec(pages.demo)) applyDemo(pages.demo, page);
+			else if (key === 'blog' && isRec(pages.blog)) applyBlog(pages.blog, page);
+			else if (key === 'not-found' && isRec(pages.notFound)) applyNotFound(pages.notFound, page);
 			else if (key === 'dpa' && isRec(pages.dpa)) applyLegal(pages.dpa, page);
 			else if (key === 'cookie-notice' && isRec(pages.cookieNotice)) applyLegal(pages.cookieNotice, page);
 			else if (key === 'privacy-policy' && isRec(pages.privacyPolicy)) applyLegal(pages.privacyPolicy, page);

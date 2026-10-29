@@ -35,7 +35,7 @@ for (const key of Object.keys(blockPages)) {
 	const after = applyBlockPages(content, { [key]: blockPages[key] }) as Rec;
 	const pick = (c: Rec) => {
 		if (key.startsWith('problem-')) return problemOf(c, key.slice('problem-'.length));
-		const k = key === 'cookie-notice' ? 'cookieNotice' : key === 'privacy-policy' ? 'privacyPolicy' : key;
+		const k = key === 'cookie-notice' ? 'cookieNotice' : key === 'privacy-policy' ? 'privacyPolicy' : key === 'not-found' ? 'notFound' : key;
 		return pagesOf(c)[k];
 	};
 	const a = canon(pick(content));
@@ -105,6 +105,38 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 		(block(p, 'pillars').data as Rec).items = [{ id: 'iso', title: 'ISO', body: 'Certified' }];
 	});
 	check(canon((pagesOf(t).trust as Rec).pillars) === canon([{ id: 'iso', title: 'ISO', body: 'Certified' }]), 'trust pillars keep their ids (they key the list)');
+}
+
+{
+	const d = edit('demo', (p) => {
+		(block(p, 'hero').header as Rec).heading = 'Talk to us';
+		(block(p, 'form').data as Rec)['steps.calendar.title'] = 'Choose a slot';
+		(block(p, 'aside').data as Rec).items = [{ id: 'i1', title: 'One', body: 'Thing' }];
+	});
+	const demo = pagesOf(d).demo as Rec;
+	check((demo.hero as Rec).title === 'Talk to us', 'the demo hero edit reaches the page');
+	check(((demo.steps as Rec).calendar as Rec).title === 'Choose a slot' && ((demo.steps as Rec).calendar as Rec).intro === (((pagesOf(content).demo as Rec).steps as Rec).calendar as Rec).intro, 'a booking-form wording edit reaches its step, and the rest of the step is kept');
+	check(canon((demo.aside as Rec).items) === canon([{ title: 'One', body: 'Thing' }]), 'the demo aside edit reaches the page');
+
+	const b = edit('blog', (p) => {
+		(block(p, 'index').data as Rec)['recent.title'] = 'Newest.';
+		(block(p, 'article').data as Rec)['article.share'] = 'Pass it on';
+	});
+	const blog = pagesOf(b).blog as Rec;
+	check((blog.recent as Rec).title === 'Newest.' && (blog.article as Rec).share === 'Pass it on', 'blog wording edits reach the page');
+
+	const n = edit('not-found', (p) => {
+		const hero = block(p, 'hero');
+		(hero.header as Rec).buttons = [{ label: 'Home', url: '/', style: '' }];
+		(hero.data as Rec).showExplainer = false;
+		(block(p, 'whereNext').data as Rec).items = [{ id: 'i1', title: 'Trust', body: 'Security', buttonUrl: '/trust' }];
+		(block(p, 'error').header as Rec).heading = 'Oops';
+	});
+	const nf = pagesOf(n).notFound as Rec;
+	const nh = nf.hero as Rec;
+	check((nh.primary as Rec).label === 'Home' && (nh.secondary as Rec).label === '' && nh.sharedElement === 'none', 'the error page hero: a removed button is left blank and the explainer can be switched off');
+	check(canon((nf.whereNext as Rec).items) === canon([{ label: 'Trust', body: 'Security', href: '/trust' }]), 'link cards come back as the label, body and address the page reads');
+	check((nf.error as Rec).title === 'Oops', 'the failure wording edit reaches the page');
 }
 
 {
