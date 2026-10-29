@@ -1,11 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { afterNavigate } from '$app/navigation';
+	import { page } from '$app/state';
 	import './layout.css';
 	import { captureUtmsFromLocation } from '$lib/demo/utm';
 	import { tagDemoLinks } from '$lib/demo/demo-link-utm';
 	import { site } from '$lib/content';
+	import { recordPageView } from '$lib/site/page-view-client';
 
 	let { children } = $props();
+
+	// One anonymous page view per page shown — see page-view.ts for exactly what is sent.
+	afterNavigate(() => recordPageView({ pathname: page.url.pathname, status: page.status }));
 
 	onMount(() => {
 		captureUtmsFromLocation();
