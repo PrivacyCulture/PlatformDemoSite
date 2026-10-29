@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import { page as route } from '$app/state';
 	import { SIZES, imageSize, responsive, sourceSrcset } from '$lib/site/images';
 	import SeoHead from './SeoHead.svelte';
@@ -70,6 +71,7 @@
 	<ProblemPager current={page.href} />
 {/snippet}
 
+<PreviewBlock id="hero">
 <PageHero
 	eyebrow={common.eyebrow}
 	title={page.hero.title}
@@ -80,6 +82,7 @@
 	children={showExplainer ? video : undefined}
 	under={stepper}
 />
+</PreviewBlock>
 
 {#snippet quoteBlock()}
 	{#if page.quote}
@@ -103,6 +106,7 @@
 					{@html rich(page.inPlatform.body)}
 				</p>
 			</div>
+{#if page.inPlatform.image?.src}
 			<figure class="mt-8 w-full sm:mt-10">
 				<picture>
 					{#if page.inPlatform.image.webp}
@@ -119,6 +123,7 @@
 					/>
 				</picture>
 			</figure>
+			{/if}
 		</section>
 	{:else if page.panel === 'auditChecklist'}
 		<section class="mt-14 w-full sm:mt-20">
@@ -135,7 +140,7 @@
 				{page.functionality.title}
 			</h2>
 			<ul class="mt-8 grid gap-4 sm:grid-cols-3">
-				{#each page.functionality.items as item, i (item.title)}
+				{#each page.functionality.items as item, i (i)}
 					<li class="rounded-2xl border border-lens/50 bg-transparent p-5">
 						<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
 							{String(i + 1).padStart(2, '0')}
@@ -162,6 +167,7 @@
 {/snippet}
 
 {#each entries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
 	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
 	{:else if entry.id === 'quote'}{@render quoteBlock()}
 	{:else if entry.id === 'inPlatform'}{@render inPlatformBlock()}
@@ -169,6 +175,7 @@
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{/if}
+</PreviewBlock>
 {/each}
 
 <ProblemPager current={page.href} />

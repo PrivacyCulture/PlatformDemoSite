@@ -7,6 +7,7 @@
 	import BookDemoForm from '$lib/components/BookDemoForm.svelte';
 	import { emptyDemoForm, type DemoFormValues } from '$lib/demo/fields';
 	import { captureUtmsFromLocation } from '$lib/demo/utm';
+	import { trackConversion } from '$lib/site/linkedin-tag';
 	import { site } from '$lib/site/content';
 	import { pages, pageTitle } from '$lib/content';
 
@@ -98,6 +99,7 @@
 						onQualified={(values) => {
 							form = values;
 							step = 'calendar';
+							trackConversion('demo_qualified');
 						}}
 					/>
 				{/key}
@@ -115,6 +117,9 @@
 					onBooked={(result) => {
 						confirmation = result;
 						step = 'confirm';
+						// The URL below is never loaded, so an ad platform cannot see it as a page —
+						// the conversion is reported directly.
+						trackConversion('demo_booked');
 						// A URL of its own, so analytics can count completed bookings.
 						pushState('/demo-booked', {});
 					}}

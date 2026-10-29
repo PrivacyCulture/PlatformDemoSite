@@ -4,13 +4,16 @@ import {
 	parseRecipientList,
 	type DemoNotificationInput
 } from '../demo/notification';
+import { getDemoNotifyEmails } from './hubspot';
 
 /**
  * Tells the team a demo has been booked.
  *
  * Sent through SendGrid's REST API, the same service Sorted sends from, under the same two
  * variable names (SENDGRID_API_KEY, EMAIL_FROM) so the values can be copied across. Who hears
- * about it is DEMO_NOTIFY_EMAILS, a list of addresses; unset means nobody, quietly.
+ * about it is the list in Sorted's Settings → Platform ("Book a demo — notification emails"),
+ * else DEMO_NOTIFY_EMAILS when that list is empty or Sorted can't be reached; neither set
+ * means nobody, quietly.
  *
  * Called after the booking has succeeded and never awaited by the response: the visitor's
  * meeting exists in HubSpot whatever happens here, so a mail failure is logged, not shown.
@@ -18,8 +21,9 @@ import {
 
 const SENDGRID_SEND_URL = 'https://api.sendgrid.com/v3/mail/send';
 
-export function demoNotifyRecipients(): string[] {
-	return parseRecipientList(env.DEMO_NOTIFY_EMAILS);
+export async function demoNotifyRecipients(): Promise<string[]> {
+	const fromSettings = await getDemoNotifyEmails();
+	return fromSettings.length ? fromSettings : parseRecipientList(env.DEMO_NOTIFY_EMAILS);
 }
 
 /** "Name <address>" or a bare address, as EMAIL_FROM is written. */
@@ -33,14 +37,14 @@ function parseFrom(raw: string): { email: string; name?: string } {
 }
 
 export async function notifyDemoBooked(input: DemoNotificationInput): Promise<void> {
-	const to = demoNotifyRecipients();
+	const to = await demoNotifyRecipients();
 	if (!to.length) return;
 
 	const apiKey = env.SENDGRID_API_KEY?.trim();
 	const fromRaw = env.EMAIL_FROM?.trim();
 	if (!apiKey || !fromRaw) {
 		console.error(
-			'[demo/notify] DEMO_NOTIFY_EMAILS is set but SENDGRID_API_KEY or EMAIL_FROM is not; no notification sent.'
+			'[demo/notify] Recipients are set but SENDGRID_API_KEY or EMAIL_FROM is not; no notification sent.'
 		);
 		return;
 	}

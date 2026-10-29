@@ -24,9 +24,9 @@ export type DemoNotificationForm = {
  */
 
 /**
- * The addresses in DEMO_NOTIFY_EMAILS: separated by commas, semicolons, spaces or newlines,
- * in any mix. Anything that is not shaped like an address is dropped, and each address is
- * kept once. Returns [] for an unset variable, which is how "no notifications" is spelled.
+ * A recipient list (Sorted's setting, or DEMO_NOTIFY_EMAILS): addresses separated by commas,
+ * semicolons, spaces or newlines, in any mix. Anything that is not shaped like an address is
+ * dropped, and each address is kept once. Returns [] for an unset value.
  */
 export function parseRecipientList(raw: string | undefined | null): string[] {
 	if (!raw) return [];
@@ -225,7 +225,7 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 		${section('When', whenRows)}
 		${section('Who', whoRows)}
 		${section('Source', sourceRows)}
-		<p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">Sent to the addresses in DEMO_NOTIFY_EMAILS. The meeting is in HubSpot with the usual invite.</p>
+		<p style="margin:24px 0 0;font-size:12px;color:#9ca3af;">Sent to the demo notification list in Sorted's Platform settings. The meeting is in HubSpot with the usual invite.</p>
 	</div>`.trim();
 
 	const textRows = (rows: Row[]) => rows.map(([label, value]) => `${label}: ${value}`).join('\n');

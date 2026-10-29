@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import { pages, pageTitle } from '$lib/content';
@@ -19,6 +20,7 @@
 	keywords={metaKeywords(copy.meta)}
 />
 
+<PreviewBlock id="document">
 <div class="w-full pt-6 sm:pt-10">
 	<header class="pp-doc-header max-w-[46rem]">
 		<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{copy.eyebrow}</p>
@@ -128,6 +130,7 @@
 		</nav>
 	</div>
 </div>
+</PreviewBlock>
 
 <style>
 	/* Printing yields a clean policy, not a screenshot of the site. */

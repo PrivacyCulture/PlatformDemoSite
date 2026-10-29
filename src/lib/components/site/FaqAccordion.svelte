@@ -25,7 +25,7 @@
 </script>
 
 <div class="divide-y border-y {dark ? 'divide-bone/15 border-bone/15' : 'divide-ink/10 border-ink/10'}">
-	{#each items as item, i (item.q)}
+	{#each items as item, i (i)}
 		{@const expanded = open === i}
 		<div>
 			<svelte:element this={headingLevel} class="m-0">

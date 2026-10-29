@@ -16,7 +16,9 @@
 	<!-- Cookiebot in manual blocking mode, loaded async so it doesn't hold up first paint. Each
 	     tracker below is type="text/plain" with a data-cookieconsent category, and Cookiebot
 	     only runs it once the visitor has accepted that category. A new third-party script
-	     needs the same two attributes, or it runs before consent. -->
+	     needs the same two attributes, or it runs before consent.
+	     The LinkedIn Insight Tag is not here: its IDs come from Sorted and it must stay off the dev
+	     site, so it is loaded from code once Marketing is accepted — src/lib/site/linkedin-tag.ts. -->
 	<script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="3943241c-aa8a-44cf-848d-824f4c223931" async></script>
 	
 	

@@ -1,4 +1,4 @@
-# CultureLens Video Journey
+# PCL Platform Video Journey
 
 SvelteKit 5 + Tailwind CSS site with scroll-scrubbed journey video, plus the Replicate clip generation toolchain.
 
@@ -95,7 +95,7 @@ The form at `/demo` books a HubSpot meeting (`HUBSPOT_MEETING_SLUG`, with a toke
 
 Every "Book a demo" button on the site is tagged with the page it was clicked on, from one hook in the root layout ([demo-link-utm.ts](src/lib/demo/demo-link-utm.ts)): the link becomes `/demo?from=<page>`, where `<page>` is `home`, `platform`, `pricing`, `dsar-overload` and so on. It is its own parameter, not a UTM, so it never reaches HubSpot's campaign fields, and a link that already has `from=` is left alone. First touch wins in HubSpot, so a visitor who arrived on a campaign keeps that campaign; the page reaches the team in the notification.
 
-When a booking succeeds the team is emailed. Set `DEMO_NOTIFY_EMAILS` to the addresses (comma separated, any number), with `SENDGRID_API_KEY` and `EMAIL_FROM` for the sender. Leave `DEMO_NOTIFY_EMAILS` empty to send nothing.
+When a booking succeeds the team is emailed. Who is set in Sorted, under Settings → Platform → *Book a demo — notification emails* (read through `/api/platform-demo-config`, so a change lands within five minutes). `DEMO_NOTIFY_EMAILS` (comma separated, any number) is only the fallback for when that list is empty or Sorted can't be reached. `SENDGRID_API_KEY` and `EMAIL_FROM` are the sender. With neither list set, nothing is sent.
 
 ### Journey clips
 

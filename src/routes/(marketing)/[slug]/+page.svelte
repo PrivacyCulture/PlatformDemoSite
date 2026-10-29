@@ -15,8 +15,11 @@
 	import { pageTitle } from '$lib/content';
 	import { rich, plain } from '$lib/site/rich';
 
+	import ProblemPage from '$lib/components/site/ProblemPage.svelte';
+
 	let { data } = $props();
-	const page = $derived(data.page);
+	// A problem page created in the page builder is drawn by the same component as the ten built in.
+	const page = $derived(data.page!);
 	// The page's own main image — the first section carrying one — is its link-preview picture.
 	const firstImage = $derived(
 		page.sections
@@ -25,6 +28,10 @@
 	);
 	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
 </script>
+
+{#if data.problemHref}
+	<ProblemPage href={data.problemHref} />
+{:else}
 
 <SeoHead
 	title={pageTitle(plain(page.meta.title || page.title))}
@@ -38,7 +45,7 @@
 />
 
 <div class="w-full pt-6 sm:pt-10">
-	<header class="max-w-[46rem]">
+	<header class="max-w-[46rem]" data-block-id="hero">
 		{#if page.eyebrow}
 			<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{page.eyebrow}</p>
 		{/if}
@@ -56,7 +63,7 @@
 				{#if section.template !== 'text'}
 					<AddedSection {section} class="!mt-0" />
 				{:else}
-				<section id={section.id} class="scroll-mt-24 border-t border-ink/10 pt-6">
+				<section id={section.id} data-block-id={section.id} class="scroll-mt-24 border-t border-ink/10 pt-6">
 					<p class="flex items-center gap-2 font-mono text-[10px] tracking-[0.18em] text-ink/65 tabular-nums">
 						<span aria-hidden="true" class="h-px w-5 bg-gold"></span>
 						{String(i + 1).padStart(2, '0')}
@@ -75,7 +82,7 @@
 		</div>
 	{/if}
 
-	<section class="mt-16 sm:mt-24">
+	<section class="mt-16 sm:mt-24" data-block-id="cta">
 		<DemoCtaBlock
 			eyebrow={page.cta.eyebrow || undefined}
 			title={page.cta.title || undefined}
@@ -84,3 +91,4 @@
 		/>
 	</section>
 </div>
+{/if}

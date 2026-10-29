@@ -9,6 +9,7 @@
  * last good snapshot.
  */
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { applyBlockPages, validBlockPages } from '$lib/site/block-pages';
 import { createHash, timingSafeEqual } from 'node:crypto';
 import { env } from '$env/dynamic/private';
 import type { CustomPage, SiteContent } from '$lib/content';
@@ -103,6 +104,12 @@ export function validateContent(body: unknown): SiteContent {
 		// Coerced, never validated as a whole: a stray entry must not cost the site its content.
 		archivedPaths: Array.isArray(archived) ? archived.filter((x): x is string => typeof x === 'string' && x.startsWith('/')) : []
 	};
+}
+
+/** The raw content with Sorted's block pages written over their pages; untouched when there are none. */
+export function withBlockPages(body: unknown): unknown {
+	if (!isObject(body)) return body;
+	return applyBlockPages(body, validBlockPages((body as Record<string, unknown>).blockPages));
 }
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
@@ -245,7 +252,9 @@ async function fetchContent(): Promise<void> {
 		}
 		if (!res.ok) throw new Error(`CMS responded ${res.status} ${res.statusText}`.trim());
 		const body: unknown = await res.json();
-		const content = withBundledClips(withFeatureIcons(withFallbackDefaults(validateContent(body))));
+		// Pages built in Sorted's page builder are written over their pages first, so what they say
+		// goes through the same checks, defaults and coercion as the rest of the file.
+		const content = withBundledClips(withFeatureIcons(withFallbackDefaults(validateContent(withBlockPages(body)))));
 		snapshot = { content, source: 'cms', fetchedAt: new Date().toISOString() };
 		etag = res.headers.get('etag');
 		freshUntil = Date.now() + cfg.ttlSeconds * 1000;

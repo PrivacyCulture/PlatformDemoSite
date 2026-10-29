@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
@@ -27,9 +28,10 @@
 	mainEntityId={SOFTWARE_ID(page.url.origin)}
 />
 
-<PricingStrip asPage />
+<PreviewBlock id="plans"><PricingStrip asPage /></PreviewBlock>
 
 {#each entries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
 	{#if entry.kind === 'section'}
 		<AddedSection section={entry.section} />
 	{:else if entry.id === 'modules'}
@@ -37,4 +39,5 @@
 	{:else if entry.id === 'cta'}
 		<div class="mt-16 w-full"><DemoCtaBlock /></div>
 	{/if}
+</PreviewBlock>
 {/each}
