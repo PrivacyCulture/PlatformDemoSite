@@ -508,7 +508,129 @@
 					"buttons": []
 				},
 				"data": {
-					"eyebrow": "Problems this solves"
+					"eyebrow": "Problems this solves",
+					"items": [
+						{
+							"id": "conflicting-sources",
+							"title": "Conflicting sources of truth",
+							"body": "One connected estate, not five tools telling you five different things.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/conflicting-sources",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "stale-ropa",
+							"title": "The stale ROPA",
+							"body": "Records the business re-confirms as they change, not a register rebuilt at audit.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/stale-ropa",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "dpia-follow-through",
+							"title": "Assessments that land",
+							"body": "Every DPIA tied to the live risk it flagged, not filed and forgotten.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/dpia-follow-through",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "vendor-drift",
+							"title": "Vendor risk that goes quiet",
+							"body": "Vendors watched continuously, not vetted once and trusted.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/vendor-drift",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "shadow-ai",
+							"title": "Shadow AI",
+							"body": "Every AI tool surfaced and tied to its record, not found after it ships.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/shadow-ai",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "board-reporting",
+							"title": "Show the board",
+							"body": "The trend, the target and the gap on one screen, not a shrug and a spreadsheet.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/board-reporting",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "dsar-overload",
+							"title": "DSAR overload",
+							"body": "Locate data subject records in minutes instead of weeks.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/dsar-overload",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "training-budget",
+							"title": "Training that misses the risk",
+							"body": "Point education at operational weak spots, not generic tick-boxes.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/training-budget",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "breach-response",
+							"title": "Breach response readiness",
+							"body": "A breach on a Friday, handled – roles, clock, and an evidenced 72 hours.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/breach-response",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "audit-readiness",
+							"title": "Audit & regulator readiness",
+							"body": "A continuous evidence log, not a scramble before review.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/audit-readiness",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
 				}
 			},
 			{
@@ -1063,8 +1185,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "A continuous evidence log, not a scramble before review."
+		"notes": []
 	},
 	"problem-board-reporting": {
 		"v": 2,
@@ -1278,8 +1399,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "The trend, the target and the gap on one screen, not a shrug and a spreadsheet."
+		"notes": []
 	},
 	"problem-breach-response": {
 		"v": 2,
@@ -1521,8 +1641,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "A breach on a Friday, handled – roles, clock, and an evidenced 72 hours."
+		"notes": []
 	},
 	"problem-conflicting-sources": {
 		"v": 2,
@@ -1764,8 +1883,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "One connected estate, not five tools telling you five different things."
+		"notes": []
 	},
 	"problem-dpia-follow-through": {
 		"v": 2,
@@ -1979,8 +2097,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Every DPIA tied to the live risk it flagged, not filed and forgotten."
+		"notes": []
 	},
 	"problem-dsar-overload": {
 		"v": 2,
@@ -2222,8 +2339,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Locate data subject records in minutes instead of weeks."
+		"notes": []
 	},
 	"problem-shadow-ai": {
 		"v": 2,
@@ -2437,8 +2553,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Every AI tool surfaced and tied to its record, not found after it ships."
+		"notes": []
 	},
 	"problem-stale-ropa": {
 		"v": 2,
@@ -2652,8 +2767,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Records the business re-confirms as they change, not a register rebuilt at audit."
+		"notes": []
 	},
 	"problem-training-budget": {
 		"v": 2,
@@ -2867,8 +2981,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Point education at operational weak spots, not generic tick-boxes."
+		"notes": []
 	},
 	"problem-vendor-drift": {
 		"v": 2,
@@ -3082,8 +3195,7 @@
 				}
 			}
 		],
-		"notes": [],
-		"summary": "Vendors watched continuously, not vetted once and trusted."
+		"notes": []
 	},
 	"trust": {
 		"v": 2,

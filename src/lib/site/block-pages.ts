@@ -229,7 +229,7 @@ const byId = (page: BlockPage, id: string, type: string) => page.blocks.find((b)
 const PLATFORM_DEFAULT = ['trusted', 'fit', 'problems', 'articles', 'pricing', 'cta'];
 const PROBLEM_DEFAULT = ['quote', 'inPlatform', 'functionality', 'pricing', 'cta'];
 
-function applyPlatform(copy: Rec, page: BlockPage): void {
+function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): void {
 	seo(copy, page);
 	const hero = byId(page, 'hero', 'hero');
 	if (hero) {
@@ -256,7 +256,10 @@ function applyPlatform(copy: Rec, page: BlockPage): void {
 		copy.fit = f;
 	}
 	const problems = byId(page, 'problems', 'problems');
-	if (problems) copy.problems = { ...rec(copy.problems), eyebrow: str(problems.data.eyebrow), title: problems.header.heading };
+	if (problems) {
+		copy.problems = { ...rec(copy.problems), eyebrow: str(problems.data.eyebrow), title: problems.header.heading };
+		applyProblemRows(problemItems, problems.data.items);
+	}
 	const articles = byId(page, 'articles', 'articles');
 	if (articles && (isRec(copy.articles) || articles.header.heading || str(articles.data.eyebrow) || str(articles.data.loadMore))) {
 		const a: Rec = clone(rec(copy.articles));
@@ -284,10 +287,28 @@ function applyPlatform(copy: Rec, page: BlockPage): void {
 	);
 }
 
+/**
+ * The problems list owns the problem pages' order (the list and the pager follow it) and the line
+ * under each. Sorted in place, so references to the items stay good. A problem page the list does
+ * not name — added to the file after the list was last saved — keeps its place after the named ones.
+ */
+function applyProblemRows(problemItems: unknown[], rows: unknown): void {
+	const list = arr(rows).filter(isRec);
+	if (!list.length) return;
+	const order = new Map(list.map((r, i) => [str(r.id), i]));
+	const line = new Map(list.map((r) => [str(r.id), str(r.body)]));
+	for (const item of problemItems) {
+		if (isRec(item) && line.has(str(item.slug))) item.summary = line.get(str(item.slug));
+	}
+	const rank = (i: unknown) => order.get(str(rec(i).slug)) ?? Number.MAX_SAFE_INTEGER;
+	const sorted = [...problemItems].map((v, i) => ({ v, i })).sort((a, b) => rank(a.v) - rank(b.v) || a.i - b.i).map((x) => x.v);
+	problemItems.splice(0, problemItems.length, ...sorted);
+}
+
 function applyProblem(item: Rec, page: BlockPage): void {
 	seo(item, page);
 	if (page.title) item.title = page.title;
-	if (page.summary || 'summary' in item) item.summary = page.summary;
+	// The line under it in the problems list is /platform's to edit (applyProblemRows), not this page's.
 	const hero = byId(page, 'hero', 'hero');
 	if (hero) {
 		const h: Rec = clone(rec(item.hero));
@@ -466,7 +487,7 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 	for (const key of keys) {
 		const page = blockPages[key];
 		try {
-			if (key === 'platform' && isRec(pages.platform)) applyPlatform(pages.platform, page);
+			if (key === 'platform' && isRec(pages.platform)) applyPlatform(pages.platform, page, problemItems);
 			else if (key.startsWith('problem-')) {
 				const item = problemItems.find((i) => `problem-${str(rec(i).slug)}` === key);
 				if (isRec(item)) applyProblem(item, page);

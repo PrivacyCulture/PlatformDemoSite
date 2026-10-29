@@ -107,6 +107,23 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(canon((pagesOf(t).trust as Rec).pillars) === canon([{ id: 'iso', title: 'ISO', body: 'Certified' }]), 'trust pillars keep their ids (they key the list)');
 }
 
+{
+	// The problems list owns the order of the problem pages and the line under each.
+	const items = (content.problems as Rec).items as Rec[];
+	const [first, second] = items.map((i) => i.slug as string);
+	const c = edit('platform', (p) => {
+		const rows = (block(p, 'problems').data as Rec).items as Rec[];
+		const moved = [rows[1], rows[0], ...rows.slice(2)];
+		moved[0] = { ...moved[0], body: 'A new line under it' };
+		(block(p, 'problems').data as Rec).items = moved.slice(0, -1);
+	});
+	const after = (c.problems as Rec).items as Rec[];
+	check(after[0].slug === second && after[1].slug === first, 'reordering the list reorders the problem pages (the pager follows)');
+	check(after[0].summary === 'A new line under it', 'a line edited in the list reaches that problem');
+	check(after[after.length - 1].slug === items[items.length - 1].slug, 'a problem the list does not name keeps its place after the named ones');
+	check(after.length === items.length, 'no problem page is lost');
+}
+
 // ── what is refused ──
 check(readBlockPage({ blocks: [] }) === null && readBlockPage(null) === null, 'something that is not a block page is refused');
 const hiddenEtc = readBlockPage({ v: 2, blocks: [{ id: 'a', type: 'text' }, { id: 'a', type: 'text' }, { id: 'h', type: 'text', hidden: true }, { id: 'l', type: 'text', link: 's1' }, { type: 'text' }] })!;
