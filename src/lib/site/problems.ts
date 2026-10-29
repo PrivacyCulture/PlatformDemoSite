@@ -1,6 +1,7 @@
 import { PROBLEM_BLOCKS, type ProblemBlockId, type ProblemItem } from '$lib/content';
 import { live } from '$lib/content/runtime';
 import { isArchived } from '$lib/site/archive';
+import { safeHref } from '$lib/site/added-sections';
 import { pageLayout, type LayoutEntry } from '$lib/site/page-layout';
 
 /** The pain points in the order they appear on /platform. Each has its own page. */
@@ -42,4 +43,41 @@ export function problemNeighbours(href: string): { previous: Problem | null; nex
  */
 export function problemLayout(page: Pick<ProblemItem, 'layout' | 'sections'>): LayoutEntry<ProblemBlockId>[] {
 	return pageLayout(page, PROBLEM_BLOCKS, PROBLEM_BLOCKS);
+}
+
+/** One row of the /platform problems list: a problem page, or another page Sorted's list links to. */
+export type ProblemListEntry = { href: string; title: string; summary: string };
+
+/**
+ * The /platform problems list in order. With no `entries` (the list holds only problem pages) it
+ * is the problem pages still on the site, as it always was. With entries, each names a problem by
+ * slug or another page by address with its own words; an archived or unknown page is skipped, a
+ * repeated address drawn once (it keys the list), and a problem the entries do not name — added to
+ * the file since the list was saved — follows at the end.
+ */
+export function problemListEntries(list: unknown): ProblemListEntry[] {
+	const raw = list && typeof list === 'object' ? (list as { entries?: unknown }).entries : undefined;
+	const visible = visibleProblems();
+	const asEntry = (p: Problem): ProblemListEntry => ({ href: p.href, title: p.title, summary: p.summary });
+	if (!Array.isArray(raw)) return visible.map(asEntry);
+	const out: ProblemListEntry[] = [];
+	const seen = new Set<string>();
+	const push = (e: ProblemListEntry) => {
+		if (!e.href || seen.has(e.href) || isArchived(e.href)) return;
+		seen.add(e.href);
+		out.push(e);
+	};
+	for (const e of raw) {
+		if (!e || typeof e !== 'object') continue;
+		const r = e as Record<string, unknown>;
+		if (typeof r.slug === 'string') {
+			const p = visible.find((x) => x.slug === r.slug);
+			if (p) push(asEntry(p));
+		} else if (typeof r.href === 'string' && typeof r.title === 'string' && r.title.trim()) {
+			const href = safeHref(r.href);
+			if (href) push({ href, title: r.title, summary: typeof r.summary === 'string' ? r.summary : '' });
+		}
+	}
+	for (const p of visible) push(asEntry(p));
+	return out;
 }

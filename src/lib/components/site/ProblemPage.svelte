@@ -106,6 +106,7 @@
 					{@html rich(page.inPlatform.body)}
 				</p>
 			</div>
+{#if page.inPlatform.image?.src}
 			<figure class="mt-8 w-full sm:mt-10">
 				<picture>
 					{#if page.inPlatform.image.webp}
@@ -122,6 +123,7 @@
 					/>
 				</picture>
 			</figure>
+			{/if}
 		</section>
 	{:else if page.panel === 'auditChecklist'}
 		<section class="mt-14 w-full sm:mt-20">
@@ -138,7 +140,7 @@
 				{page.functionality.title}
 			</h2>
 			<ul class="mt-8 grid gap-4 sm:grid-cols-3">
-				{#each page.functionality.items as item, i (item.title)}
+				{#each page.functionality.items as item, i (i)}
 					<li class="rounded-2xl border border-lens/50 bg-transparent p-5">
 						<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
 							{String(i + 1).padStart(2, '0')}

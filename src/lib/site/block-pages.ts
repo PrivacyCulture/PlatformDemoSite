@@ -257,8 +257,14 @@ function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): voi
 	}
 	const problems = byId(page, 'problems', 'problems');
 	if (problems) {
-		copy.problems = { ...rec(copy.problems), eyebrow: str(problems.data.eyebrow), title: problems.header.heading };
+		const list: Rec = { ...rec(copy.problems), eyebrow: str(problems.data.eyebrow), title: problems.header.heading };
 		applyProblemRows(problemItems, problems.data.items);
+		const entries = listEntries(problemItems, problems.data.items);
+		// Written only when the list holds a row that is not a problem page: otherwise the list is
+		// the problem pages in their order, exactly what the page drew before.
+		if (entries.some((e) => 'href' in e)) list.entries = entries;
+		else delete list.entries;
+		copy.problems = list;
 	}
 	const articles = byId(page, 'articles', 'articles');
 	if (articles && (isRec(copy.articles) || articles.header.heading || str(articles.data.eyebrow) || str(articles.data.loadMore))) {
@@ -293,7 +299,15 @@ function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): voi
  * not name — added to the file after the list was last saved — keeps its place after the named ones.
  */
 function applyProblemRows(problemItems: unknown[], rows: unknown): void {
-	const list = arr(rows).filter(isRec);
+	const slugs = new Set(problemItems.map((i) => str(rec(i).slug)));
+	// A row stands for a problem page when it names one (`ref`), or — rows saved before `ref`
+	// existed — when its id is a problem's slug. Every other row is a link to some other page.
+	const list = arr(rows)
+		.filter(isRec)
+		.flatMap((r) => {
+			const slug = str(r.ref).startsWith('problem-') ? str(r.ref).slice('problem-'.length) : !str(r.ref) && slugs.has(str(r.id)) ? str(r.id) : '';
+			return slug ? [{ id: slug, body: str(r.body) }] : [];
+		});
 	if (!list.length) return;
 	const order = new Map(list.map((r, i) => [str(r.id), i]));
 	const line = new Map(list.map((r) => [str(r.id), str(r.body)]));
@@ -303,6 +317,34 @@ function applyProblemRows(problemItems: unknown[], rows: unknown): void {
 	const rank = (i: unknown) => order.get(str(rec(i).slug)) ?? Number.MAX_SAFE_INTEGER;
 	const sorted = [...problemItems].map((v, i) => ({ v, i })).sort((a, b) => rank(a.v) - rank(b.v) || a.i - b.i).map((x) => x.v);
 	problemItems.splice(0, problemItems.length, ...sorted);
+}
+
+/** The list's rows in order: a problem page by its slug, any other page as a link with its own words. */
+function listEntries(problemItems: unknown[], rows: unknown): Rec[] {
+	const slugs = new Set(problemItems.map((i) => str(rec(i).slug)));
+	return arr(rows)
+		.filter(isRec)
+		.flatMap((r): Rec[] => {
+			const ref = str(r.ref);
+			if (ref.startsWith('problem-')) return [{ slug: ref.slice('problem-'.length) }];
+			if (!ref && slugs.has(str(r.id))) return [{ slug: str(r.id) }];
+			const href = str(r.buttonUrl).trim();
+			return href && str(r.title).trim() ? [{ href, title: str(r.title), summary: str(r.body) }] : [];
+		});
+}
+
+/** A problem page made in the page builder, which the content file does not have: the shape ProblemPage reads, empty. */
+function newProblemItem(slug: string): Rec {
+	return {
+		slug,
+		href: `/${slug}`,
+		title: '',
+		summary: '',
+		meta: { title: '', description: '' },
+		hero: { title: '', body: '', sharedElement: 'none' },
+		functionality: { title: '', items: [] },
+		cta: { title: '', body: '' }
+	};
 }
 
 function applyProblem(item: Rec, page: BlockPage): void {
@@ -484,6 +526,11 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 	const pages = rec(out.pages);
 	const problemItems = arr(rec(out.problems).items);
 	const custom = arr(out.customPages);
+	// Problem pages made in the page builder are created first, so /platform's list can place them.
+	for (const key of keys) {
+		const slug = key.startsWith('problem-') ? key.slice('problem-'.length) : '';
+		if (slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) && !problemItems.some((i) => str(rec(i).slug) === slug)) problemItems.push(newProblemItem(slug));
+	}
 	for (const key of keys) {
 		const page = blockPages[key];
 		try {

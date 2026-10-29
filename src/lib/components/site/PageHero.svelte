@@ -71,7 +71,7 @@
 					<h1
 						class="text-[clamp(2.25rem,5vw,3.5rem)] leading-[1.04] font-bold tracking-tight text-heading"
 					>
-						{#each lines as line, i (line)}
+						{#each lines as line, i (i)}
 							{#if i > 0}<br />{/if}{line}
 						{/each}
 					</h1>

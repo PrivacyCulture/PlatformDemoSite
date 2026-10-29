@@ -18,7 +18,7 @@
 	import BlogCard from '$lib/components/site/blog/BlogCard.svelte';
 	import { postEyebrow } from '$lib/site/blog';
 	import LensCta from '$lib/components/site/LensCta.svelte';
-	import { visibleProblems, problems as problemItems } from '$lib/site/problems';
+	import { problemListEntries, problems as problemItems } from '$lib/site/problems';
 	import { rich } from '$lib/site/rich';
 
 	const copy = pages.platform;
@@ -81,7 +81,7 @@
 					<h2
 						class="max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
 					>
-						{#each copy.fit.titleLines as line, i (line)}
+						{#each copy.fit.titleLines as line, i (i)}
 							{#if i > 0}<br />{/if}{line}
 						{/each}
 					</h2>
@@ -103,7 +103,7 @@
 			</div>
 
 			<ul class="mt-8 grid gap-4 sm:grid-cols-3 sm:mt-10">
-				{#each copy.fit.pillars as pillar (pillar.title)}
+				{#each copy.fit.pillars as pillar, i (i)}
 					<li class="rounded-2xl bg-white/80 p-5 ring-1 ring-ink/5">
 						<p class="flex items-center gap-2.5">
 							<span class="size-2.5 shrink-0 bg-gold" aria-hidden="true"></span>
@@ -128,7 +128,7 @@
 				</h2>
 
 				<ul class="mt-10 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16">
-					{#each visibleProblems() as item, i (item.href)}
+					{#each problemListEntries(copy.problems) as item, i (item.href)}
 						<li class="border-b border-ink/10">
 							<a
 								href={item.href}

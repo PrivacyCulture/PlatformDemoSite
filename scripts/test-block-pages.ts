@@ -124,6 +124,34 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(after.length === items.length, 'no problem page is lost');
 }
 
+{
+	// Other pages in the list, and a problem page made in the page builder.
+	const c = applyBlockPages(content, validBlockPages({
+		platform: (() => {
+			const p = JSON.parse(JSON.stringify(served.platform)) as Rec;
+			const rows = (block(p, 'problems').data as Rec).items as Rec[];
+			(block(p, 'problems').data as Rec).items = [{ id: 'made', ref: 'problem-records-nobody-owns', title: 'Records nobody owns', body: 'Nobody knows who keeps it', buttonUrl: '/records-nobody-owns' }, ...rows, { id: 'lnk', title: 'Trust and security', body: 'How we keep it safe', buttonUrl: '/trust' }];
+			return p;
+		})(),
+		'problem-records-nobody-owns': { v: 2, title: 'Records nobody owns', slug: 'records-nobody-owns', seo: { title: 'Records', description: 'D', keywords: '' }, blocks: [
+			{ id: 'hero', type: 'hero', layout: 'default', swap: false, header: { heading: 'Who keeps the record?', body: '<p>Body</p>', buttons: [] }, data: { showExplainer: false, showPager: true } },
+			{ id: 'inPlatform', type: 'copy-image', layout: 'below', swap: false, header: { heading: 'In', body: 'B', buttons: [] }, data: { media: null } },
+			{ id: 'functionality', type: 'cards', layout: 'default', swap: false, header: { heading: 'Fn', body: '', buttons: [] }, data: { items: [{ id: 'i1', title: 'One', body: 'First' }] } },
+			{ id: 'cta', type: 'cta', layout: 'default', swap: false, header: { heading: '', body: '', buttons: [] }, data: {} }
+		] }
+	})) as Rec;
+	const after = (c.problems as Rec).items as Rec[];
+	const made = after.find((i) => i.slug === 'records-nobody-owns');
+	check(!!made && made.href === '/records-nobody-owns' && made.title === 'Records nobody owns' && (made.hero as Rec).title === 'Who keeps the record?', 'a problem page made in the builder is created with its words');
+	check(after[0].slug === 'records-nobody-owns' && made!.summary === 'Nobody knows who keeps it', 'it takes its place and line in the list');
+	check(!('image' in (made!.inPlatform as Rec)), 'with no picture yet, In the platform has none (the page draws the words alone)');
+	check(canon(made!.layout) === canon([{ id: 'inPlatform' }, { id: 'functionality' }, { id: 'cta' }]), 'its own parts are laid out in order, the plans left off when it has none');
+	const entries = ((pagesOf(c).platform as Rec).problems as Rec).entries as Rec[];
+	check(canon(entries[0]) === canon({ slug: 'records-nobody-owns' }) && canon(entries[entries.length - 1]) === canon({ href: '/trust', title: 'Trust and security', summary: 'How we keep it safe' }), 'the list carries a link row in its place, beside the problem pages');
+	const plain = applyBlockPages(content, validBlockPages({ platform: served.platform })) as Rec;
+	check(!('entries' in ((pagesOf(plain).platform as Rec).problems as Rec)), 'a list of only problem pages writes no entries (drawn exactly as before)');
+}
+
 // ── what is refused ──
 check(readBlockPage({ blocks: [] }) === null && readBlockPage(null) === null, 'something that is not a block page is refused');
 const hiddenEtc = readBlockPage({ v: 2, blocks: [{ id: 'a', type: 'text' }, { id: 'a', type: 'text' }, { id: 'h', type: 'text', hidden: true }, { id: 'l', type: 'text', link: 's1' }, { type: 'text' }] })!;

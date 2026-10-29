@@ -15,8 +15,11 @@
 	import { pageTitle } from '$lib/content';
 	import { rich, plain } from '$lib/site/rich';
 
+	import ProblemPage from '$lib/components/site/ProblemPage.svelte';
+
 	let { data } = $props();
-	const page = $derived(data.page);
+	// A problem page created in the page builder is drawn by the same component as the ten built in.
+	const page = $derived(data.page!);
 	// The page's own main image — the first section carrying one — is its link-preview picture.
 	const firstImage = $derived(
 		page.sections
@@ -25,6 +28,10 @@
 	);
 	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
 </script>
+
+{#if data.problemHref}
+	<ProblemPage href={data.problemHref} />
+{:else}
 
 <SeoHead
 	title={pageTitle(plain(page.meta.title || page.title))}
@@ -84,3 +91,4 @@
 		/>
 	</section>
 </div>
+{/if}

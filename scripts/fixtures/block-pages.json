@@ -520,7 +520,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-conflicting-sources"
 						},
 						{
 							"id": "stale-ropa",
@@ -532,7 +533,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-stale-ropa"
 						},
 						{
 							"id": "dpia-follow-through",
@@ -544,7 +546,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-dpia-follow-through"
 						},
 						{
 							"id": "vendor-drift",
@@ -556,7 +559,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-vendor-drift"
 						},
 						{
 							"id": "shadow-ai",
@@ -568,7 +572,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-shadow-ai"
 						},
 						{
 							"id": "board-reporting",
@@ -580,7 +585,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-board-reporting"
 						},
 						{
 							"id": "dsar-overload",
@@ -592,7 +598,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-dsar-overload"
 						},
 						{
 							"id": "training-budget",
@@ -604,7 +611,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-training-budget"
 						},
 						{
 							"id": "breach-response",
@@ -616,7 +624,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-breach-response"
 						},
 						{
 							"id": "audit-readiness",
@@ -628,7 +637,8 @@
 							"selected": false,
 							"iconSize": "",
 							"timestamp": "",
-							"subtitles": ""
+							"subtitles": "",
+							"ref": "problem-audit-readiness"
 						}
 					]
 				}
