@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import { page as route } from '$app/state';
 	import { SIZES, imageSize, responsive, sourceSrcset } from '$lib/site/images';
 	import SeoHead from './SeoHead.svelte';
@@ -70,6 +71,7 @@
 	<ProblemPager current={page.href} />
 {/snippet}
 
+<PreviewBlock id="hero">
 <PageHero
 	eyebrow={common.eyebrow}
 	title={page.hero.title}
@@ -80,6 +82,7 @@
 	children={showExplainer ? video : undefined}
 	under={stepper}
 />
+</PreviewBlock>
 
 {#snippet quoteBlock()}
 	{#if page.quote}
@@ -162,6 +165,7 @@
 {/snippet}
 
 {#each entries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
 	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
 	{:else if entry.id === 'quote'}{@render quoteBlock()}
 	{:else if entry.id === 'inPlatform'}{@render inPlatformBlock()}
@@ -169,6 +173,7 @@
 	{:else if entry.id === 'pricing'}{@render pricingBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{/if}
+</PreviewBlock>
 {/each}
 
 <ProblemPager current={page.href} />

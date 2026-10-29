@@ -8,6 +8,7 @@
 	import { site } from '$lib/content';
 	import { recordPageView } from '$lib/site/page-view-client';
 	import { startLinkedInTag } from '$lib/site/linkedin-tag';
+	import { startSortedPreview } from '$lib/site/sorted-preview';
 
 	let { children } = $props();
 
@@ -20,9 +21,12 @@
 		const stopTag = startLinkedInTag(page.data.tracking ?? null);
 		// Every Book a demo button says which page it was clicked on; see demo-link-utm.ts.
 		const stopTagging = tagDemoLinks();
+		// Sorted's page builder preview: only with ?sortedPreview=1 on the draft channel.
+		const stopPreview = startSortedPreview(new URL(window.location.href), page.data.contentMeta?.channel);
 		return () => {
 			stopTag();
 			stopTagging();
+			stopPreview();
 		};
 	});
 </script>

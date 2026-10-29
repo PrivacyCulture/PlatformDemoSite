@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
@@ -28,7 +29,7 @@
 	mainEntityId={FAQ_ID(page.url.origin, page.url.pathname)}
 />
 
-<PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} />
+<PreviewBlock id="hero"><PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} /></PreviewBlock>
 
 {#snippet questionsBlock()}
 	<section
@@ -87,8 +88,10 @@
 {/snippet}
 
 {#each entries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
 	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
 	{:else if entry.id === 'questions'}{@render questionsBlock()}
 	{:else if entry.id === 'cta'}{@render ctaBlock()}
 	{/if}
+</PreviewBlock>
 {/each}

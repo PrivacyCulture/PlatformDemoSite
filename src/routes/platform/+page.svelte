@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import { page } from '$app/state';
 	import { SIZES, imageSize, responsive } from '$lib/site/images';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
@@ -54,6 +55,7 @@
 	schema={[video]}
 />
 
+<PreviewBlock id="hero">
 <PageHero
 	eyebrow={copy.hero.eyebrow}
 	title={copy.hero.title}
@@ -68,6 +70,7 @@
 >
 	<ExplainerVideo bind:this={explainer} compact {...explainerProps} />
 </PageHero>
+</PreviewBlock>
 
 {#snippet fitBlock()}
 	<section class="mt-10 w-full sm:mt-16">
@@ -198,6 +201,7 @@
 
 <!-- The blocks between the hero and the end of the page, in the order the CMS gives them. -->
 {#each bodyEntries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
 	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
 	{:else if entry.id === 'fit'}{@render fitBlock()}
 	{:else if entry.id === 'problems'}{@render problemsBlock()}
@@ -209,4 +213,5 @@
 	{:else if entry.id === 'trusted'}
 		<section class="mt-12 w-full sm:mt-16"><LogoStrip /></section>
 	{/if}
+</PreviewBlock>
 {/each}

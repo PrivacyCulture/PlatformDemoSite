@@ -51,7 +51,7 @@
 	{/if}
 {/snippet}
 
-<section id={section.id} class={['added-section mt-14 w-full scroll-mt-24 sm:mt-20', className]}>
+<section id={section.id} data-block-id={section.id} class={['added-section mt-14 w-full scroll-mt-24 sm:mt-20', className]}>
 	{#if section.template === 'text'}
 		<div class="max-w-[46rem] border-t border-ink/10 pt-6">
 			{@render heading('', section.title, section.body)}

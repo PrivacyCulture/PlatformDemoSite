@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
@@ -14,6 +15,7 @@
 	keywords={metaKeywords(copy.meta)}
 />
 
+<PreviewBlock id="document">
 <div class="w-full pt-6 sm:pt-10">
 	<p class="dpa-back mb-6">
 		<a
@@ -138,6 +140,7 @@
 		/>
 	</section>
 </div>
+</PreviewBlock>
 
 <style>
 	/* "Print or save as PDF" has to yield a clean terms document, not a screenshot

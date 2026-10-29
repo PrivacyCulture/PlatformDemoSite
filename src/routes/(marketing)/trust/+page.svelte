@@ -1,4 +1,5 @@
 <script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import { metaKeywords } from '$lib/site/seo';
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
@@ -15,6 +16,7 @@
 	keywords={metaKeywords(copy.meta)}
 />
 
+<PreviewBlock id="hero">
 <PageHero
 	eyebrow={copy.hero.eyebrow}
 	title={copy.hero.title}
@@ -22,7 +24,9 @@
 	primary={copy.hero.primary}
 	secondary={copy.hero.secondary}
 />
+</PreviewBlock>
 
+<PreviewBlock id="pillars">
 <section class="mt-14 w-full sm:mt-20">
 	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{copy.pillarsEyebrow}</p>
 	<ul class="grid gap-4 sm:grid-cols-2">
@@ -46,3 +50,4 @@
 		<GoldCta href={copy.ctas.dpa.href} label={copy.ctas.dpa.label} />
 	</div>
 </section>
+</PreviewBlock>
