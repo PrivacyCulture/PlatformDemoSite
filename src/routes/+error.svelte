@@ -27,9 +27,11 @@
 			? { eyebrow: copy.hero.eyebrow, title: copy.hero.title, body: copy.hero.body }
 			: { eyebrow: copy.error.eyebrow, title: copy.error.title, body: copy.error.body }
 	);
-	// A button whose page has been archived in the CMS is dropped rather than drawn as a dead link.
-	const primary = $derived(isArchived(copy.hero.primary.href) ? undefined : copy.hero.primary);
-	const secondary = $derived(isArchived(copy.hero.secondary.href) ? undefined : copy.hero.secondary);
+	// A button whose page has been archived in the CMS, or that was taken off in the page builder
+	// (left with no label), is dropped rather than drawn as a dead or empty link.
+	const usable = (b: { label?: string; href?: string } | undefined) => !!b?.label?.trim() && !!b.href?.trim() && !isArchived(b.href);
+	const primary = $derived(usable(copy.hero.primary) ? copy.hero.primary : undefined);
+	const secondary = $derived(usable(copy.hero.secondary) ? copy.hero.secondary : undefined);
 	// Absent (content written before the field existed) or anything unrecognised reads as none.
 	const showExplainer = $derived(copy.hero.sharedElement === 'explainer-video');
 	const links = $derived(visibleLinks(copy.whereNext.items));

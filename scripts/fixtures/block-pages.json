@@ -1,4 +1,109 @@
 {
+	"blog": {
+		"v": 2,
+		"title": "Blog",
+		"slug": "blog",
+		"seo": {
+			"title": "Blog",
+			"description": "Practical notes for privacy teams on keeping a privacy estate live: records, assessments, vendors, AI and reporting.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "index",
+				"type": "blog-index",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"recent.eyebrow": "The blog",
+					"recent.title": "Recent articles.",
+					"hero.eyebrow": "Latest article",
+					"hero.readLabel": "Read the article",
+					"hero.browseLabel": "Browse all articles",
+					"featured.eyebrow": "Featured",
+					"featured.cta": "Read the findings",
+					"archive.eyebrow": "From the archive",
+					"archive.title": "More articles.",
+					"archive.loadMore": "Load more articles",
+					"search.label": "Search articles",
+					"search.placeholder": "Try ROPA, DPIA or vendor risk",
+					"search.button": "Search",
+					"search.resultsTitle": "Search results",
+					"search.noResults": "No articles match that search.",
+					"search.clear": "Clear search",
+					"empty.title": "No articles yet.",
+					"empty.body": "The first articles are on their way."
+				}
+			},
+			{
+				"id": "article",
+				"type": "blog-article",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"article.readMore": "Read",
+					"article.onThisPage": "On this page",
+					"article.takeaways": "Key takeaways",
+					"article.questions": "Questions this article answers",
+					"article.relatedChallenge": "Related challenge",
+					"article.relatedLink": "See how the platform helps",
+					"article.tags": "Topics",
+					"article.share": "Share",
+					"article.copyLink": "Copy link",
+					"article.copied": "Link copied",
+					"article.keepReadingEyebrow": "Keep reading",
+					"article.keepReadingTitle": "More on running a live privacy estate.",
+					"article.allArticles": "All articles",
+					"article.sideCtaEyebrow": "Next step",
+					"article.sideCtaTitle": "See the Visual ROPA View in action.",
+					"article.sideCtaBody": "A 25-minute live walkthrough of the platform.",
+					"article.sideCtaLabel": "Book a demo"
+				}
+			}
+		],
+		"notes": []
+	},
 	"cookie-notice": {
 		"v": 2,
 		"title": "Cookie notice",
@@ -43,6 +148,158 @@
 					"contentsLabel": "On this page",
 					"printLabel": "Print or save as PDF",
 					"document": "{\n  \"intro\": [\n    \"Our Privacy Policy explains our principles when it comes to the collection, processing and storage of your information. This website uses cookies to distinguish you from other visitors. This helps us give you a good experience when you browse the site and also allows us to improve it.\",\n    \"This Cookie Notice explains what cookies are, which ones this website uses, what they are used for and the options you have to control them. It covers platform.privacyculture.com. Our main website, www.privacyculture.com, has its own Cookie Notice.\"\n  ],\n  \"introLinks\": [\n    {\n      \"label\": \"Read our Privacy Policy\",\n      \"href\": \"/privacy-policy\"\n    },\n    {\n      \"label\": \"www.privacyculture.com Cookie Notice\",\n      \"href\": \"https://www.privacyculture.com/cookie-notice\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"id\": \"what-are-cookies\",\n      \"title\": \"What are cookies?\",\n      \"paragraphs\": [\n        \"Cookies are small pieces of data, stored in text files, that are placed on your device when you visit web pages. They are widely used to make websites work, or work more efficiently, and to give website owners information for different purposes.\",\n        \"This notice also covers similar technologies that work in the same way, such as your browser’s local storage and session storage, and tracking pixels (tiny images or requests that tell a service a page was viewed).\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"types-of-cookies\",\n      \"title\": \"Types of cookies\",\n      \"paragraphs\": [\n        \"We group the cookies on this site by purpose:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Necessary\",\n          \"body\": \"Help make the website usable by enabling basic functions like page navigation and remembering your cookie choices. The website cannot work properly without them.\"\n        },\n        {\n          \"term\": \"Preferences\",\n          \"body\": \"Let a website remember information that changes the way it behaves or looks, like your preferred language or region. This site does not currently set any preference cookies.\"\n        },\n        {\n          \"term\": \"Statistics\",\n          \"body\": \"Help us understand how visitors use the website by collecting and reporting information on pages visited, how people move between them and where they came from.\"\n        },\n        {\n          \"term\": \"Marketing\",\n          \"body\": \"Used to track visitors across websites so that advertising can be more relevant, and to measure whether our campaigns lead to demo bookings.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"cookies-we-use\",\n      \"title\": \"Cookies we use on this site\",\n      \"paragraphs\": [\n        \"The list below sets out each cookie and similar technology used on this website, who sets it, what it is for and how long it lasts. Statistics and marketing cookies are only set if you accept them in the cookie banner.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"legal-basis\",\n      \"title\": \"Legal basis for using cookies\",\n      \"paragraphs\": [\n        \"We use cookies in line with the UK General Data Protection Regulation (UK GDPR), the EU GDPR, the UK Data Protection Act 2018 and the Privacy and Electronic Communications Regulations (PECR). The legal basis for processing personal data collected through cookies depends on the type of cookie:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Necessary cookies\",\n          \"body\": \"Our legitimate interest in making sure the website, and any services we provide to you through it, work properly and securely. These cookies are exempt from consent because they are strictly necessary.\"\n        },\n        {\n          \"term\": \"Preference, statistics and marketing cookies\",\n          \"body\": \"Your consent, which you can give or withdraw at any time as described below.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"change-settings\",\n      \"title\": \"How can you change your cookie settings?\",\n      \"paragraphs\": [\n        \"When you first visit this website, a cookie banner lets you choose which categories of cookies to accept or reject. Only necessary cookies are set until you make a choice. You can change or withdraw your consent at any time with the button below, and it will apply from that point on.\",\n        \"You can also manage cookies in your browser settings, where you can accept, reject or delete them. Every browser is slightly different, so check the ‘Help’ menu of your browser (or your phone’s handset manual). If you block necessary cookies, some parts of the website may not work as intended.\",\n        \"To opt out of being tracked by Google Analytics across all websites, install the Google Analytics opt-out browser add-on. To find out more about cookies, including how to see which cookies have been set, visit www.aboutcookies.org or www.allaboutcookies.org.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"Google Chrome\",\n          \"href\": \"https://support.google.com/chrome/answer/95647\"\n        },\n        {\n          \"label\": \"Microsoft Edge\",\n          \"href\": \"https://support.microsoft.com/en-gb/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09\"\n        },\n        {\n          \"label\": \"Mozilla Firefox\",\n          \"href\": \"https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox\"\n        },\n        {\n          \"label\": \"Apple Safari\",\n          \"href\": \"https://support.apple.com/en-gb/guide/safari/sfri11471/mac\"\n        },\n        {\n          \"label\": \"Opera\",\n          \"href\": \"https://help.opera.com/en/latest/web-preferences/#cookies\"\n        },\n        {\n          \"label\": \"Google Analytics opt-out\",\n          \"href\": \"https://tools.google.com/dlpage/gaoptout\"\n        },\n        {\n          \"label\": \"aboutcookies.org\",\n          \"href\": \"https://www.aboutcookies.org\"\n        },\n        {\n          \"label\": \"allaboutcookies.org\",\n          \"href\": \"https://www.allaboutcookies.org\"\n        }\n      ]\n    },\n    {\n      \"id\": \"contact\",\n      \"title\": \"Contact us\",\n      \"paragraphs\": [\n        \"If you have any questions about our use of cookies or other technologies, email our Data Protection Officer at DPO@privacyculture.com or write to hello@privacyculture.com. You can also call us on +44 (0) 20 7112 9360.\",\n        \"Our principal address is Bouverie House, 154-160 Fleet Street, London EC4A 2DQ.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"DPO@privacyculture.com\",\n          \"href\": \"mailto:DPO@privacyculture.com\"\n        },\n        {\n          \"label\": \"hello@privacyculture.com\",\n          \"href\": \"mailto:hello@privacyculture.com\"\n        }\n      ]\n    },\n    {\n      \"id\": \"changes\",\n      \"title\": \"Changes to this Cookie Notice\",\n      \"paragraphs\": [\n        \"We may update this Cookie Notice from time to time, for example when we add or remove a service that sets cookies. Please check this page now and then. If we make significant changes to the way we use cookies, we will show a prominent notice on the website and ask for your consent again where needed.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    }\n  ],\n  \"cookieTableAfter\": \"cookies-we-use\",\n  \"cookieTableLabels\": {\n    \"name\": \"Name\",\n    \"provider\": \"Provider\",\n    \"type\": \"Type\",\n    \"purpose\": \"Purpose\",\n    \"duration\": \"Duration\",\n    \"moreInfo\": \"Provider’s privacy policy\"\n  },\n  \"cookieGroups\": [\n    {\n      \"id\": \"necessary\",\n      \"title\": \"Necessary\",\n      \"cookies\": [\n        {\n          \"name\": \"CookieConsent\",\n          \"provider\": \"Cookiebot (on privacyculture.com)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Stores your cookie consent choices for this website.\",\n          \"duration\": \"1 year\",\n          \"infoHref\": \"https://www.cookiebot.com/en/privacy-policy/\"\n        },\n        {\n          \"name\": \"__cf_bm\",\n          \"provider\": \"HubSpot (via Cloudflare)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Tells humans and bots apart, to protect HubSpot’s services from malicious traffic.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"test_cookie\",\n          \"provider\": \"Google (doubleclick.net)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Checks whether your browser supports cookies.\",\n          \"duration\": \"15 minutes\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"sveltekit:scroll, sveltekit:snapshot\",\n          \"provider\": \"Privacy Culture\",\n          \"type\": \"HTML session storage\",\n          \"purpose\": \"Remembers your place on a page so the back button returns you to where you were.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"/privacy-policy\"\n        }\n      ]\n    },\n    {\n      \"id\": \"statistics\",\n      \"title\": \"Statistics\",\n      \"cookies\": [\n        {\n          \"name\": \"_ga\",\n          \"provider\": \"Google Analytics\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Registers a unique ID used to produce statistics on how you use the website.\",\n          \"duration\": \"2 years\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_ga_M67X8M2TQR\",\n          \"provider\": \"Google Analytics\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Keeps track of your session, including how many times you have visited and the dates of your first and most recent visit.\",\n          \"duration\": \"2 years\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_hjSessionUser_6785893\",\n          \"provider\": \"Hotjar\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Gives you a unique ID the first time you visit, so your later visits are recognised as the same visitor.\",\n          \"duration\": \"1 year\",\n          \"infoHref\": \"https://www.hotjar.com/legal/policies/privacy/\"\n        },\n        {\n          \"name\": \"_hjSession_6785893\",\n          \"provider\": \"Hotjar\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Holds data for the current session, so page views in the same visit are grouped together.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://www.hotjar.com/legal/policies/privacy/\"\n        },\n        {\n          \"name\": \"__hstc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Tracks visitors, storing the time of your first visit, your previous visit and your current one, and how many sessions you have had.\",\n          \"duration\": \"6 months\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"hubspotutk\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Keeps track of your identity as a visitor, so HubSpot can recognise you across sessions and produce visitor statistics.\",\n          \"duration\": \"6 months\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"__hssc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Counts page views in a session and works out whether the session count needs updating.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"__hssrc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Recognises when you have restarted your browser, to tell new sessions apart.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"pc_demo_utm\",\n          \"provider\": \"Privacy Culture\",\n          \"type\": \"HTML session storage\",\n          \"purpose\": \"Remembers the campaign link (UTM tags) that brought you to the site, so that if you book a demo we know which campaign it came from.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"/privacy-policy\"\n        }\n      ]\n    },\n    {\n      \"id\": \"marketing\",\n      \"title\": \"Marketing\",\n      \"cookies\": [\n        {\n          \"name\": \"_gcl_au\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Stores click information from our ads so that demo bookings can be linked back to the ad that led to them.\",\n          \"duration\": \"3 months\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_gcl_ls\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"HTML local storage\",\n          \"purpose\": \"A copy of the ad click information in _gcl_au, used when cookies are not available.\",\n          \"duration\": \"Persistent\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"IDE\",\n          \"provider\": \"Google (doubleclick.net)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Records your actions after viewing or clicking one of our ads, to measure how well the ad works and show you more relevant ads.\",\n          \"duration\": \"13 months\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"pagead/1p-user-list/#, rmkt/collect/#\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"Pixel tracker\",\n          \"purpose\": \"Adds visitors to our remarketing audiences and records conversions, so we can show relevant ads on other websites and limit how often you see the same one.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"__ptq.gif\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"Pixel tracker\",\n          \"purpose\": \"Sends information about your device and behaviour to HubSpot, our marketing platform, and tracks you across devices and marketing channels.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        }\n      ]\n    }\n  ],\n  \"consentButtonLabel\": \"Change your cookie settings\"\n}"
+				}
+			}
+		],
+		"notes": []
+	},
+	"demo": {
+		"v": 2,
+		"title": "Book a demo",
+		"slug": "demo",
+		"seo": {
+			"title": "Book a conversation",
+			"description": "Twenty-five minutes to see how privacy work can look when everything’s connected. Book a time that suits you.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Let’s look at the view together.",
+					"body": "Not a product tour. A short conversation about how privacy work can feel when everything tells one story — and you can show the whole picture.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false
+				}
+			},
+			{
+				"id": "form",
+				"type": "booking",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"steps.qualify.eyebrow": "Step 1 of 2",
+					"steps.qualify.title": "A few details",
+					"steps.qualify.intro": "A little context helps us talk about your world, not a generic tour.",
+					"steps.calendar.eyebrow": "Step 2 of 2",
+					"steps.calendar.title": "Pick a time",
+					"steps.calendar.intro": "Choose a slot that works. We’ll send the invite straight away.",
+					"steps.confirm.eyebrow": "Done",
+					"steps.confirm.title": "You’re booked",
+					"confirmation.eyebrow": "In the diary",
+					"confirmation.onlineBefore": "A calendar invite is on its way to",
+					"confirmation.onlineAfter": ". Come as you are — curiosity beats preparation.",
+					"confirmation.offline": "We’ve got your time. If the calendar invite needs a human nudge, we’ll follow up shortly.",
+					"confirmation.backLabel": "Back to the story",
+					"confirmation.backHref": "/"
+				}
+			},
+			{
+				"id": "aside",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "What you’ll walk away with",
+					"numbered": false,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Clarity you can feel.",
+							"body": "How privacy work looks when everything tells one story — a living ROPA, one answer for the board, vendors you can actually see.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "A picture you can point at.",
+							"body": "We’ll open a live view of how privacy looks when everything’s connected — using sample data, not your secrets.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Time well spent.",
+							"body": "Twenty-five minutes. You’ll leave knowing whether this is the view you’ve been looking for.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
 				}
 			}
 		],
@@ -313,6 +570,178 @@
 				"data": {
 					"eyebrow": "Still deciding",
 					"micro": "Our security collateral is published without a sales gate."
+				}
+			}
+		],
+		"notes": []
+	},
+	"not-found": {
+		"v": 2,
+		"title": "Page not found",
+		"slug": "not-found",
+		"seo": {
+			"title": "Page not found",
+			"description": "The page you asked for is not on this site. Head back to the platform overview, watch the two-minute explainer or book a demo.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "This page has gone off the map.",
+					"body": "It may have moved, been retired, or the address was mistyped. Nothing here was lost. The platform overview, pricing and the demo are all one click away.",
+					"buttons": [
+						{
+							"label": "Back to the home page",
+							"url": "/",
+							"style": "",
+							"icon": "",
+							"image": null
+						},
+						{
+							"label": "See the platform",
+							"url": "/platform",
+							"style": "",
+							"icon": "",
+							"image": null
+						}
+					]
+				},
+				"data": {
+					"eyebrow": "Page not found",
+					"micro": "If you followed a link from somewhere else, let us know and we will fix it.",
+					"showExplainer": true,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": ""
+				}
+			},
+			{
+				"id": "whereNext",
+				"type": "link-cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The pages people usually want",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Where next",
+					"items": [
+						{
+							"id": "i1",
+							"title": "The Platform",
+							"body": "The ten privacy problems it solves and how the pieces fit together.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/platform",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Pricing",
+							"body": "Transparent rates scaled to organisation size, every module included.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/pricing",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "FAQ",
+							"body": "Straight answers on data residency, security and how onboarding works.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/faq",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i4",
+							"title": "Book a demo",
+							"body": "Twenty-five minutes, live, with the Visual ROPA View on screen.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "/demo",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "error",
+				"type": "error",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "That did not work, and it is on us.",
+					"body": "Something failed while drawing this page. Try again in a moment. If it keeps happening, the home page and the demo booking still work.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Something went wrong"
 				}
 			}
 		],

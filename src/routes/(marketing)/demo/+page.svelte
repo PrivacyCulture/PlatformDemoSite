@@ -151,7 +151,7 @@
 		<aside class="lg:pt-2">
 			<p class="text-[11px] tracking-[0.2em] text-gold uppercase">{copy.aside.eyebrow}</p>
 			<ul class="mt-5 space-y-5 text-[15px] leading-relaxed font-light text-ink/70">
-				{#each copy.aside.items as item (item.title)}
+				{#each copy.aside.items as item, i (i)}
 					<li>
 						<span class="block font-semibold text-heading">{item.title}</span>
 						{item.body}
