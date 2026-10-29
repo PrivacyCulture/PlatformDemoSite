@@ -1,0 +1,3235 @@
+{
+	"cookie-notice": {
+		"v": 2,
+		"title": "Cookie notice",
+		"slug": "cookie-notice",
+		"seo": {
+			"title": "Cookie Notice",
+			"description": "The cookies and similar technologies used on the Privacy Culture Platform website, what each one does, how long it lasts and how to change your choices.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "document",
+				"type": "legal",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Cookie Notice",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Legal",
+					"dateline": "Privacy Culture Ltd · Last updated September 2026",
+					"contentsLabel": "On this page",
+					"printLabel": "Print or save as PDF",
+					"document": "{\n  \"intro\": [\n    \"Our Privacy Policy explains our principles when it comes to the collection, processing and storage of your information. This website uses cookies to distinguish you from other visitors. This helps us give you a good experience when you browse the site and also allows us to improve it.\",\n    \"This Cookie Notice explains what cookies are, which ones this website uses, what they are used for and the options you have to control them. It covers platform.privacyculture.com. Our main website, www.privacyculture.com, has its own Cookie Notice.\"\n  ],\n  \"introLinks\": [\n    {\n      \"label\": \"Read our Privacy Policy\",\n      \"href\": \"/privacy-policy\"\n    },\n    {\n      \"label\": \"www.privacyculture.com Cookie Notice\",\n      \"href\": \"https://www.privacyculture.com/cookie-notice\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"id\": \"what-are-cookies\",\n      \"title\": \"What are cookies?\",\n      \"paragraphs\": [\n        \"Cookies are small pieces of data, stored in text files, that are placed on your device when you visit web pages. They are widely used to make websites work, or work more efficiently, and to give website owners information for different purposes.\",\n        \"This notice also covers similar technologies that work in the same way, such as your browser’s local storage and session storage, and tracking pixels (tiny images or requests that tell a service a page was viewed).\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"types-of-cookies\",\n      \"title\": \"Types of cookies\",\n      \"paragraphs\": [\n        \"We group the cookies on this site by purpose:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Necessary\",\n          \"body\": \"Help make the website usable by enabling basic functions like page navigation and remembering your cookie choices. The website cannot work properly without them.\"\n        },\n        {\n          \"term\": \"Preferences\",\n          \"body\": \"Let a website remember information that changes the way it behaves or looks, like your preferred language or region. This site does not currently set any preference cookies.\"\n        },\n        {\n          \"term\": \"Statistics\",\n          \"body\": \"Help us understand how visitors use the website by collecting and reporting information on pages visited, how people move between them and where they came from.\"\n        },\n        {\n          \"term\": \"Marketing\",\n          \"body\": \"Used to track visitors across websites so that advertising can be more relevant, and to measure whether our campaigns lead to demo bookings.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"cookies-we-use\",\n      \"title\": \"Cookies we use on this site\",\n      \"paragraphs\": [\n        \"The list below sets out each cookie and similar technology used on this website, who sets it, what it is for and how long it lasts. Statistics and marketing cookies are only set if you accept them in the cookie banner.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"legal-basis\",\n      \"title\": \"Legal basis for using cookies\",\n      \"paragraphs\": [\n        \"We use cookies in line with the UK General Data Protection Regulation (UK GDPR), the EU GDPR, the UK Data Protection Act 2018 and the Privacy and Electronic Communications Regulations (PECR). The legal basis for processing personal data collected through cookies depends on the type of cookie:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Necessary cookies\",\n          \"body\": \"Our legitimate interest in making sure the website, and any services we provide to you through it, work properly and securely. These cookies are exempt from consent because they are strictly necessary.\"\n        },\n        {\n          \"term\": \"Preference, statistics and marketing cookies\",\n          \"body\": \"Your consent, which you can give or withdraw at any time as described below.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"change-settings\",\n      \"title\": \"How can you change your cookie settings?\",\n      \"paragraphs\": [\n        \"When you first visit this website, a cookie banner lets you choose which categories of cookies to accept or reject. Only necessary cookies are set until you make a choice. You can change or withdraw your consent at any time with the button below, and it will apply from that point on.\",\n        \"You can also manage cookies in your browser settings, where you can accept, reject or delete them. Every browser is slightly different, so check the ‘Help’ menu of your browser (or your phone’s handset manual). If you block necessary cookies, some parts of the website may not work as intended.\",\n        \"To opt out of being tracked by Google Analytics across all websites, install the Google Analytics opt-out browser add-on. To find out more about cookies, including how to see which cookies have been set, visit www.aboutcookies.org or www.allaboutcookies.org.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"Google Chrome\",\n          \"href\": \"https://support.google.com/chrome/answer/95647\"\n        },\n        {\n          \"label\": \"Microsoft Edge\",\n          \"href\": \"https://support.microsoft.com/en-gb/microsoft-edge/delete-cookies-in-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09\"\n        },\n        {\n          \"label\": \"Mozilla Firefox\",\n          \"href\": \"https://support.mozilla.org/en-US/kb/clear-cookies-and-site-data-firefox\"\n        },\n        {\n          \"label\": \"Apple Safari\",\n          \"href\": \"https://support.apple.com/en-gb/guide/safari/sfri11471/mac\"\n        },\n        {\n          \"label\": \"Opera\",\n          \"href\": \"https://help.opera.com/en/latest/web-preferences/#cookies\"\n        },\n        {\n          \"label\": \"Google Analytics opt-out\",\n          \"href\": \"https://tools.google.com/dlpage/gaoptout\"\n        },\n        {\n          \"label\": \"aboutcookies.org\",\n          \"href\": \"https://www.aboutcookies.org\"\n        },\n        {\n          \"label\": \"allaboutcookies.org\",\n          \"href\": \"https://www.allaboutcookies.org\"\n        }\n      ]\n    },\n    {\n      \"id\": \"contact\",\n      \"title\": \"Contact us\",\n      \"paragraphs\": [\n        \"If you have any questions about our use of cookies or other technologies, email our Data Protection Officer at DPO@privacyculture.com or write to hello@privacyculture.com. You can also call us on +44 (0) 20 7112 9360.\",\n        \"Our principal address is Bouverie House, 154-160 Fleet Street, London EC4A 2DQ.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"DPO@privacyculture.com\",\n          \"href\": \"mailto:DPO@privacyculture.com\"\n        },\n        {\n          \"label\": \"hello@privacyculture.com\",\n          \"href\": \"mailto:hello@privacyculture.com\"\n        }\n      ]\n    },\n    {\n      \"id\": \"changes\",\n      \"title\": \"Changes to this Cookie Notice\",\n      \"paragraphs\": [\n        \"We may update this Cookie Notice from time to time, for example when we add or remove a service that sets cookies. Please check this page now and then. If we make significant changes to the way we use cookies, we will show a prominent notice on the website and ask for your consent again where needed.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    }\n  ],\n  \"cookieTableAfter\": \"cookies-we-use\",\n  \"cookieTableLabels\": {\n    \"name\": \"Name\",\n    \"provider\": \"Provider\",\n    \"type\": \"Type\",\n    \"purpose\": \"Purpose\",\n    \"duration\": \"Duration\",\n    \"moreInfo\": \"Provider’s privacy policy\"\n  },\n  \"cookieGroups\": [\n    {\n      \"id\": \"necessary\",\n      \"title\": \"Necessary\",\n      \"cookies\": [\n        {\n          \"name\": \"CookieConsent\",\n          \"provider\": \"Cookiebot (on privacyculture.com)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Stores your cookie consent choices for this website.\",\n          \"duration\": \"1 year\",\n          \"infoHref\": \"https://www.cookiebot.com/en/privacy-policy/\"\n        },\n        {\n          \"name\": \"__cf_bm\",\n          \"provider\": \"HubSpot (via Cloudflare)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Tells humans and bots apart, to protect HubSpot’s services from malicious traffic.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"test_cookie\",\n          \"provider\": \"Google (doubleclick.net)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Checks whether your browser supports cookies.\",\n          \"duration\": \"15 minutes\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"sveltekit:scroll, sveltekit:snapshot\",\n          \"provider\": \"Privacy Culture\",\n          \"type\": \"HTML session storage\",\n          \"purpose\": \"Remembers your place on a page so the back button returns you to where you were.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"/privacy-policy\"\n        }\n      ]\n    },\n    {\n      \"id\": \"statistics\",\n      \"title\": \"Statistics\",\n      \"cookies\": [\n        {\n          \"name\": \"_ga\",\n          \"provider\": \"Google Analytics\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Registers a unique ID used to produce statistics on how you use the website.\",\n          \"duration\": \"2 years\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_ga_M67X8M2TQR\",\n          \"provider\": \"Google Analytics\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Keeps track of your session, including how many times you have visited and the dates of your first and most recent visit.\",\n          \"duration\": \"2 years\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_hjSessionUser_6785893\",\n          \"provider\": \"Hotjar\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Gives you a unique ID the first time you visit, so your later visits are recognised as the same visitor.\",\n          \"duration\": \"1 year\",\n          \"infoHref\": \"https://www.hotjar.com/legal/policies/privacy/\"\n        },\n        {\n          \"name\": \"_hjSession_6785893\",\n          \"provider\": \"Hotjar\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Holds data for the current session, so page views in the same visit are grouped together.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://www.hotjar.com/legal/policies/privacy/\"\n        },\n        {\n          \"name\": \"__hstc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Tracks visitors, storing the time of your first visit, your previous visit and your current one, and how many sessions you have had.\",\n          \"duration\": \"6 months\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"hubspotutk\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Keeps track of your identity as a visitor, so HubSpot can recognise you across sessions and produce visitor statistics.\",\n          \"duration\": \"6 months\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"__hssc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Counts page views in a session and works out whether the session count needs updating.\",\n          \"duration\": \"30 minutes\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"__hssrc\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Recognises when you have restarted your browser, to tell new sessions apart.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        },\n        {\n          \"name\": \"pc_demo_utm\",\n          \"provider\": \"Privacy Culture\",\n          \"type\": \"HTML session storage\",\n          \"purpose\": \"Remembers the campaign link (UTM tags) that brought you to the site, so that if you book a demo we know which campaign it came from.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"/privacy-policy\"\n        }\n      ]\n    },\n    {\n      \"id\": \"marketing\",\n      \"title\": \"Marketing\",\n      \"cookies\": [\n        {\n          \"name\": \"_gcl_au\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Stores click information from our ads so that demo bookings can be linked back to the ad that led to them.\",\n          \"duration\": \"3 months\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"_gcl_ls\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"HTML local storage\",\n          \"purpose\": \"A copy of the ad click information in _gcl_au, used when cookies are not available.\",\n          \"duration\": \"Persistent\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"IDE\",\n          \"provider\": \"Google (doubleclick.net)\",\n          \"type\": \"HTTP cookie\",\n          \"purpose\": \"Records your actions after viewing or clicking one of our ads, to measure how well the ad works and show you more relevant ads.\",\n          \"duration\": \"13 months\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"pagead/1p-user-list/#, rmkt/collect/#\",\n          \"provider\": \"Google Ads\",\n          \"type\": \"Pixel tracker\",\n          \"purpose\": \"Adds visitors to our remarketing audiences and records conversions, so we can show relevant ads on other websites and limit how often you see the same one.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://business.safety.google/privacy/\"\n        },\n        {\n          \"name\": \"__ptq.gif\",\n          \"provider\": \"HubSpot\",\n          \"type\": \"Pixel tracker\",\n          \"purpose\": \"Sends information about your device and behaviour to HubSpot, our marketing platform, and tracks you across devices and marketing channels.\",\n          \"duration\": \"Session\",\n          \"infoHref\": \"https://legal.hubspot.com/privacy-policy\"\n        }\n      ]\n    }\n  ],\n  \"consentButtonLabel\": \"Change your cookie settings\"\n}"
+				}
+			}
+		],
+		"notes": []
+	},
+	"dpa": {
+		"v": 2,
+		"title": "Standard DPA",
+		"slug": "dpa",
+		"seo": {
+			"title": "Standard DPA",
+			"description": "Public summary of the Privacy Culture Platform standard Data Processing Addendum, including UK data residency, encryption and security certification.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "document",
+				"type": "legal",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Data Processing Addendum",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Standard DPA",
+					"dateline": "Public terms summary · Privacy Culture Ltd · September 2026",
+					"contentsLabel": "On this page",
+					"printLabel": "Print or save as PDF",
+					"document": "{\n  \"backLabel\": \"← Trust & Security\",\n  \"backHref\": \"/trust\",\n  \"keyFactsTitle\": \"At a glance\",\n  \"keyFacts\": [\n    {\n      \"label\": \"Role\",\n      \"value\": \"Processor, Privacy Culture Ltd (England & Wales)\"\n    },\n    {\n      \"label\": \"Data residency\",\n      \"value\": \"United Kingdom, AWS UK Region\"\n    },\n    {\n      \"label\": \"Encryption\",\n      \"value\": \"AES-256 at rest · TLS 1.3 in transit\"\n    },\n    {\n      \"label\": \"Assurance\",\n      \"value\": \"Cyber Essentials · Independent penetration testing\"\n    }\n  ],\n  \"intro\": \"This page is the openly published summary of our standard Data Processing Addendum. The executable DPA is issued with the order form. Use your browser’s print dialog to save a PDF copy.\",\n  \"sections\": [\n    {\n      \"id\": \"processor\",\n      \"title\": \"Processor\",\n      \"body\": \"Privacy Culture Ltd, registered in England & Wales, acts as processor for customer personal data hosted in the Privacy Culture Platform.\"\n    },\n    {\n      \"id\": \"nature-of-processing\",\n      \"title\": \"Nature of processing\",\n      \"body\": \"Records and workflows that support privacy operations, including tasks, ROPA, incidents, vendors, operational assessments, and risks.\"\n    },\n    {\n      \"id\": \"location-and-security\",\n      \"title\": \"Location and security\",\n      \"body\": \"Customer data is hosted in the United Kingdom (AWS UK Region), in tier-3 data centres, with AES-256 encryption at rest and TLS 1.3 in transit. Privacy Culture holds Cyber Essentials certification. The Platform undergoes independent penetration testing.\"\n    }\n  ]\n}"
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Need the executable DPA?",
+					"body": "The signed version is issued with your order form. Book a demo and we will send the full security pack alongside it.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Contracting",
+					"micro": "Published terms, no sales gate."
+				}
+			}
+		],
+		"notes": []
+	},
+	"faq": {
+		"v": 2,
+		"title": "FAQ",
+		"slug": "faq",
+		"seo": {
+			"title": "FAQ",
+			"description": "Answers on who the platform is for, what is included at launch, onboarding, pricing, and security assurances.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Questions, answered plainly.",
+					"body": "Straight answers on who the platform is for, what ships at launch, how onboarding runs, what it costs and how we handle your data. Nothing here sits behind a form.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "FAQ",
+					"showExplainer": false
+				}
+			},
+			{
+				"id": "questions",
+				"type": "faq",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"items": [
+						{
+							"id": "i1",
+							"title": "Who is the Privacy Culture Platform designed for?",
+							"body": "It is designed for mid-market privacy teams that need stronger oversight than spreadsheets provide, without taking on an enterprise-scale privacy platform implementation. Our focus is UK organisations with roughly 1,000 to 5,000 employees.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "What is included at launch?",
+							"body": "At launch, the platform includes Tasks, ROPA, Incidents, Vendors, Operational Assessments, and Risks. All modules are fully connected and included together rather than sold as separate feature-gated tiers.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Can you import our existing ROPA?",
+							"body": "Yes. We import existing ROPA data from Excel as part of our assisted onboarding process to ensure your Visual ROPA View is live quickly.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i4",
+							"title": "How quickly can we get live?",
+							"body": "Our launch commitment is to get your Visual ROPA View live within 30 days, subject to standard data availability, agreed scope, and customer participation.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i5",
+							"title": "Do you offer a free trial?",
+							"body": "We do not offer an anonymous, self-serve trial at this time. Following a brief demo, controlled product access can be arranged once we understand your operational context and data structures.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i6",
+							"title": "How much does it cost?",
+							"body": "Pricing starts at £500 per month for organisations with up to 750 employees, then £800 for 751–1,500, £1,250 for 1,501–3,000 and £1,667 for 3,001–5,000, each billed annually. Above 5,000 employees, or for complex groups, pricing is on application. Every plan is a 12-month agreement and includes all launch modules.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i7",
+							"title": "What security assurances are available?",
+							"body": "Privacy Culture holds Cyber Essentials certification, and the Platform undergoes independent penetration testing. Detailed security collateral, including our standard DPA, is accessible directly on our dedicated Trust & Security page.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					],
+					"countLabel": "questions",
+					"packLead": "Need the security pack?",
+					"packTrustLabel": "Open the Trust & Security page",
+					"packTrustHref": "/trust",
+					"packOr": "or",
+					"packDemoLabel": "book a demo",
+					"packDemoHref": "/demo"
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Bring the awkward questions.",
+					"body": "Book a demo and we will walk the platform through your own processing activities rather than a canned dataset.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Still deciding",
+					"micro": "Our security collateral is published without a sales gate."
+				}
+			}
+		],
+		"notes": []
+	},
+	"platform": {
+		"v": 2,
+		"title": "The Platform",
+		"slug": "platform",
+		"seo": {
+			"title": "The Platform",
+			"description": "The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the Visual ROPA View, then dive into operational detail when you need it.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Total visibility<br>across your privacy estate.",
+					"body": "The Privacy Culture Platform links the records and workflows that support day-to-day privacy operations. Start with the big picture in the Visual ROPA View, then dive into operational detail when you need it.",
+					"buttons": [
+						{
+							"label": "Book a demo",
+							"url": "/demo",
+							"style": "",
+							"icon": "",
+							"image": null
+						},
+						{
+							"label": "Watch the 2-minute overview",
+							"url": "",
+							"style": "play-explainer",
+							"icon": "",
+							"image": null
+						}
+					]
+				},
+				"data": {
+					"eyebrow": "The Platform",
+					"plainTitle": "Total visibility across your privacy estate.",
+					"showExplainer": true,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": false,
+					"showPager": false
+				}
+			},
+			{
+				"id": "trusted",
+				"type": "logos",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {}
+			},
+			{
+				"id": "fit",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "beside",
+				"swap": false,
+				"look": {
+					"background": "panel",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "One live privacy estate.<br>Not five spreadsheets and a guess.",
+					"body": "Bring the records and workflows you already keep, scattered across tools and tabs, into one place. The privacy team sees the whole estate, hands ownership out to the people who do the processing, and everyone works from the same picture.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "How it fits together",
+					"media": {
+						"url": "/Images/FromExcelToTeams.png",
+						"alt": "Scattered spreadsheets resolving into one connected privacy estate shared across teams",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null
+					},
+					"panel": "",
+					"items": [
+						{
+							"id": "i1",
+							"title": "Simple",
+							"body": "No twelve-month rollout. Clear workflows, transparent pricing, no enterprise implementation programme.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Visual",
+							"body": "See your processing as a map, not a spreadsheet. The whole estate at a glance, a record's reach when needed.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Federated",
+							"body": "Owners in the business confirm their own records are right. You keep the central view.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "problems",
+				"type": "problems",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Clarity where the work actually breaks.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Problems this solves"
+				}
+			},
+			{
+				"id": "articles",
+				"type": "articles",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"loadMore": ""
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": []
+	},
+	"pricing": {
+		"v": 2,
+		"title": "Pricing",
+		"slug": "pricing",
+		"seo": {
+			"title": "Pricing",
+			"description": "Clear pricing for privacy management software, from £500 a month. Plans by headcount, every launch module included, 12-month agreement.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "plans",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": true,
+					"notes": [
+						{
+							"id": "i1",
+							"title": "What “from” covers",
+							"body": "Prices assume a single legal entity operating in GDPR-focused jurisdictions (UK GDPR and EU GDPR).",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "What can increase the price",
+							"body": "Multiple legal entities, additional jurisdictions beyond GDPR, or more user accounts than your plan includes, SSO integration. We’ll confirm your price in a written quote before you commit.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Terms",
+							"body": "12-month agreement. All launch modules included. Billing terms confirmed in the order form.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "modules",
+				"type": "foldout",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "View our launch modules",
+					"body": "Every plan includes all six, connected on one estate rather than sold as separate tiers.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"items": [
+						{
+							"id": "i1",
+							"title": "Tasks",
+							"body": "Automated task routing that assigns owners, chases deadlines and records who did what.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "ROPA",
+							"body": "Your record of processing as a live, visual map of data flows and the systems behind them.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Incidents",
+							"body": "Log incidents and DSARs, track the clock and keep the evidence in one place.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i4",
+							"title": "Vendors",
+							"body": "Vendor and sub-processor records with due diligence, re-attestation and risk.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i5",
+							"title": "Operational Assessments",
+							"body": "DPIAs and assessments that follow through into tasks instead of sitting in a folder.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i6",
+							"title": "Risks",
+							"body": "A risk register tied to the processing, vendors and assessments each risk comes from.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": []
+	},
+	"privacy-policy": {
+		"v": 2,
+		"title": "Privacy policy",
+		"slug": "privacy-policy",
+		"seo": {
+			"title": "Privacy Policy",
+			"description": "How Privacy Culture collects, uses, stores and protects the personal information of visitors to the Privacy Culture Platform website, and the rights you have over it.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "document",
+				"type": "legal",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Privacy Policy",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "Legal",
+					"dateline": "Privacy Culture Ltd · Last updated September 2026",
+					"contentsLabel": "On this page",
+					"printLabel": "Print or save as PDF",
+					"document": "{\n  \"intro\": [\n    \"Privacy Culture Limited (“Privacy Culture”, “we”) is committed to earning your confidence and trust by complying with data protection law and following the practices that protect your privacy and safeguard your personal information.\",\n    \"This Privacy Policy explains how we collect, use, store, share and protect your personal information when you visit this website, platform.privacyculture.com, book a demo of the Privacy Culture Platform or otherwise get in touch with us through it. We are registered with the UK Information Commissioner’s Office under registration number ZA551135.\",\n    \"Personal data that our customers hold inside the Privacy Culture Platform itself is processed on their behalf under our Data Processing Addendum, not under this policy. Our main website, www.privacyculture.com, has its own Privacy Policy. Please also read our Cookie Notice, which lists the cookies this website sets.\"\n  ],\n  \"introLinks\": [\n    {\n      \"label\": \"Cookie Notice\",\n      \"href\": \"/cookie-notice\"\n    },\n    {\n      \"label\": \"Standard DPA\",\n      \"href\": \"/dpa\"\n    },\n    {\n      \"label\": \"www.privacyculture.com Privacy Policy\",\n      \"href\": \"https://www.privacyculture.com/privacy-policy\"\n    }\n  ],\n  \"sections\": [\n    {\n      \"id\": \"controller\",\n      \"title\": \"Who is responsible for your personal information?\",\n      \"paragraphs\": [\n        \"Privacy Culture Limited is the controller of the personal information collected through this website. Our details are below. Questions about this policy can go to our Data Protection Officer.\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Name\",\n          \"body\": \"Privacy Culture Limited\"\n        },\n        {\n          \"term\": \"Address\",\n          \"body\": \"Bouverie House, 154-160 Fleet Street, London EC4A 2DQ\"\n        },\n        {\n          \"term\": \"Email\",\n          \"body\": \"DPO@privacyculture.com (Data Protection Officer) or hello@privacyculture.com\"\n        },\n        {\n          \"term\": \"Phone\",\n          \"body\": \"+44 (0) 20 7112 9360\"\n        },\n        {\n          \"term\": \"ICO registration number\",\n          \"body\": \"ZA551135\"\n        }\n      ],\n      \"links\": [\n        {\n          \"label\": \"DPO@privacyculture.com\",\n          \"href\": \"mailto:DPO@privacyculture.com\"\n        },\n        {\n          \"label\": \"hello@privacyculture.com\",\n          \"href\": \"mailto:hello@privacyculture.com\"\n        }\n      ]\n    },\n    {\n      \"id\": \"what-we-collect\",\n      \"title\": \"What personal information do we collect?\",\n      \"paragraphs\": [\n        \"The information we collect through this website may include:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Identity and contact details\",\n          \"body\": \"Your name, work email address, company, job role and, if you choose to give it, your telephone number, as entered when you book a demo or contact us.\"\n        },\n        {\n          \"term\": \"Details about your organisation and needs\",\n          \"body\": \"The headcount band of your organisation, the tools you currently use for privacy work, your rough timing, whether you are working towards ISO 27701 or a similar standard, and what you would like to improve. These help us make a demo relevant to you.\"\n        },\n        {\n          \"term\": \"Device and usage information\",\n          \"body\": \"Your IP address, browser and device type, the pages you visit, how you move between them and the campaign link that brought you here. Most of this is collected through cookies and similar technologies, and only with your consent where the law requires it. Our Cookie Notice lists each one.\"\n        },\n        {\n          \"term\": \"Correspondence\",\n          \"body\": \"What you tell us in the emails, calls and meetings that follow from your enquiry.\"\n        },\n        {\n          \"term\": \"Special category data\",\n          \"body\": \"We do not ask for special category data, such as health information, through this website. If you include it in a message to us, we will handle it with particular care and only as the law allows.\"\n        }\n      ],\n      \"links\": [\n        {\n          \"label\": \"Cookie Notice\",\n          \"href\": \"/cookie-notice\"\n        }\n      ]\n    },\n    {\n      \"id\": \"how-we-collect\",\n      \"title\": \"How do we collect your personal information?\",\n      \"paragraphs\": [\n        \"We collect information directly from you when you:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Book a demo\",\n          \"body\": \"Fill in the booking form and choose a meeting time, and during the demo itself.\"\n        },\n        {\n          \"term\": \"Get in touch\",\n          \"body\": \"Email, call or write to us to find out more about the Privacy Culture Platform or our services.\"\n        },\n        {\n          \"term\": \"Browse the site\",\n          \"body\": \"Visit and use this website, through the cookies and similar technologies described in our Cookie Notice.\"\n        },\n        {\n          \"term\": \"Follow a campaign link\",\n          \"body\": \"Arrive from an advert, email or post that carries campaign tags, which tell us which campaign brought you here.\"\n        },\n        {\n          \"term\": \"Other sources\",\n          \"body\": \"We may also receive information from our marketing and analytics providers, from public sources such as your company website or professional networking profile, from colleagues who introduce you, and from event organisers where you have agreed to your details being shared.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"why-we-use\",\n      \"title\": \"Why do we use your personal information, and on what basis?\",\n      \"paragraphs\": [\n        \"We use your personal information to respond to your enquiries, to arrange and run the demo you have booked, to follow up with you afterwards, and to enter into and perform a contract with your organisation if it decides to use the Privacy Culture Platform.\",\n        \"We also process personal information for our legitimate business interests: to understand how visitors use this website and improve it, to measure whether our marketing campaigns lead to demo bookings, to keep our systems secure and prevent fraud, to send you information we think will interest you where the law allows, and to produce statistics about our audience. Statistics are aggregated or de-identified so that they cannot identify you.\",\n        \"Whenever we process your information for these purposes we take account of your rights and interests. Our lawful basis for each use is one of the following:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Consent\",\n          \"body\": \"You have given us clear permission, for example by accepting statistics or marketing cookies in the cookie banner or asking to receive marketing emails. You can withdraw consent at any time.\"\n        },\n        {\n          \"term\": \"Legitimate interests\",\n          \"body\": \"The processing benefits you, Privacy Culture or our affiliates, such as answering your enquiry, improving this website or protecting it, and does not put anyone at undue risk. You can object to processing on this basis.\"\n        },\n        {\n          \"term\": \"Contract\",\n          \"body\": \"The processing is needed to enter into or carry out a contract with you or your organisation, including providing access to the Privacy Culture Platform.\"\n        },\n        {\n          \"term\": \"Legal obligation\",\n          \"body\": \"We are required to process the information to comply with the law.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"marketing\",\n      \"title\": \"Your marketing and contact preferences\",\n      \"paragraphs\": [\n        \"We respect your preferences about hearing from us. We may contact you with information about the Privacy Culture Platform, our services, events, courses and other resources that we think will interest you.\",\n        \"Email marketing: we will ask for your permission before sending you marketing emails, unless you are a business contact we may lawfully email about similar services. Every marketing email we send carries an ‘Unsubscribe’ link.\",\n        \"Telephone marketing: we may call to follow up on a demo request or to tell you about our services. If your number is registered with the Telephone Preference Service (TPS) or the Corporate Telephone Preference Service (CTPS), we will only call you for marketing purposes with your express permission.\",\n        \"If you tell us that you no longer want direct marketing from us, we will act on that and keep a record of your request so that we do not contact you again with marketing content. You can do this with the ‘Unsubscribe’ link or by using the contact details in this policy.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"your-rights\",\n      \"title\": \"Your data protection rights and choices\",\n      \"paragraphs\": [\n        \"Under data protection law you have the following rights:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Access\",\n          \"body\": \"You can ask for access to, and a copy of, the personal information we hold about you.\"\n        },\n        {\n          \"term\": \"Rectification\",\n          \"body\": \"You can ask us to correct personal information you think is inaccurate or incomplete. Please tell us so that we can keep your information up to date.\"\n        },\n        {\n          \"term\": \"Erasure\",\n          \"body\": \"You can ask us to delete the personal information we hold about you. We may need to keep a minimal record so that we can honour your request to be excluded from processing.\"\n        },\n        {\n          \"term\": \"Restriction\",\n          \"body\": \"You can ask us to limit how we process your personal information.\"\n        },\n        {\n          \"term\": \"Data portability\",\n          \"body\": \"You can ask for your personal information in a structured, machine-readable format.\"\n        },\n        {\n          \"term\": \"Object\",\n          \"body\": \"You can object to processing that is based on our legitimate interests, and to direct marketing at any time.\"\n        },\n        {\n          \"term\": \"Automated decision-making\",\n          \"body\": \"You have the right not to be subject to a decision based solely on automated processing. We do not make such decisions through this website.\"\n        },\n        {\n          \"term\": \"Withdraw consent\",\n          \"body\": \"Where we rely on your consent, you can withdraw it at any time. For cookies, use the cookie settings on our Cookie Notice; for anything else, contact us.\"\n        },\n        {\n          \"term\": \"Exercising your rights\",\n          \"body\": \"Send your request to the contact details in this policy. We will respond within one month, or tell you if we need longer. There is normally no fee. If you are not satisfied with our response, you may complain to the Information Commissioner’s Office (ICO).\"\n        }\n      ],\n      \"links\": [\n        {\n          \"label\": \"Make a complaint to the ICO\",\n          \"href\": \"https://ico.org.uk/make-a-complaint/\"\n        },\n        {\n          \"label\": \"Your information rights, ico.org.uk\",\n          \"href\": \"https://ico.org.uk/for-the-public/\"\n        }\n      ]\n    },\n    {\n      \"id\": \"retention\",\n      \"title\": \"How long do we keep your personal data?\",\n      \"paragraphs\": [\n        \"How long we keep your personal data depends on the type of information and what it is used for. We keep it only for as long as is necessary to provide what you have asked for, to enter into or perform a contract, to meet our legal obligations, to resolve disputes and to enforce our agreements.\",\n        \"Details from a demo enquiry that does not lead to a customer relationship are kept while the conversation is active and then reviewed for deletion. Analytics data is kept for the periods set out in our Cookie Notice. When personal data is no longer needed it is securely deleted or anonymised. If you would like a copy of our Data Retention Policy, or have any questions about how your data is stored, contact us at DPO@privacyculture.com.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"DPO@privacyculture.com\",\n          \"href\": \"mailto:DPO@privacyculture.com\"\n        }\n      ]\n    },\n    {\n      \"id\": \"sharing\",\n      \"title\": \"Do we share your personal data?\",\n      \"paragraphs\": [\n        \"Where necessary, and in limited circumstances, we may share your personal information with third parties to the extent permitted or required by law, including to:\"\n      ],\n      \"items\": [\n        {\n          \"term\": \"Meet our legal obligations\",\n          \"body\": \"Including responding to lawful requests from regulators, courts and law enforcement.\"\n        },\n        {\n          \"term\": \"Cooperate with investigations\",\n          \"body\": \"Provide reasonable voluntary cooperation with a relevant police or regulatory investigation, or with ongoing or prospective legal proceedings.\"\n        },\n        {\n          \"term\": \"Protect our rights\",\n          \"body\": \"Establish, exercise or defend our legal rights, including sharing information for fraud prevention.\"\n        },\n        {\n          \"term\": \"Service providers\",\n          \"body\": \"Specialist providers that help us run this website and our business, acting on our instructions under contract. For this website these include HubSpot (our CRM and meeting booking), Google (analytics and advertising measurement), Hotjar (understanding how visitors use the site), Cookiebot (cookie consent) and our hosting and IT providers. Each is bound to protect your data and to use it only for the agreed service.\"\n        },\n        {\n          \"term\": \"Our CRM\",\n          \"body\": \"Your details may be held in one or more customer relationship management databases that bring together your dealings with us across our services, so that we have accurate records and can understand how we might help you.\"\n        },\n        {\n          \"term\": \"Advisers and stakeholders\",\n          \"body\": \"Where needed for reasonable management, analysis, planning and decision making, including decisions about the services we offer.\"\n        }\n      ],\n      \"links\": []\n    },\n    {\n      \"id\": \"international-transfers\",\n      \"title\": \"International transfers\",\n      \"paragraphs\": [\n        \"Some of the service providers named above are based, or store data, outside the United Kingdom and the European Economic Area, for example in the United States. Where your personal data is transferred outside the UK or the EEA, by us or by a provider acting on our behalf, we put in place the safeguards the law requires, such as the UK International Data Transfer Agreement or Addendum, the EU Standard Contractual Clauses or an adequacy decision, together with the organisational and technical measures needed to protect it.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"security\",\n      \"title\": \"Security\",\n      \"paragraphs\": [\n        \"We take appropriate technical and organisational measures to protect your personal information, in line with our legal obligations. These measures reduce the risk of loss, misuse, unauthorised access, disclosure and alteration.\",\n        \"We require every third party we work with to respect the security of your personal data and to treat it in accordance with the law. We do not allow our service providers to use your personal data for their own purposes, and only permit them to process it for specified purposes and in accordance with our instructions.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"cookies\",\n      \"title\": \"Cookies\",\n      \"paragraphs\": [\n        \"This website uses cookies and similar technologies to remember your choices, to understand how the site is used and to measure our marketing. Statistics and marketing cookies are only set with your consent, which you can change at any time. Our Cookie Notice lists each cookie, who sets it, what it does and how long it lasts.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"Read our Cookie Notice\",\n          \"href\": \"/cookie-notice\"\n        }\n      ]\n    },\n    {\n      \"id\": \"changes\",\n      \"title\": \"Changes to this Privacy Policy\",\n      \"paragraphs\": [\n        \"We keep this Privacy Policy under regular review to reflect changes in the law and in our own practices. Please check this page from time to time. If we make significant changes to the way we process your personal data, we will show a prominent notice on this website.\"\n      ],\n      \"items\": [],\n      \"links\": []\n    },\n    {\n      \"id\": \"complaints\",\n      \"title\": \"Complaints and queries\",\n      \"paragraphs\": [\n        \"We do our best to meet the highest standards when handling personal information, and we take any complaint about it seriously. If you think our collection, use or storage of your personal information is unfair, misleading or inappropriate, please tell us.\",\n        \"We also welcome suggestions for improving how we work. Send any correspondence to the contact details in this policy. If you are not satisfied with our response, you may report your concern to the Information Commissioner’s Office (ICO).\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"Information Commissioner’s Office\",\n          \"href\": \"https://ico.org.uk/\"\n        }\n      ]\n    },\n    {\n      \"id\": \"contact\",\n      \"title\": \"How to contact us\",\n      \"paragraphs\": [\n        \"Our principal address is Bouverie House, 154-160 Fleet Street, London EC4A 2DQ. You can email our Data Protection Officer at DPO@privacyculture.com or write to hello@privacyculture.com. You can also call us on +44 (0) 20 7112 9360.\"\n      ],\n      \"items\": [],\n      \"links\": [\n        {\n          \"label\": \"DPO@privacyculture.com\",\n          \"href\": \"mailto:DPO@privacyculture.com\"\n        },\n        {\n          \"label\": \"hello@privacyculture.com\",\n          \"href\": \"mailto:hello@privacyculture.com\"\n        }\n      ]\n    }\n  ]\n}"
+				}
+			}
+		],
+		"notes": []
+	},
+	"problem-audit-readiness": {
+		"v": 2,
+		"title": "Audit & regulator readiness",
+		"slug": "audit-readiness",
+		"seo": {
+			"title": "Audit Readiness",
+			"description": "Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Can you evidence your accountability programme today?",
+					"body": "Scrambling before an audit or insurer assessment creates friction and reveals gaps. Maintain a continuous, time-stamped audit log of data inventory reviews and vendor re-attestations automatically.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": null,
+					"panel": "auditChecklist",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Accountability that stays current.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Time-stamped inventory reviews",
+							"body": "Every ROPA attestation is dated, owned, and still visible when the auditor asks who last confirmed it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Vendor re-attestation on a clock",
+							"body": "Stale processing terms surface before the assessment, not during it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Evidence without the scramble",
+							"body": "Pass, fail, and stale states sit on one card so you can see the gaps while there is still time to close them.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Walk into the next audit with the log already written.",
+					"body": "Book a demo to see the continuous evidence log, and what a time-stamped attestation history looks like when the auditor asks who last confirmed a record.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "A continuous evidence log, not a scramble before review."
+	},
+	"problem-board-reporting": {
+		"v": 2,
+		"title": "Show the board",
+		"slug": "board-reporting",
+		"seo": {
+			"title": "Show the Board",
+			"description": "Board-ready privacy reporting drawn from the live estate: the trend, the target and the gap on one screen, with every number traceable to a record.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Can you show the board where privacy stands, on one screen?",
+					"body": "Boards do not want a walkthrough of a spreadsheet. They want the trend, the target and the gap. Pull those from the live estate rather than assembling them by hand each quarter, so the story is current and every number can be traced.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The whole operation on one screen.",
+					"body": "This is the Privacy Operations Centre. The row across the top is the state of play: tasks open, how many are past their target date, how many are still waiting on an owner, the average days to close and the share closed within SLA this year. Underneath, created against resolved over twelve months answers the question a board actually asks, whether the team is keeping up or falling behind, and the category breakdown shows where the work lands, from vendor assessments to subject rights requests. Every tile exports, and every number traces back to the tasks behind it.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/poc-screen.png",
+						"alt": "The Privacy Operations Centre dashboard, showing open, overdue and unassigned task counts above charts for status, monthly created against resolved volume, tasks by category and priority.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/poc-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Numbers with a trail.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Live posture, not a quarterly build",
+							"body": "ROPA confirmation, vendor currency, open risks and overdue tasks are read from the estate, so the report is as current as the records behind it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Target and gap on every measure",
+							"body": "Set the target the board agreed and show the distance to it, with the trend since last quarter alongside.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Drill from the number to the record",
+							"body": "Every figure links back to the activities, vendors or tasks behind it, so a challenge in the room has an answer.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Show your board the trend, the target and the gap.",
+					"body": "Book a demo to see the board view built from live records, and how every number drills to the activity, vendor or task behind it.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "The trend, the target and the gap on one screen, not a shrug and a spreadsheet."
+	},
+	"problem-breach-response": {
+		"v": 2,
+		"title": "Breach response readiness",
+		"slug": "breach-response",
+		"seo": {
+			"title": "Breach Response Readiness",
+			"description": "Breach response with roles, a running 72-hour clock and an evidence log built as decisions are made, tied to the systems and activities involved.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "It is 5pm on a Friday and someone has lost a laptop. Now what?",
+					"body": "Seventy-two hours is not long when the first six are spent working out who is in charge and which systems were involved. Predefine the roles, start the clock at detection and log every decision as it is made, so the notification is evidenced rather than reconstructed.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "quote",
+				"type": "quote",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"quote": "“The regulator will ask what you knew, when you knew it, and what you did in between.”",
+					"attribution": ""
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The shape of your incidents, before the next one.",
+					"body": "This is the breach readiness view. The top row is the current position: incidents open, how many are still awaiting triage, how many have been confirmed and how many have crossed the threshold for notifying a regulator. Below it, the pipeline shows where cases are stacked up and how long each stage is taking in practice, from triage through investigation and containment to closure. Severity and root cause sit alongside, so the pattern behind the incidents is something you can point at rather than something you suspect.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/breach-readiness-screen.png",
+						"alt": "The Breach Readiness dashboard, showing incident counts and notifications required above charts for incidents over time, stage pipeline and duration, severity distribution and root causes.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/breach-readiness-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Rehearsed, not improvised.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Roles set before the incident",
+							"body": "Triage lead, DPO, comms and legal are named in advance, each with a fallback, so nobody is deciding who decides at 5pm on a Friday.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "The clock starts at detection",
+							"body": "Every action is timestamped against the 72-hour deadline, so you always know how much runway is left and can show how you used it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Blast radius from the map",
+							"body": "Link the incident to the systems involved and the estate shows the processing activities, vendors and data subjects affected.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Rehearse the Friday breach before it happens.",
+					"body": "Book a demo to see the roles, the 72-hour clock and the evidence log working together on a live incident walkthrough.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "A breach on a Friday, handled – roles, clock, and an evidenced 72 hours."
+	},
+	"problem-conflicting-sources": {
+		"v": 2,
+		"title": "Conflicting sources of truth",
+		"slug": "conflicting-sources",
+		"seo": {
+			"title": "Conflicting Sources of Truth",
+			"description": "Stop reconciling spreadsheets, registers and trackers that disagree. One connected privacy estate gives every processing activity a single, current record.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Five tools, five answers. Which one does the regulator get?",
+					"body": "When the ROPA lives in one spreadsheet, the vendor list in another and the DPIA register on a shared drive, every question about a processing activity has several answers. Connect them into one estate so a record has one owner, one status and one story.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "quote",
+				"type": "quote",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"quote": "“A privacy programme is never more accurate than the least-maintained spreadsheet it depends on.”",
+					"attribution": ""
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Every register reporting into one screen.",
+					"body": "This is the screen the morning starts on. Programme at a glance holds each register as a tile, operational assessments, third parties, the ROPA, risks, incidents, subject rights and tasks, giving the counts a stack of spreadsheets would give you, except they are drawn from one estate rather than eight and they agree with each other. The line under the greeting is the one that matters on a Monday: how many items are overdue, and how many of those carry a statutory deadline. Scope it to your own work, your team's, or everything you can see.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/dashboard-screen.png",
+						"alt": "The platform dashboard, showing overdue and upcoming item counts above a programme at a glance panel with tiles for assessments, third parties, ROPA, risk, incidents, subject rights, tasks and the operations centre.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/dashboard-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "One record, every angle.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "One processing record",
+							"body": "Each activity holds its systems, vendors, lawful basis and retention in one place. The ROPA, vendor register and DPIA log become views of the same data, not rivals to it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Change once, reflect everywhere",
+							"body": "Update a retention period on the record and every export, register and dashboard picks it up. There is no second copy to forget.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Provenance you can show",
+							"body": "Every field carries who set it and when, so a challenged value has an answer rather than a shrug.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "One record, one answer. Bring a real example.",
+					"body": "Book a 25-minute demo and bring a processing activity that lives in more than one place. We will show you what it looks like as a single connected record.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "One connected estate, not five tools telling you five different things."
+	},
+	"problem-dpia-follow-through": {
+		"v": 2,
+		"title": "Assessments that land",
+		"slug": "dpia-follow-through",
+		"seo": {
+			"title": "Assessments That Land",
+			"description": "Connect every DPIA to the live risk it identified. Mitigations get owners and deadlines, and the assessment stays attached to the processing it covers.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Your DPIA found the risk. Did anything happen next?",
+					"body": "Too many assessments end as a signed PDF in a folder. Tie each DPIA to the processing activity it assessed and the risks it raised, so mitigations have owners, deadlines and a live status that someone is accountable for.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Every assessment, and where it has got to.",
+					"body": "This is the DPIA Review board. Every assessment sits in a column for not started, in progress, under review or complete, with the total, active and archived counts across the top. Each card carries who raised it, when it was last touched and whether the processing it covers is still live, so you can see which risks have someone working on them and which have stalled since sign-off. Search, filter or export the lot to Excel when the auditor asks.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/dpia-status-screen.png",
+						"alt": "The DPIA Review board showing assessments as cards in columns for not started, in progress, under review and complete, with total, active and archived counts above.",
+						"mime": "image/png",
+						"width": 1920,
+						"height": 1024,
+						"mediaId": null,
+						"webp": "/Images/screenshots/dpia-status-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "From finding to fix.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Risks become tasks",
+							"body": "Each identified risk turns into a mitigation with an owner and a date, routed to the person who can actually close it.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Attached to the record",
+							"body": "The DPIA sits on the processing activity it assessed. Open the record and the assessment, its risks and their status are right there.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Re-assessment triggers",
+							"body": "When the activity changes materially, the platform flags the DPIA for review rather than leaving it to memory.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Turn your last DPIA into tasks with owners.",
+					"body": "Book a demo and bring an assessment you have already signed off. We will show how its risks become tracked mitigations attached to the live record.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Every DPIA tied to the live risk it flagged, not filed and forgotten."
+	},
+	"problem-dsar-overload": {
+		"v": 2,
+		"title": "DSAR overload",
+		"slug": "dsar-overload",
+		"seo": {
+			"title": "DSAR Overload",
+			"description": "Stop manually chasing department leads for data locations. When your estate is connected, locating data subject records takes minutes instead of weeks.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "More than five DSARs a month, and you can't keep up?",
+					"body": "Stop manually chasing department leads for data locations. When your estate is connected to operational systems, locating data subject records takes minutes instead of weeks.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "quote",
+				"type": "quote",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"quote": "“Regulators don't measure good intentions; they measure statutory deadlines.”",
+					"attribution": ""
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Every open request against its statutory clock.",
+					"body": "This is the DSAR Overview. Across the top sit the numbers that matter on a Monday morning: how many requests are open, how many arrived this month, how many are past their statutory deadline or due within seven days, which have extensions running and the share closed inside 30 days. Below that the requests break down by the right being exercised, the channel they came in through, the volume month by month and where identity verification has got to, so you can see the pattern behind the backlog rather than one request at a time.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/dsr-overview-screen.png",
+						"alt": "The DSAR Overview dashboard with counts of open, new, overdue and due-soon requests, the SLA met rate, and charts breaking requests down by right type, monthly volume, intake channel and identity verification status.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/dsr-overview-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The map does the chasing.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Connected estate lookup",
+							"body": "Subject records resolve against live processing activities, systems, and owners — not a scavenger hunt through inboxes.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Routed collection tasks",
+							"body": "Department leads get a precise request for the systems they own, with a timestamped trail back to privacy.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Incident linkage",
+							"body": "If a breach or lost device is in play, the same map shows which processing activities and vendors sit in the blast radius.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "See a DSAR resolved against the map.",
+					"body": "Book a 25-minute demo and watch a subject request go from inbox to located records in less time than it takes to draft the first chase email.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Locate data subject records in minutes instead of weeks."
+	},
+	"problem-shadow-ai": {
+		"v": 2,
+		"title": "Shadow AI",
+		"slug": "shadow-ai",
+		"seo": {
+			"title": "Shadow AI",
+			"description": "Find every AI tool in use across the business, tie it to a processing record and govern it before it ships, not after.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "How many AI tools is your business using that privacy has never seen?",
+					"body": "Teams adopt assistants, transcription tools and copilots faster than any intake form can catch them. Surface every AI tool in use, record what data it touches and attach it to a processing activity, so it is governed before it ships rather than discovered after.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Eight of your forty-two activities are running AI.",
+					"body": "This is the ROPA view filtered by AI capability. Eight processing activities come back, each drawn with the vendors, assets, risks and legal bases already attached to it, so an assistant somebody signed up for in Marketing arrives with its hallucination and data leakage risks on the record rather than in a conversation months later. The panel on the right stacks the conditions: generative AI as the capability, the named vendors behind it, the department functions that own them. The counts on the left tell you what the filter left standing.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/shadowai-screen.png",
+						"alt": "The ROPA view filtered by AI capability, showing eight processing activities as linked node clusters with a filter panel for vendors, assets, risks and legal bases.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/shadowai-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Governed before it ships.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "An AI tool register",
+							"body": "A dedicated register of AI tools, models and their vendors, each tied to the activity it serves and the personal data it processes.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Intake that fits how teams work",
+							"body": "A short, plain-English intake that owners will actually complete, routed to privacy for review before the tool goes live.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Risk flags that follow the tool",
+							"body": "Training on personal data, third-country transfers and automated decisions are flagged on the record, ready for the DPIA.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Find the AI tools nobody told privacy about.",
+					"body": "Book a demo to see the AI register, the intake teams will actually complete, and the risk flags that carry through to the DPIA.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Every AI tool surfaced and tied to its record, not found after it ships."
+	},
+	"problem-stale-ropa": {
+		"v": 2,
+		"title": "The stale ROPA",
+		"slug": "stale-ropa",
+		"seo": {
+			"title": "The Stale ROPA",
+			"description": "Keep the record of processing current between audits. Owners in the business re-confirm their activities as they change, so the ROPA never needs rebuilding.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "When did the business last confirm your Article 30 record was true?",
+					"body": "A ROPA rebuilt in the fortnight before an audit is a snapshot of a rush, not a record of processing. Put confirmation in the hands of the people who own each activity, on a schedule, so the register stays current between audits rather than being reconstructed for them.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "See at a glance which records are still true.",
+					"body": "This is the Visual ROPA View in review status mode. Every processing activity is a node, coloured by where its owner's confirmation stands: green when it is complete, purple while it is under review, red when it has not started. Filter by vendor, asset, risk or legal basis, and the register shows you where to chase next instead of leaving you to hunt through a spreadsheet.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/ropa-freshness-screen.png",
+						"alt": "The Visual ROPA View in review status mode, showing every processing activity as a node with complete, in progress and not started records picked out by colour.",
+						"mime": "image/png",
+						"width": 1920,
+						"height": 1024,
+						"mediaId": null,
+						"webp": "/Images/screenshots/ropa-freshness-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "A register that keeps itself honest.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Owner attestation on a cadence",
+							"body": "Each activity has a named owner who confirms it on a schedule you set. Quarterly for high-risk processing, annually for the rest.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Change-triggered review",
+							"body": "A new system, vendor or purpose flags the record for re-confirmation instead of waiting for the next cycle to come round.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Freshness at a glance",
+							"body": "See which records are current, due and overdue across the estate, and chase by exception rather than by spreadsheet.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "See a ROPA that confirms itself.",
+					"body": "Book a demo to see owner attestation in action: the schedule, the reminders and the freshness view that shows what is current, due and overdue.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Records the business re-confirms as they change, not a register rebuilt at audit."
+	},
+	"problem-training-budget": {
+		"v": 2,
+		"title": "Training that misses the risk",
+		"slug": "training-budget",
+		"seo": {
+			"title": "Culture & Training Alignment",
+			"description": "Align educational initiatives with actual operational risk markers derived from data activities and incident logs.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Stop guessing where your risk actually sits.",
+					"body": "Generic annual privacy training tick-boxes don't prevent data breaches. Align your educational initiatives with actual operational risk markers derived from data activities and incident logs.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The teams that need more than a module.",
+					"body": "This is the culture hot spots grid. Every business function sits against every location, and each cell carries two numbers: the culture score in bold and the participation rate beneath it. Colour runs from green where the score holds up to red where it does not, so a team that looks fine on the company average stops looking fine here. Overlay any two metrics, including incidents and training hours, and the confidence slider drops cells with too few responses to trust. Empty rows and columns hide themselves, so you are reading signal rather than grid.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/culture-screen.png",
+						"alt": "A colour-coded grid of culture scores and participation rates by business function and location, with metric tabs, a two-metric overlay and a confidence slider.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/culture-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Train the gap, not the average.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "CultureLens sentiment",
+							"body": "See where people believe they are strong, and where confidence is running ahead of the evidence.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Operational risk markers",
+							"body": "Incident logs, stale processing, and high-risk activities mark the teams that need more than an annual course.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Education that follows the gap",
+							"body": "Point budget at the cells where high confidence meets high operational risk, not at another generic module.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Point the training budget where the risk actually is.",
+					"body": "Book a demo to see CultureLens sentiment set against operational risk markers, and where the blind spots sit in your business.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Point education at operational weak spots, not generic tick-boxes."
+	},
+	"problem-vendor-drift": {
+		"v": 2,
+		"title": "Vendor risk that goes quiet",
+		"slug": "vendor-drift",
+		"seo": {
+			"title": "Vendor Risk That Goes Quiet",
+			"description": "Vendors watched continuously, not vetted once. Re-attestation schedules, sub-processor tracking and a live link from every processor to the activities it supports.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "You vetted the vendor two years ago. Who has checked since?",
+					"body": "Due diligence at onboarding is a moment. Vendors change sub-processors, move data, get acquired and let certifications lapse. Keep processors on a re-attestation schedule and tie them to the activities they serve, so a change on their side becomes a task on yours.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"showExplainer": false,
+					"video": null,
+					"poster": null,
+					"videoLabel": "",
+					"captions": null,
+					"uploadDate": "",
+					"durationSeconds": "",
+					"showPricingNote": true,
+					"showPager": true
+				}
+			},
+			{
+				"id": "inPlatform",
+				"type": "copy-image",
+				"anchor": "",
+				"hidden": false,
+				"layout": "below",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "The vendors that need you this week.",
+					"body": "This is the third parties requiring attention list. Every processor on it has a reason to be there: a high risk rating, a DPA that is still pending or was never signed, or an assessment that has never happened. Each row shows the business unit that owns the relationship, the current DPA status, when the vendor was last assessed and when the next review falls due, with overdue dates picked out in red. Export it to CSV when procurement or the auditor wants the list.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"media": {
+						"url": "/Images/screenshots/vendor-overview-status-screen.png",
+						"alt": "A table of third parties requiring attention, listing each vendor's category, business unit, risk rating, DPA status, last assessment, next review date and the reason it needs attention.",
+						"mime": "image/png",
+						"width": 2048,
+						"height": 1152,
+						"mediaId": null,
+						"webp": "/Images/screenshots/vendor-overview-status-screen.webp"
+					},
+					"panel": "",
+					"items": []
+				}
+			},
+			{
+				"id": "functionality",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-left",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Onboarding is where it starts, not where it ends.",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"numbered": true,
+					"items": [
+						{
+							"id": "i1",
+							"title": "Re-attestation on a clock",
+							"body": "Every processor carries a review date. Terms, certifications and sub-processor lists are re-confirmed before they go stale, not after.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i2",
+							"title": "Sub-processor changes tracked",
+							"body": "Log each sub-processor a vendor uses and keep the change history, so a quiet move of data to a new region is visible when it happens.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "i3",
+							"title": "Impact you can trace",
+							"body": "A vendor issue shows every processing activity, system and data subject group it touches, so the response is proportionate rather than guessed.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			},
+			{
+				"id": "pricing",
+				"type": "pricing",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "mountain-right",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": []
+				},
+				"data": {
+					"pageHeading": false,
+					"notes": []
+				}
+			},
+			{
+				"id": "cta",
+				"type": "cta",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Put your processors on a clock.",
+					"body": "Book a demo to see re-attestation schedules, sub-processor change tracking and the trace from a vendor issue to every activity it touches.",
+					"buttons": []
+				},
+				"data": {
+					"eyebrow": "",
+					"micro": ""
+				}
+			}
+		],
+		"notes": [],
+		"summary": "Vendors watched continuously, not vetted once and trusted."
+	},
+	"trust": {
+		"v": 2,
+		"title": "Trust & security",
+		"slug": "trust",
+		"seo": {
+			"title": "Security & Trust Center",
+			"description": "Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency.",
+			"keywords": "",
+			"image": null
+		},
+		"hideNavigation": false,
+		"navButton": null,
+		"backgroundImage": null,
+		"popup": null,
+		"blocks": [
+			{
+				"id": "hero",
+				"type": "hero",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "Security & Trust Center",
+					"body": "Built for privacy teams that demand technical rigor, data residency guarantees, and full compliance transparency.",
+					"buttons": [
+						{
+							"label": "Download standard DPA",
+							"url": "/dpa",
+							"style": "",
+							"icon": "",
+							"image": null
+						},
+						{
+							"label": "Book a demo",
+							"url": "/demo",
+							"style": "",
+							"icon": "",
+							"image": null
+						}
+					]
+				},
+				"data": {
+					"eyebrow": "Trust & Security",
+					"showExplainer": false
+				}
+			},
+			{
+				"id": "pillars",
+				"type": "cards",
+				"anchor": "",
+				"hidden": false,
+				"layout": "default",
+				"swap": false,
+				"look": {
+					"background": "none",
+					"wash": false,
+					"align": "left",
+					"headingSize": "default",
+					"headingColour": "auto",
+					"headingBold": false,
+					"imageStyle": "default",
+					"spacing": "normal"
+				},
+				"header": {
+					"logo": null,
+					"heading": "",
+					"body": "",
+					"buttons": [
+						{
+							"label": "Read the standard DPA",
+							"url": "/dpa",
+							"style": "",
+							"icon": "",
+							"image": null
+						}
+					]
+				},
+				"data": {
+					"eyebrow": "Security pillars",
+					"numbered": false,
+					"items": [
+						{
+							"id": "cyber-essentials",
+							"title": "Cyber Essentials Certified",
+							"body": "Fully compliant with UK Government-backed cybersecurity practices to safeguard against common online threats.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "pen-test",
+							"title": "Independent Penetration Testing",
+							"body": "The Platform undergoes regular third-party penetration testing. Executive summaries and remediation logs are available to prospective customers under NDA.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "residency",
+							"title": "UK Data Residency & Encryption",
+							"body": "Customer data is hosted strictly within tier-3 UK data centres, protected by AES-256 encryption at rest and TLS 1.3 in transit.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						},
+						{
+							"id": "contracts",
+							"title": "Contractual Transparency",
+							"body": "Standard Data Processing Addendums (DPA) and security contact protocols are published openly without gating behind sales calls.",
+							"image": null,
+							"buttonText": "",
+							"buttonUrl": "",
+							"selected": false,
+							"iconSize": "",
+							"timestamp": "",
+							"subtitles": ""
+						}
+					]
+				}
+			}
+		],
+		"notes": []
+	}
+}
