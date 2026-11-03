@@ -46,6 +46,8 @@ export function parseRecipientList(raw: string | undefined | null): string[] {
 
 export type DemoNotificationInput = {
 	form: DemoNotificationForm;
+	/** Answers to the questions added in Sorted, in form order; unanswered ones left out. */
+	extraAnswers?: { label: string; value: string }[];
 	/** ISO start and end, as HubSpot confirmed them. */
 	start: string;
 	end: string;
@@ -147,6 +149,23 @@ export function bookingPageUrl(origin: string, path: string | undefined): string
 	}
 }
 
+/**
+ * Where a booking was made, in words: the three Source rows of the team's email, and the same
+ * three values saved on the HubSpot contact — one function, so the two always read the same.
+ */
+export function describeBookingSource(input: Pick<DemoNotificationInput, 'site' | 'bookingPath' | 'from'>): {
+	website: string;
+	bookingPage: string;
+	cameFrom: string;
+} {
+	const host = hostOf(input.site.origin);
+	return {
+		website: host ? `${input.site.name} (${host})` : input.site.name,
+		bookingPage: bookingPageUrl(input.site.origin, input.bookingPath),
+		cameFrom: describeFromPage(input.from)
+	};
+}
+
 function utmLine(utms: DemoUtm): string {
 	const parts = (['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'] as const)
 		.filter((key) => utms[key])
@@ -165,7 +184,8 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 	const campaign = describeCampaign(input.pageUtms);
 	const firstTouch = utmLine(input.utms);
 	const host = hostOf(input.site.origin);
-	const siteLabel = host ? `${input.site.name} (${host})` : input.site.name;
+	const source = describeBookingSource(input);
+	const siteLabel = source.website;
 
 	const subject = `Demo booked on ${host || input.site.name}: ${name}${company ? ` at ${company}` : ''}, ${formatWhen(input.start, TEAM_TIMEZONE)}`;
 
@@ -187,12 +207,13 @@ export function buildDemoNotification(input: DemoNotificationInput): DemoNotific
 		...(form.tooling ? [['Current tooling', form.tooling] as Row] : []),
 		...(form.timing ? [['Timing', form.timing] as Row] : []),
 		...(form.isoGate ? [['ISO / SOC', form.isoGate] as Row] : []),
-		...(form.improve ? [['Wants to improve', form.improve] as Row] : [])
+		...(form.improve ? [['Wants to improve', form.improve] as Row] : []),
+		...(input.extraAnswers ?? []).map(({ label, value }) => [label, value] as Row)
 	];
 	const sourceRows: Row[] = [
-		['Website', siteLabel],
-		['Booking page', bookingPageUrl(input.site.origin, input.bookingPath)],
-		['Came from page', describeFromPage(input.from)],
+		['Website', source.website],
+		['Booking page', source.bookingPage],
+		['Came from page', source.cameFrom],
 		...(campaign ? [['Campaign', campaign] as Row] : []),
 		...(firstTouch ? [['First touch', firstTouch] as Row] : []),
 		...(input.routing

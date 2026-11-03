@@ -18,6 +18,14 @@ export const HUBSPOT_CONTACT_PROPS = {
 	timing: 'pc_eval_timing',
 	isoGate: 'pc_iso_soc_gate',
 	improve: 'pc_improve_notes',
+	/**
+	 * Where the LATEST booking was made — the Source rows of the team's email. Overwritten on
+	 * every booking, unlike the first-touch fields below. Custom properties: they must exist on
+	 * HubSpot Contacts (single-line text) under exactly these names.
+	 */
+	bookingWebsite: 'pc_demo_website',
+	bookingPage: 'pc_demo_booking_page',
+	cameFromPage: 'pc_demo_came_from',
 	/** Stranger Y/N — cold / low-fit inbound vs ICP-shaped lead */
 	stranger: 'pc_stranger',
 	/** SLA bucket from §14.3 stand-in routing */

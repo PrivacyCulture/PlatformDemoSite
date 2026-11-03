@@ -2,6 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { earliestBookableMs, slotIsBookable } from '$lib/booking-lead-time';
 import {
+	DEMO_EXTRA_FIELDS,
 	emptyDemoForm,
 	normalizeDemoForm,
 	validateDemoForm,
@@ -13,6 +14,8 @@ import {
 	routeContact,
 	utmToContactProperties
 } from '$lib/demo/hubspotProperties';
+import { extraAnswerRows, extraHubSpotProperties } from '$lib/demo/extra-fields';
+import { describeBookingSource } from '$lib/demo/notification';
 import { cleanDemoFrom, utmsFromUnknown, type DemoUtm } from '$lib/demo/utm';
 import { notifyDemoBooked } from '$lib/server/demo-notify';
 import {
@@ -23,7 +26,7 @@ import {
 	getBookingLeadDays,
 	mergePreservingOriginalSource,
 	requireMeetingSlug,
-	updateContact
+	updateContactKnownProperties
 } from '$lib/server/hubspot';
 
 type BookBody = {
@@ -49,8 +52,10 @@ function parseForm(raw: Partial<DemoFormValues> | undefined): DemoFormValues {
 	if (!raw || typeof raw !== 'object') return base;
 	for (const key of Object.keys(base) as (keyof DemoFormValues)[]) {
 		const value = raw[key];
-		if (typeof value === 'string') base[key] = value;
+		if (key !== 'extra' && typeof value === 'string') base[key] = value;
 	}
+	// Normalised against the questions on the form NOW: an answer to one not there is dropped.
+	base.extra = (raw.extra ?? {}) as DemoFormValues['extra'];
 	return normalizeDemoForm(base);
 }
 
@@ -117,6 +122,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 
 	try {
 		const slug = requireMeetingSlug();
+		const extraProperties = extraHubSpotProperties(DEMO_EXTRA_FIELDS, form.extra);
 		const booking = await bookMeeting(
 			{
 				slug,
@@ -130,6 +136,9 @@ export const POST: RequestHandler = async ({ request, url }) => {
 				// contact patch below uses, so the two can never drift. bookMeeting keeps only
 				// the ones this meeting link actually declares.
 				fieldValues: {
+					// Questions added in Sorted first, so none of the fixed answers below can be
+					// replaced by one (their names are refused there as well).
+					...extraProperties,
 					[HUBSPOT_CONTACT_PROPS.company]: form.company,
 					[HUBSPOT_CONTACT_PROPS.phone]: form.phone,
 					// "What do you do?" is the question HubSpot's own jobtitle field asks.
@@ -147,22 +156,44 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		const contactId = booking.contactId != null ? String(booking.contactId) : null;
 		const routing = routeContact(form, utms);
 		if (contactId) {
+			const source = describeBookingSource({ site: { name: SITE_NAME, origin: url.origin }, bookingPath, from });
 			const incoming = {
+				// Questions added in Sorted first, so none of the fixed answers below can be
+				// replaced by one (their names are refused there as well).
+				...extraProperties,
 				...formToContactProperties(form),
 				...utmToContactProperties(utms),
 				...routing.properties,
-				...(routing.hubspotOwnerId ? { hubspot_owner_id: routing.hubspotOwnerId } : {})
+				...(routing.hubspotOwnerId ? { hubspot_owner_id: routing.hubspotOwnerId } : {}),
+				// Where this booking was made, as the team's email words it.
+				[HUBSPOT_CONTACT_PROPS.bookingWebsite]: source.website,
+				[HUBSPOT_CONTACT_PROPS.bookingPage]: source.bookingPage,
+				[HUBSPOT_CONTACT_PROPS.cameFromPage]: source.cameFrom
 			};
 
+			// First touch is never overwritten. If the contact cannot be read to check, the
+			// first-touch fields are left out rather than risk replacing an older source.
+			let merged: Record<string, string>;
 			try {
 				const existing = await getContact(contactId, [...PRESERVE_SOURCE_KEYS]);
-				const merged = mergePreservingOriginalSource(
-					existing.properties ?? {},
-					incoming,
-					PRESERVE_SOURCE_KEYS
+				merged = mergePreservingOriginalSource(existing.properties ?? {}, incoming, PRESERVE_SOURCE_KEYS);
+			} catch (readErr) {
+				console.error('[demo/book] could not read the contact; first-touch fields left out', readErr);
+				merged = Object.fromEntries(
+					Object.entries(incoming).filter(([k]) => !(PRESERVE_SOURCE_KEYS as readonly string[]).includes(k))
 				);
-				if (Object.keys(merged).length) {
-					await updateContact(contactId, merged);
+			}
+
+			// Everything HubSpot will take is saved; a property not yet created there (or a value
+			// it will not accept) is left out and named in the log. The booking stands either way,
+			// and every answer is in the team's email.
+			try {
+				const result = await updateContactKnownProperties(contactId, merged);
+				if (result.skipped.length) {
+					console.warn(
+						'[demo/book] HubSpot did not take these contact properties, so their values were not saved:',
+						result.skipped.map((p) => `${p.name} (${p.code})`).join(', ')
+					);
 				}
 			} catch (patchErr) {
 				// Booking succeeded — log property sync failure but still confirm to the user.
@@ -177,6 +208,7 @@ export const POST: RequestHandler = async ({ request, url }) => {
 		// on, or hear about, a mail service.
 		void notifyDemoBooked({
 			form,
+			extraAnswers: extraAnswerRows(DEMO_EXTRA_FIELDS, form.extra),
 			start,
 			end,
 			timezone: booking.bookingTimezone ?? timezone,

@@ -4,6 +4,13 @@
  * `demoForm`.
  */
 import { live } from '$lib/content/runtime';
+import {
+	normalizeExtraAnswers,
+	parseExtraFields,
+	validateExtraAnswers,
+	type DemoExtraAnswers,
+	type DemoExtraField
+} from './extra-fields';
 
 export const DEMO_ROLES: readonly string[] = live((c) => c.demoForm.options.roles, 'array');
 export const EMPLOYEE_BANDS: readonly string[] = live(
@@ -15,6 +22,19 @@ export const TIMING_OPTIONS: readonly string[] = live((c) => c.demoForm.options.
 export const ISO_GATE_OPTIONS: readonly string[] = live((c) => c.demoForm.options.isoGate, 'array');
 
 const messages = live((c) => c.demoForm.errors);
+
+/** Questions added in Sorted, drawn after the fixed ones. See ./extra-fields. */
+export const DEMO_EXTRA_FIELDS: readonly DemoExtraField[] = live(
+	(c) => parseExtraFields(c.demoForm.extraFields),
+	'array'
+);
+
+function extraMessages() {
+	return {
+		required: messages.fieldRequired || 'This is required.',
+		invalid: messages.fieldInvalid || 'Choose an option from the list.'
+	};
+}
 
 export const FREE_EMAIL_DOMAINS = new Set([
 	'gmail.com',
@@ -55,9 +75,14 @@ export type DemoFormValues = {
 	isoGate: string;
 	improve: string;
 	phone: string;
+	/** Answers to the questions added in Sorted, keyed by question id. */
+	extra: DemoExtraAnswers;
 };
 
-export type DemoFormErrors = Partial<Record<keyof DemoFormValues, string>>;
+export type DemoFormErrors = Partial<Record<Exclude<keyof DemoFormValues, 'extra'>, string>> & {
+	/** Keyed by question id. */
+	extra?: Record<string, string>;
+};
 
 export const emptyDemoForm = (): DemoFormValues => ({
 	firstName: '',
@@ -70,7 +95,8 @@ export const emptyDemoForm = (): DemoFormValues => ({
 	timing: '',
 	isoGate: '',
 	improve: '',
-	phone: ''
+	phone: '',
+	extra: {}
 });
 
 export function isWorkEmail(email: string): boolean {
@@ -122,6 +148,9 @@ export function validateDemoForm(values: DemoFormValues): DemoFormErrors {
 		errors.isoGate = messages.isoGateInvalid;
 	}
 
+	const extra = validateExtraAnswers(DEMO_EXTRA_FIELDS, values.extra ?? {}, extraMessages());
+	if (Object.keys(extra).length) errors.extra = extra;
+
 	return errors;
 }
 
@@ -137,6 +166,7 @@ export function normalizeDemoForm(values: DemoFormValues): DemoFormValues {
 		timing: values.timing.trim(),
 		isoGate: values.isoGate.trim(),
 		improve: values.improve.trim(),
-		phone: values.phone.trim()
+		phone: values.phone.trim(),
+		extra: normalizeExtraAnswers(DEMO_EXTRA_FIELDS, values.extra)
 	};
 }
