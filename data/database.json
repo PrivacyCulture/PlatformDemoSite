@@ -2266,7 +2266,9 @@
 			"toolingInvalid": "Choose current tooling.",
 			"timingRequired": "Timing is required.",
 			"timingInvalid": "Choose a timing option.",
-			"isoGateInvalid": "Choose an option."
+			"isoGateInvalid": "Choose an option.",
+			"fieldRequired": "This is required.",
+			"fieldInvalid": "Choose an option from the list."
 		},
 		"calendar": {
 			"timezoneLabel": "Your timezone",

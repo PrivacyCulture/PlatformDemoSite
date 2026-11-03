@@ -194,7 +194,12 @@ export type CustomPage = {
 
 type Raw = typeof raw;
 
-export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site'> & {
+export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site' | 'demoForm'> & {
+	/**
+	 * `extraFields` is the list of questions added in Sorted. Not in the fallback file (an empty
+	 * list there would type as never[]), read through parseExtraFields in $lib/demo/extra-fields.
+	 */
+	demoForm: Raw['demoForm'] & { extraFields?: unknown };
 	site: Omit<Raw['site'], 'nav'> & {
 		nav: Omit<Raw['site']['nav'], 'links'> & { links: NavLink[] };
 	};

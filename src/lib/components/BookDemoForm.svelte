@@ -1,5 +1,6 @@
 <script lang="ts">
 	import {
+		DEMO_EXTRA_FIELDS,
 		DEMO_ROLES,
 		EMPLOYEE_BANDS,
 		TIMING_OPTIONS,
@@ -10,6 +11,7 @@
 		type DemoFormValues
 	} from '$lib/demo/fields';
 	import { demoForm } from '$lib/content';
+	import { CHECKBOX_YES, emptyExtraAnswers } from '$lib/demo/extra-fields';
 
 	const L = demoForm.fields;
 
@@ -24,7 +26,12 @@
 	} = $props();
 
 	// svelte-ignore state_referenced_locally
-	let values = $state<DemoFormValues>({ ...seed });
+	// Every added question gets an answer slot, so a question added since the seed was made still
+	// binds — and one removed since is dropped by normalizeDemoForm on the server.
+	let values = $state<DemoFormValues>({
+		...seed,
+		extra: { ...emptyExtraAnswers(DEMO_EXTRA_FIELDS), ...(seed.extra ?? {}) }
+	});
 	let errors = $state<DemoFormErrors>({});
 	let submitted = $state(false);
 
@@ -51,7 +58,15 @@
 		onQualified({ ...values });
 	}
 
-	function blurValidate(key: keyof DemoFormValues) {
+	function blurValidateExtra(id: string) {
+		if (!submitted) return;
+		const message = validateDemoForm(values).extra?.[id];
+		const { [id]: _, ...rest } = errors.extra ?? {};
+		const extra = message ? { ...rest, [id]: message } : rest;
+		errors = { ...errors, extra: Object.keys(extra).length ? extra : undefined };
+	}
+
+	function blurValidate(key: Exclude<keyof DemoFormValues, 'extra'>) {
 		if (!submitted) return;
 		const next = validateDemoForm(values);
 		if (next[key]) errors = { ...errors, [key]: next[key] };
@@ -192,6 +207,73 @@
 			<span class={errorClass}>{errors.timing}</span>
 		{/if}
 	</label>
+
+	{#each DEMO_EXTRA_FIELDS as f (f.id)}
+		{@const error = errors.extra?.[f.id]}
+		{#if f.type === 'checkbox'}
+			<div>
+				<label class="{labelClass} flex cursor-pointer items-start gap-2.5">
+					<input
+						type="checkbox"
+						class="mt-0.5 h-4 w-4 shrink-0 cursor-pointer accent-lens"
+						checked={values.extra[f.id] === CHECKBOX_YES}
+						onchange={(e) => {
+							values.extra[f.id] = e.currentTarget.checked ? CHECKBOX_YES : '';
+							blurValidateExtra(f.id);
+						}}
+						aria-invalid={Boolean(error)}
+					/>
+					<span>
+						{f.label}
+						{#if !f.required}<span class={hintClass}> {L.optional}</span>{/if}
+					</span>
+				</label>
+				{#if error}
+					<span class={errorClass}>{error}</span>
+				{/if}
+			</div>
+		{:else}
+			<label class={labelClass}>
+				{f.label}
+				{#if !f.required}<span class={hintClass}> {L.optional}</span>{/if}
+				{#if f.type === 'select'}
+					<select
+						class="{fieldClass} cursor-pointer"
+						bind:value={values.extra[f.id]}
+						onblur={() => blurValidateExtra(f.id)}
+						aria-invalid={Boolean(error)}
+					>
+						<option value="" disabled={f.required}>{f.placeholder || 'Choose…'}</option>
+						{#each f.options as option, i (i)}
+							<option value={option}>{option}</option>
+						{/each}
+					</select>
+				{:else if f.type === 'textarea'}
+					<textarea
+						class="{fieldClass} min-h-[5.5rem] py-2"
+						rows="3"
+						maxlength="2000"
+						placeholder={f.placeholder}
+						bind:value={values.extra[f.id]}
+						onblur={() => blurValidateExtra(f.id)}
+						aria-invalid={Boolean(error)}
+					></textarea>
+				{:else}
+					<input
+						class={fieldClass}
+						maxlength="2000"
+						placeholder={f.placeholder}
+						bind:value={values.extra[f.id]}
+						onblur={() => blurValidateExtra(f.id)}
+						aria-invalid={Boolean(error)}
+					/>
+				{/if}
+				{#if error}
+					<span class={errorClass}>{error}</span>
+				{/if}
+			</label>
+		{/if}
+	{/each}
 
 	<label class={labelClass}>
 		{L.improve}

@@ -1,6 +1,7 @@
 import { env } from '$env/dynamic/private';
 import { normaliseLeadDays } from '../booking-lead-time';
 import { parseRecipientList } from '../demo/notification';
+import { sendWithoutRefused, type PropertyUpdateResult } from '../demo/hubspot-invalid-properties';
 import {
 	selectMeetingFormFields,
 	type MeetingFieldValues,
@@ -402,6 +403,28 @@ export async function updateContact(
 			body: JSON.stringify({ properties })
 		}
 	);
+}
+
+/** Properties HubSpot said it does not have, remembered for a while so later bookings skip them. */
+const missingProperties = new Map<string, number>();
+const MISSING_PROPERTY_TTL_MS = 10 * 60_000;
+
+/**
+ * Updates a contact with every property HubSpot will take, and leaves out the rest — see
+ * sendWithoutRefused. HubSpot refuses the WHOLE update when one property does not exist or one
+ * value is not allowed, so a site deployed before its properties are created in HubSpot would
+ * otherwise save nothing. A property found missing is skipped up front for ten minutes, then
+ * tried again, so creating it in HubSpot starts working within that time with no deploy.
+ */
+export function updateContactKnownProperties(
+	contactId: string,
+	properties: Record<string, string>
+): Promise<PropertyUpdateResult> {
+	const now = Date.now();
+	return sendWithoutRefused(properties, (props) => updateContact(contactId, props), {
+		skip: (name) => (missingProperties.get(name) ?? 0) > now,
+		onMissing: (name) => missingProperties.set(name, now + MISSING_PROPERTY_TTL_MS)
+	});
 }
 
 /**
