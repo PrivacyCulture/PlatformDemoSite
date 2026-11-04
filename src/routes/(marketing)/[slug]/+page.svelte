@@ -14,6 +14,10 @@
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import { pageTitle } from '$lib/content';
 	import { rich, plain } from '$lib/site/rich';
+	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import { explainerFor } from '$lib/site/explainer';
+	import { explainerVideoNode } from '$lib/site/aeo';
+	import { page as route } from '$app/state';
 
 	import ProblemPage from '$lib/components/site/ProblemPage.svelte';
 
@@ -27,6 +31,12 @@
 			.find((img) => !!img?.src) ?? null
 	);
 	const sections = $derived(page.sections.filter((s) => s.template !== 'text' || s.title.trim() || s.body.trim()));
+	// Only the page's OWN film (or thumbnail): a page made in the CMS never shows the default video.
+	const showExplainer = $derived(!!(page.explainer?.src?.trim() || page.explainer?.poster?.trim()));
+	const explainer = $derived(explainerFor(page));
+	const videoNode = $derived(
+		showExplainer && !explainer.image ? explainerVideoNode(route.url.origin, route.url.pathname, explainer, route.data?.videoTranscript) : null
+	);
 </script>
 
 {#if data.problemHref}
@@ -42,6 +52,7 @@
 	imageHeight={firstImage?.height}
 	imageAlt={firstImage?.alt}
 	heading={plain(page.title)}
+	schema={videoNode ? [videoNode] : undefined}
 />
 
 <div class="w-full pt-6 sm:pt-10">
@@ -54,6 +65,12 @@
 			<p class="mt-6 max-w-[62ch] text-[17px] leading-relaxed font-light text-ink/70">{@html rich(page.intro)}</p>
 		{/if}
 	</header>
+
+	{#if showExplainer}
+		<section class="mt-10 max-w-[52rem]" data-block-id="explainer">
+			<ExplainerVideo compact {...explainer} />
+		</section>
+	{/if}
 
 	{#if sections.length}
 		<div class="mt-12 max-w-[44rem] space-y-10">

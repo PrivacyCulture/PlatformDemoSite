@@ -190,6 +190,10 @@ export type CustomPage = {
 	sections: AddedSection[];
 	/** The house demo CTA. Blank lines fall back to `site.demoCta`. */
 	cta: { eyebrow: string; title: string; body: string; micro: string };
+	/** An explainer video under the introduction (`src`, `poster`, `captions`, `label`, `chapters`,
+	 *  `uploadDate`, `durationSeconds`), read by `explainerFor`. Absent, or with neither a file nor a
+	 *  thumbnail, the page shows none — a page made in the CMS never borrows the default video. */
+	explainer?: Record<string, string>;
 };
 
 type Raw = typeof raw;
