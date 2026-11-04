@@ -151,10 +151,11 @@ function explainer(target: Rec, d: Rec): void {
 	const src = str(rec(d.video).url);
 	const poster = str(rec(d.poster).url);
 	const captions = str(rec(d.captions).url);
+	const chapters = str(rec(d.chapters).url);
 	const label = str(d.videoLabel);
 	const uploadDate = str(d.uploadDate);
 	const duration = str(d.durationSeconds);
-	if (!src && !poster && !captions && !label && !uploadDate && !duration && !isRec(target.explainer)) return;
+	if (!src && !poster && !captions && !chapters && !label && !uploadDate && !duration && !isRec(target.explainer)) return;
 	const out: Rec = clone(before);
 	const set = (k: string, v: string) => {
 		if (v || k in out) out[k] = v;
@@ -162,6 +163,8 @@ function explainer(target: Rec, d: Rec): void {
 	set('src', src);
 	set('poster', poster);
 	set('captions', captions);
+	// The chapter player's file (a film from the Explainer Studio). Cleared with the video it came with.
+	set('chapters', chapters);
 	set('label', label);
 	set('uploadDate', uploadDate);
 	if (duration) out.durationSeconds = /^\d+(\.\d+)?$/.test(duration) && typeof before.durationSeconds === 'number' ? Number(duration) : duration;

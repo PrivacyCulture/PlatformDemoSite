@@ -24,6 +24,11 @@ explainer video (or the default in Site globals): Sorted copies the film into th
 makes a still per chapter and writes the chapter file, then fills the video, thumbnail, chapters,
 length and date fields. Without a `chapters` value the explainer plays inline exactly as before.
 
+A page edited in Sorted's page builder carries the same choice on its hero block (`data.chapters`), and
+`applyBlockPages` (`src/lib/site/block-pages.ts`) writes it onto the page's `explainer.chapters` — and
+clears it when the hero's video has no chapter file. Deploy this before Sorted, or a block page's
+chapters are dropped on the way to the page (it still plays, inline).
+
 The chapter file is on Azure blob storage, which a browser `fetch` cannot read across origins, so the
 player reads it through `/api/explainer-chapters?url=…`. That route only serves an address the
 site's own content names in a `chapters` field.
