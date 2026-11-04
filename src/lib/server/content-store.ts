@@ -124,6 +124,13 @@ function uniqueIds<T extends { id: string }>(items: T[]): T[] {
 	});
 }
 
+/** A page's explainer, strings only — anything else in it is dropped rather than drawn. */
+function explainerStrings(v: Record<string, unknown>): Record<string, string> {
+	const out: Record<string, string> = {};
+	for (const k of ['src', 'poster', 'captions', 'label', 'chapters', 'uploadDate', 'durationSeconds']) if (typeof v[k] === 'string') out[k] = v[k] as string;
+	return out;
+}
+
 /**
  * Pages created in the CMS. Coerced item by item rather than validated as a whole: one malformed
  * page must cost only that page, never the rest of the site's fresh content.
@@ -150,7 +157,8 @@ function validCustomPages(v: unknown): CustomPage[] {
 			// a repeated key would throw during hydration and take the site's router down with it.
 			// Each section is coerced to its template's shape; one the site does not draw is dropped.
 			sections: uniqueIds(sections.flatMap((s, i) => { const a = addedSection({ ...s, id: str(s.id) || `section-${i + 1}` }); return a ? [a] : []; })),
-			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) }
+			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) },
+			...(isObject(p.explainer) ? { explainer: explainerStrings(p.explainer) } : {})
 		});
 	}
 	return out;
