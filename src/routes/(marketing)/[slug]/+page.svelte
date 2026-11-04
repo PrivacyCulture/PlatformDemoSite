@@ -99,13 +99,15 @@
 		</div>
 	{/if}
 
-	<section class="mt-16 sm:mt-24" data-block-id="cta">
-		<DemoCtaBlock
-			eyebrow={page.cta.eyebrow || undefined}
-			title={page.cta.title || undefined}
-			body={page.cta.body || undefined}
-			micro={page.cta.micro || undefined}
-		/>
-	</section>
+	{#if page.showCta !== false}
+		<section class="mt-16 sm:mt-24" data-block-id="cta">
+			<DemoCtaBlock
+				eyebrow={page.cta.eyebrow || undefined}
+				title={page.cta.title || undefined}
+				body={page.cta.body || undefined}
+				micro={page.cta.micro || undefined}
+			/>
+		</section>
+	{/if}
 </div>
 {/if}
