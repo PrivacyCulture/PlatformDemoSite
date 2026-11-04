@@ -140,6 +140,32 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 }
 
 {
+	// A film from the Explainer Studio: the hero's chapter file reaches the page's explainer, and goes with it.
+	const withFilm = edit('platform', (p) => {
+		const d = block(p, 'hero').data as Rec;
+		d.showExplainer = true;
+		d.video = { url: '/media/film.mp4', alt: '', mime: 'video/mp4', width: null, height: null, mediaId: null };
+		d.chapters = { url: '/media/film-chapters.json', alt: '', mime: 'application/json', width: null, height: null, mediaId: null };
+	});
+	const e1 = (pagesOf(withFilm).platform as Rec).explainer as Rec;
+	check(e1.src === '/media/film.mp4' && e1.chapters === '/media/film-chapters.json', 'a hero film with chapters writes both onto the page’s explainer');
+	const without = edit('platform', (p) => {
+		const d = block(p, 'hero').data as Rec;
+		d.showExplainer = true;
+		d.video = { url: '/media/other.mp4', alt: '', mime: 'video/mp4', width: null, height: null, mediaId: null };
+		d.chapters = { url: '/media/film-chapters.json', alt: '', mime: 'application/json', width: null, height: null, mediaId: null };
+	});
+	const cleared = edit('platform', (p) => {
+		const d = block(p, 'hero').data as Rec;
+		d.showExplainer = true;
+		d.video = { url: '/media/other.mp4', alt: '', mime: 'video/mp4', width: null, height: null, mediaId: null };
+		d.chapters = null;
+	});
+	check(!!((pagesOf(without).platform as Rec).explainer as Rec).chapters, 'sanity: the chapters are written while set');
+	check(!(((pagesOf(cleared).platform as Rec).explainer as Rec).chapters), 'no chapter file is left on a video that has none');
+}
+
+{
 	// The problems list owns the order of the problem pages and the line under each.
 	const items = (content.problems as Rec).items as Rec[];
 	const [first, second] = items.map((i) => i.slug as string);
