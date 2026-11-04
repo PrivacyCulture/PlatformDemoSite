@@ -28,6 +28,9 @@ export type ExplainerProps = {
 	 *  a video is chosen from its library. */
 	uploadDate: string;
 	durationSeconds: string;
+	/** A chapter file (a film chosen from Sorted's Explainer Studio), or ''. Set, the explainer opens
+	 *  the full-screen chapter player instead of playing inline. Follows the FILE, like the thumbnail. */
+	chapters: string;
 };
 
 const str = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
@@ -39,11 +42,11 @@ export function explainerFor(page: unknown): ExplainerProps {
 	const own = rec && typeof rec === 'object' ? rec : {};
 	const src = str(own.src);
 	const poster = str(own.poster);
-	if (!src && poster) return { src: '', poster, captions: '', label: str(own.label), image: true, uploadDate: '', durationSeconds: '' };
+	if (!src && poster) return { src: '', poster, captions: '', label: str(own.label), image: true, uploadDate: '', durationSeconds: '', chapters: '' };
 	const label = str(own.label) || site.video.label;
-	const video = site.video as { uploadDate?: unknown; durationSeconds?: unknown };
+	const video = site.video as { uploadDate?: unknown; durationSeconds?: unknown; chapters?: unknown };
 	const defaultMeta = { uploadDate: str(video.uploadDate), durationSeconds: num(video.durationSeconds) };
-	if (!src) return { src: site.video.src, poster: site.video.poster, captions: site.video.captions, label, image: false, ...defaultMeta };
+	if (!src) return { src: site.video.src, poster: site.video.poster, captions: site.video.captions, label, image: false, ...defaultMeta, chapters: str(video.chapters) };
 	// A page that names the default file is showing the default film, so its date is the default's
 	// unless the page gives its own.
 	const borrowed = src === site.video.src ? defaultMeta : { uploadDate: '', durationSeconds: '' };
@@ -54,6 +57,8 @@ export function explainerFor(page: unknown): ExplainerProps {
 		label,
 		image: false,
 		uploadDate: str(own.uploadDate) || borrowed.uploadDate,
-		durationSeconds: num(own.durationSeconds) || borrowed.durationSeconds
+		durationSeconds: num(own.durationSeconds) || borrowed.durationSeconds,
+		// A page naming the default file shows the default's chapters unless it has its own.
+		chapters: str(own.chapters) || (src === site.video.src ? str(video.chapters) : '')
 	};
 }

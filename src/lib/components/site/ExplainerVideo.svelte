@@ -2,6 +2,7 @@
 	import { site } from '$lib/site/content';
 	import { asset } from '$lib/content/assets';
 	import { SIZES, imageAtWidth, responsive } from '$lib/site/images';
+	import ChapterPlayer from './ChapterPlayer.svelte';
 
 	let {
 		src = site.video.src,
@@ -13,6 +14,8 @@
 		compact = false,
 		// A still in place of the video: the page has a thumbnail and no file of its own.
 		image = false,
+		// A chapter file from Sorted: play opens the full-screen chapter player instead of playing here.
+		chapters = '',
 		open = $bindable(false)
 	}: {
 		src?: string;
@@ -21,8 +24,12 @@
 		captions?: string;
 		compact?: boolean;
 		image?: boolean;
+		chapters?: string;
 		open?: boolean;
 	} = $props();
+
+	let playerOpen = $state(false);
+	const chaptered = $derived(!image && !!chapters?.trim());
 
 	let videoEl = $state<HTMLVideoElement | null>(null);
 	let zoomEl = $state<HTMLDialogElement | null>(null);
@@ -51,6 +58,11 @@
 	 */
 	export function play() {
 		if (image) return;
+		if (chaptered) {
+			playerOpen = true;
+			open = true;
+			return;
+		}
 		started = true;
 		open = true;
 		const video = videoEl;
@@ -71,9 +83,14 @@
 	}
 
 	$effect(() => {
-		if (!open || !videoEl || started) return;
+		if (!open || !videoEl || started || playerOpen) return;
 		play();
 	});
+
+	function closePlayer() {
+		playerOpen = false;
+		open = false;
+	}
 </script>
 
 <div class="w-full" id={compact ? 'overview' : undefined}>
@@ -156,7 +173,7 @@
 			class="block aspect-video w-full rounded-[inherit] bg-transparent object-cover"
 			{src}
 			poster={posterUrl ? imageAtWidth(posterUrl, 1440) : undefined}
-			controls={started || touch}
+			controls={!chaptered && (started || touch)}
 			playsinline
 			preload="metadata"
 			aria-label={label}
@@ -175,7 +192,7 @@
 			<track kind="captions" src={captions || undefined} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
 		</video>
 
-		{#if !started && !touch}
+		{#if !started && (!touch || chaptered)}
 			<button
 				type="button"
 				onclick={play}
@@ -184,6 +201,19 @@
 			></button>
 		{/if}
 	</div>
+
+	{#if playerOpen}
+		<ChapterPlayer
+			{src}
+			chaptersUrl={`/api/explainer-chapters?url=${encodeURIComponent(chapters.trim())}`}
+			poster={posterUrl ? imageAtWidth(posterUrl, 1920) : ''}
+			{captions}
+			captionsLang={site.video.captionsLang}
+			captionsLabel={site.video.captionsLabel}
+			title={label}
+			onclose={closePlayer}
+		/>
+	{/if}
 
 	{#if started}
 		<p class="mt-3 text-[14px] font-semibold tracking-wide text-lens">{label}</p>
