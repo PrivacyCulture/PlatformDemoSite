@@ -140,6 +140,25 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 }
 
 {
+	// A page made in Sorted: removing its CTA block in the builder takes the Next step box off the page.
+	const withCustom = { ...content, customPages: [{ slug: 'made-here', meta: { title: 'Made here', description: '' }, eyebrow: '', title: 'Made here', intro: '', sections: [], cta: { eyebrow: '', title: '', body: '', micro: '' } }] } as Rec;
+	const base = JSON.parse(JSON.stringify(served.platform)) as Rec;
+	const hero = JSON.parse(JSON.stringify(block(base, 'hero'))) as Rec;
+	const ctaBlock = { ...JSON.parse(JSON.stringify(hero)), id: 'cta', type: 'cta', header: { ...(hero.header as Rec), heading: 'Talk to us', body: 'Soon', buttons: [] }, data: { eyebrow: 'Next', micro: '' } } as Rec;
+	const page = (bs: Rec[]) => ({ ...base, slug: 'made-here', blocks: bs });
+	const customOf = (c: Rec) => (c.customPages as Rec[]).find((p) => p.slug === 'made-here') as Rec;
+	const without = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page([hero]) })) as Rec);
+	check(without.showCta === false, 'a page made in Sorted with its CTA block removed draws no CTA');
+	const withCta = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page([hero, ctaBlock]) })) as Rec);
+	check(!('showCta' in withCta) && (withCta.cta as Rec).title === 'Talk to us', 'with the CTA block it draws the CTA, with its words');
+	const videoHero = { ...hero, data: { ...(hero.data as Rec), showExplainer: true, video: { url: '/media/film.mp4', alt: '', mime: 'video/mp4', width: null, height: null, mediaId: null }, chapters: { url: '/media/c.json', alt: '', mime: 'application/json', width: null, height: null, mediaId: null } } };
+	const withVideo = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page([videoHero]) })) as Rec);
+	check(((withVideo.explainer as Rec | undefined)?.src) === '/media/film.mp4' && (withVideo.explainer as Rec).chapters === '/media/c.json', 'the hero’s own video and chapters reach a page made in Sorted');
+	const off = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page([{ ...videoHero, data: { ...(videoHero.data as Rec), showExplainer: false } }]) })) as Rec);
+	check(!((off.explainer as Rec | undefined)?.src), 'with the explainer switched off, the page shows no video');
+}
+
+{
 	// A film from the Explainer Studio: the hero's chapter file reaches the page's explainer, and goes with it.
 	const withFilm = edit('platform', (p) => {
 		const d = block(p, 'hero').data as Rec;

@@ -158,6 +158,7 @@ function validCustomPages(v: unknown): CustomPage[] {
 			// Each section is coerced to its template's shape; one the site does not draw is dropped.
 			sections: uniqueIds(sections.flatMap((s, i) => { const a = addedSection({ ...s, id: str(s.id) || `section-${i + 1}` }); return a ? [a] : []; })),
 			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) },
+			...(p.showCta === false ? { showCta: false } : {}),
 			...(isObject(p.explainer) ? { explainer: explainerStrings(p.explainer) } : {})
 		});
 	}

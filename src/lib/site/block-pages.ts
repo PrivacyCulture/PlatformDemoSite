@@ -600,6 +600,8 @@ function applyCustom(copy: Rec, page: BlockPage): void {
 		copy.eyebrow = str(hero.data.eyebrow);
 		copy.title = hero.header.heading || str(copy.title);
 		copy.intro = hero.header.body;
+		// The page's own video (a page made in Sorted never borrows the default); off = none.
+		explainer(copy, hero.data.showExplainer === true ? hero.data : { ...hero.data, video: null, poster: null });
 	}
 	const sections: Rec[] = [];
 	for (const b of page.blocks) {
@@ -609,7 +611,10 @@ function applyCustom(copy: Rec, page: BlockPage): void {
 	}
 	copy.sections = sections;
 	const cta = byId(page, 'cta', 'cta');
-	if (cta) copy.cta = { ...rec(copy.cta), eyebrow: str(cta.data.eyebrow), title: cta.header.heading, body: cta.header.body, micro: str(cta.data.micro) };
+	if (cta) {
+		copy.cta = { ...rec(copy.cta), eyebrow: str(cta.data.eyebrow), title: cta.header.heading, body: cta.header.body, micro: str(cta.data.micro) };
+		delete copy.showCta;
+	} else copy.showCta = false; // removed in the builder: the route would otherwise draw the default box
 }
 
 /**
