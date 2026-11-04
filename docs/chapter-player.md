@@ -13,7 +13,7 @@ slim control bar and a progress bar in one segment per chapter.
 | `scripts/test-chapter-player.ts` | Tests: `npx tsx scripts/test-chapter-player.ts` |
 
 The `<video>` element's `currentTime` is the only source of truth. The current chapter, each
-segment's fill, the numbered circles, the title, the time and the toast are all derived from it, so
+segment's fill, the numbered circles, the title and the time are all derived from it, so
 nothing on screen can disagree with the picture.
 
 ## Where it is used
@@ -84,7 +84,12 @@ With focus anywhere in the player:
 Every control is a real `<button>` with an `aria-label`. The progress bar is a native range input
 (`aria-label="Seek"`, its value read as "1:05 of 5:12, chapter 3: …"). The numbered circles are an
 ordered list; the current one has `aria-current="step"`. Chapter changes are announced through a
-polite live region.
+polite live region — and only there: nothing is drawn over the picture when the chapter changes,
+since the bar's title and circles already say where you are.
+
+**Loop** (the arrows button beside Captions, `aria-pressed`) plays the film round again from the
+start instead of stopping at the end. The choice is remembered per browser
+(`localStorage` `pcl-platform:chapterPlayerLoop:v1`); off by default.
 
 ## Touch
 
@@ -103,7 +108,7 @@ All set on `.cp` and overridable by a page. Times are read once on open.
 | `--cp-accent` | `--color-lens` (#009bcc) | Progress, current chapter |
 | `--cp-focus` | `--color-gold` (#d4af6a) | Focus outline |
 | `--cp-track`, `--cp-track-hot`, `--cp-done` | translucent bone | Unplayed segment, hovered segment, chapters already watched |
-| `--cp-scrim`, `--cp-surface`, `--cp-surface-border`, `--cp-btn-hover` | | Bar gradient, tooltip/toast/card surfaces |
+| `--cp-scrim`, `--cp-surface`, `--cp-surface-border`, `--cp-btn-hover` | | Bar gradient, tooltip/card surfaces |
 | `--cp-progress-height` | `3px` | The visible bar |
 | `--cp-progress-hit` | `20px` | Its pointer target |
 | `--cp-segment-gap` | `2px` | Between segments |
@@ -115,10 +120,9 @@ All set on `.cp` and overridable by a page. Times are read once on open.
 | `--cp-tip-width`, `--cp-preview-width`, `--cp-radius` | `224px`, `320px`, `10px` | Tooltip, phone card |
 | `--cp-fade` | `200ms` | Every transition |
 | `--cp-autohide-delay` | `3s` | Controls hide this long after the last activity, while playing |
-| `--cp-toast-duration` | `2.4s` | Chapter-change toast |
 | `--cp-hold-delay` | `450ms` | Tap-and-hold for the preview card |
 
-`prefers-reduced-motion: reduce` removes every transition and animation: controls, toast and
+`prefers-reduced-motion: reduce` removes every transition and animation: controls and
 tooltips show and hide instantly.
 
 ## Chapter file

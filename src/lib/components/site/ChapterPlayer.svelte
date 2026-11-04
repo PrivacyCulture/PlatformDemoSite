@@ -7,7 +7,7 @@
 	one segment per chapter, each as wide as its chapter is long.
 
 	The <video> element's currentTime is the only source of truth: the current chapter, every
-	segment's fill, the circles, the title and the toast are all derived from it on every frame, so
+	segment's fill, the circles and the title are all derived from it on every frame, so
 	nothing on screen can disagree with the picture. The rules live in $lib/site/chapter-player.ts.
 
 	Every colour, size and timing is a CSS custom property on `.cp` (see the top of the style block),
@@ -137,11 +137,10 @@
 	// ── Auto-hide ───────────────────────────────────────────────────────────
 	const autohide = new AutoHide(3000, (v) => (controlsVisible = v));
 
-	// ── Chapter changes: an event and a toast, never on the first chapter shown ──
+	// ── Chapter changes: an event and a screen-reader announcement, never on the first chapter shown.
+	//    Nothing is drawn over the picture — the bar's title and circles already say where you are.
 	let lastIndex = -1;
-	let toast = $state<{ key: number; text: string } | null>(null);
-	let toastTimer: ReturnType<typeof setTimeout> | undefined;
-	let toastMs = 2400;
+	let announcement = $state('');
 	$effect(() => {
 		const i = current;
 		if (i < 0) return;
@@ -152,10 +151,21 @@
 		const detail: ChapterChangeDetail = { index: i, chapter: c, previous: prev };
 		onchapterchange?.(detail);
 		root?.dispatchEvent(new CustomEvent('chapterchange', { detail, bubbles: true }));
-		toast = { key: Date.now(), text: `Chapter ${i + 1} of ${chapters.length} · ${c.title}` };
-		clearTimeout(toastTimer);
-		toastTimer = setTimeout(() => (toast = null), toastMs);
+		announcement = `Chapter ${i + 1} of ${chapters.length} · ${c.title}`;
 	});
+
+	// ── Loop: play the film round again from the start. Remembered per browser. ──
+	const LOOP_KEY = 'pcl-platform:chapterPlayerLoop:v1';
+	let looping = $state(false);
+	function toggleLoop() {
+		looping = !looping;
+		try {
+			localStorage.setItem(LOOP_KEY, looping ? '1' : '0');
+		} catch {
+			/* private window: the choice lasts for this film only */
+		}
+		autohide.activity();
+	}
 
 	// ── Playback ────────────────────────────────────────────────────────────
 	function play() {
@@ -352,7 +362,11 @@
 		opener = document.activeElement;
 		const css = root ? getComputedStyle(root) : null;
 		autohide.setDelay(parseCssMs(css?.getPropertyValue('--cp-autohide-delay'), 3000));
-		toastMs = parseCssMs(css?.getPropertyValue('--cp-toast-duration'), 2400);
+		try {
+			looping = localStorage.getItem(LOOP_KEY) === '1';
+		} catch {
+			looping = false;
+		}
 		holdMs = parseCssMs(css?.getPropertyValue('--cp-hold-delay'), 450);
 		const hoverNone = window.matchMedia('(hover: none)');
 		const syncTouch = () => (touch = hoverNone.matches);
@@ -376,7 +390,6 @@
 		if (typeof document === 'undefined') return;
 		stopFrames();
 		autohide.dispose();
-		clearTimeout(toastTimer);
 		clearTimeout(holdTimer);
 		if (!contained) document.documentElement.style.overflow = restoreOverflow;
 		if (opener instanceof HTMLElement) opener.focus({ preventScroll: true });
@@ -417,6 +430,7 @@
 		poster={poster || undefined}
 		playsinline
 		preload="auto"
+		loop={looping}
 		onloadedmetadata={onLoadedMetadata}
 		ondurationchange={() => video && Number.isFinite(video.duration) && (duration = video.duration)}
 		onplay={() => {
@@ -456,10 +470,7 @@
 		</button>
 	{/if}
 
-	{#key toast?.key}
-		{#if toast}<div class="cp-toast" aria-hidden="true">{toast.text}</div>{/if}
-	{/key}
-	<p class="cp-sr" role="status" aria-live="polite">{toast?.text ?? ''}</p>
+	<p class="cp-sr" role="status" aria-live="polite">{announcement}</p>
 
 	<div
 		class="cp-controls"
@@ -548,6 +559,9 @@
 			</ol>
 
 			<div class="cp-right">
+				<button type="button" class="cp-btn" aria-label="Loop" aria-pressed={looping} title={looping ? 'Loop on — plays again from the start' : 'Loop off'} onclick={toggleLoop}>
+					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7h10v3l4-4-4-4v3H5v6h2zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2z" /></svg>
+				</button>
 				{#if captions}
 					<button type="button" class="cp-btn" aria-label="Captions" aria-pressed={captionsOn} title={captionsOn ? 'Captions on' : 'Captions off'} onclick={toggleCaptions}>
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v10h16V7zm2.5 3.5A1.5 1.5 0 0 1 8 9h2.5v1.5H8v3h2.5V15H8a1.5 1.5 0 0 1-1.5-1.5zm7 0A1.5 1.5 0 0 1 15 9h2.5v1.5H15v3h2.5V15H15a1.5 1.5 0 0 1-1.5-1.5z" /></svg>
@@ -618,11 +632,9 @@
 		--cp-tip-width: 224px;
 		--cp-preview-width: 320px;
 		--cp-radius: 10px;
-		--cp-toast-top: 24px;
 
 		--cp-fade: 200ms;
 		--cp-autohide-delay: 3s;
-		--cp-toast-duration: 2.4s;
 		--cp-hold-delay: 450ms;
 
 		position: fixed;
@@ -685,31 +697,6 @@
 		width: 44%;
 		height: 44%;
 		fill: currentColor;
-	}
-
-	/* ── Toast ── */
-	.cp-toast {
-		position: absolute;
-		top: var(--cp-toast-top);
-		left: 50%;
-		transform: translateX(-50%);
-		max-width: calc(100% - 32px);
-		padding: 8px 16px;
-		border-radius: 999px;
-		background: var(--cp-surface);
-		border: 1px solid var(--cp-surface-border);
-		font-size: var(--cp-title-font);
-		font-weight: 600;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		pointer-events: none;
-		animation: cp-toast var(--cp-toast-duration) ease both;
-	}
-	@keyframes cp-toast {
-		0% { opacity: 0; transform: translate(-50%, -6px); }
-		10%, 85% { opacity: 1; transform: translate(-50%, 0); }
-		100% { opacity: 0; transform: translate(-50%, 0); }
 	}
 
 	/* ── Controls ── */
