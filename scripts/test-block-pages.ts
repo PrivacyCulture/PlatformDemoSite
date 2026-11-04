@@ -156,6 +156,10 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(((withVideo.explainer as Rec | undefined)?.src) === '/media/film.mp4' && (withVideo.explainer as Rec).chapters === '/media/c.json', 'the hero’s own video and chapters reach a page made in Sorted');
 	const off = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page([{ ...videoHero, data: { ...(videoHero.data as Rec), showExplainer: false } }]) })) as Rec);
 	check(!((off.explainer as Rec | undefined)?.src), 'with the explainer switched off, the page shows no video');
+	// Published from the builder before its own content area was ever approved: live has no entry for it.
+	const fresh = applyBlockPages({ ...content, customPages: undefined } as Rec, validBlockPages({ 'custom-made-here': page([{ ...hero, header: { ...(hero.header as Rec), heading: 'Made here' } }]) })) as Rec;
+	const made = customOf(fresh);
+	check(!!made && made.title === 'Made here' && made.showCta === false, 'a page made in Sorted with no entry on the site is created from its block page');
 }
 
 {

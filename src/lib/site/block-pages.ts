@@ -337,6 +337,11 @@ function listEntries(problemItems: unknown[], rows: unknown): Rec[] {
 }
 
 /** A problem page made in the page builder, which the content file does not have: the shape ProblemPage reads, empty. */
+/** A page made in Sorted, empty: its block page fills every word of it. */
+function newCustomItem(slug: string): Rec {
+	return { slug, meta: { title: '', description: '' }, eyebrow: '', title: '', intro: '', sections: [], cta: { eyebrow: '', title: '', body: '', micro: '' } };
+}
+
 function newProblemItem(slug: string): Rec {
 	return {
 		slug,
@@ -633,6 +638,17 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 		const slug = key.startsWith('problem-') ? key.slice('problem-'.length) : '';
 		if (slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) && !problemItems.some((i) => str(rec(i).slug) === slug)) problemItems.push(newProblemItem(slug));
 	}
+	// So are pages made in Sorted: one published from the page builder is live even when the content
+	// area behind it never was, so the live content has no entry for it to be written over.
+	let addedCustom = false;
+	for (const key of keys) {
+		const slug = key.startsWith('custom-') ? key.slice('custom-'.length) : '';
+		if (slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) && !custom.some((i) => str(rec(i).slug) === slug)) {
+			custom.push(newCustomItem(slug));
+			addedCustom = true;
+		}
+	}
+	if (addedCustom) out.customPages = custom;
 	for (const key of keys) {
 		const page = blockPages[key];
 		try {
