@@ -15,6 +15,8 @@
 	import { pageTitle } from '$lib/content';
 	import { rich, plain } from '$lib/site/rich';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import HeroDemoForm from '$lib/components/site/HeroDemoForm.svelte';
+	import PageHero from '$lib/components/site/PageHero.svelte';
 	import { explainerFor } from '$lib/site/explainer';
 	import { explainerVideoNode } from '$lib/site/aeo';
 	import { page as route } from '$app/state';
@@ -34,6 +36,9 @@
 	// Only the page's OWN film (or thumbnail): a page made in the CMS never shows the default video.
 	const showExplainer = $derived(!!(page.explainer?.src?.trim() || page.explainer?.poster?.trim()));
 	const explainer = $derived(explainerFor(page));
+	// The Book a demo form beside the copy, switched on in Sorted: the hero splits, text left and
+	// form right. The page's own explainer, if it has one, stays under the hero as before.
+	const demoFormBeside = $derived(page.sharedElement === 'demo-form');
 	const videoNode = $derived(
 		showExplainer && !explainer.image ? explainerVideoNode(route.url.origin, route.url.pathname, explainer, route.data?.videoTranscript) : null
 	);
@@ -55,7 +60,14 @@
 	schema={videoNode ? [videoNode] : undefined}
 />
 
-<div class="w-full pt-6 sm:pt-10">
+<div class={['w-full', !demoFormBeside && 'pt-6 sm:pt-10']}>
+	{#if demoFormBeside}
+		<div data-block-id="hero" style="display: contents">
+			<PageHero eyebrow={page.eyebrow || undefined} title={page.title} body={page.intro} logos={false}>
+				<HeroDemoForm />
+			</PageHero>
+		</div>
+	{:else}
 	<header class="max-w-[46rem]" data-block-id="hero">
 		{#if page.eyebrow}
 			<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{page.eyebrow}</p>
@@ -65,6 +77,7 @@
 			<p class="mt-6 max-w-[62ch] text-[17px] leading-relaxed font-light text-ink/70">{@html rich(page.intro)}</p>
 		{/if}
 	</header>
+	{/if}
 
 	{#if showExplainer}
 		<section class="mt-10 max-w-[52rem]" data-block-id="explainer">

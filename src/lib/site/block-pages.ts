@@ -227,6 +227,9 @@ function writeLayout(target: Rec, page: BlockPage, own: Record<string, (b: Block
 
 const byId = (page: BlockPage, id: string, type: string) => page.blocks.find((b) => b.id === id && b.type === type);
 
+/** The hero block's "Show the Book a demo form beside the copy" switch (HeroDemoForm on the site). */
+const demoForm = (hero: BlockPageBlock) => hero.data.showDemoForm === true;
+
 // ── the pages ───────────────────────────────────────────────────────────────────────────────
 
 const PLATFORM_DEFAULT = ['trusted', 'fit', 'problems', 'articles', 'pricing', 'cta'];
@@ -244,6 +247,10 @@ function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): voi
 		const [primary, secondary] = hero.header.buttons;
 		if (primary) h.primary = button(primary, h.primary);
 		if (secondary) h.secondary = { ...rec(h.secondary), label: secondary.label };
+		// The Book a demo form beside the copy, in the explainer's place. Off = the explainer, which is
+		// what the page draws with no `sharedElement` at all, so the key goes rather than says so.
+		if (demoForm(hero)) h.sharedElement = 'demo-form';
+		else if (h.sharedElement === 'demo-form') delete h.sharedElement;
 		copy.hero = h;
 		explainer(copy, hero.data);
 	}
@@ -366,12 +373,16 @@ function applyProblem(item: Rec, page: BlockPage): void {
 		h.body = hero.header.body;
 		const show = hero.data.showExplainer === true;
 		const own = !!str(rec(hero.data.video).url) || !!str(rec(hero.data.poster).url);
+		// The form switched off again: the explainer switch below decides, as if it had never been on.
+		if (h.sharedElement === 'demo-form') h.sharedElement = 'none';
 		// Off = nothing beside the hero. The page's own video would show regardless (the site reads
 		// one as the request), so the served copy leaves it out; Sorted still keeps it.
 		// On = the page's own video when it has one, else the shared one.
 		if (!show) h.sharedElement = 'none';
 		else if (!own) h.sharedElement = 'explainer-video';
 		else if (!('sharedElement' in h)) h.sharedElement = 'none';
+		// The Book a demo form beside the copy wins over the video (the page keeps its video for later).
+		if (demoForm(hero)) h.sharedElement = 'demo-form';
 		item.hero = h;
 		explainer(item, show ? hero.data : { ...hero.data, video: null, poster: null });
 	}
@@ -578,7 +589,7 @@ function applyNotFound(copy: Rec, page: BlockPage): void {
 		h.primary = button(primary ?? { label: '', url: '' }, h.primary);
 		h.secondary = button(secondary ?? { label: '', url: '' }, h.secondary);
 		const show = hero.data.showExplainer === true;
-		h.sharedElement = show ? 'explainer-video' : 'none';
+		h.sharedElement = demoForm(hero) ? 'demo-form' : show ? 'explainer-video' : 'none';
 		copy.hero = h;
 		explainer(copy, show ? hero.data : { ...hero.data, video: null, poster: null });
 	}
@@ -607,6 +618,9 @@ function applyCustom(copy: Rec, page: BlockPage): void {
 		copy.intro = hero.header.body;
 		// The page's own video (a page made in Sorted never borrows the default); off = none.
 		explainer(copy, hero.data.showExplainer === true ? hero.data : { ...hero.data, video: null, poster: null });
+		// The Book a demo form beside the copy. The page's own video, if any, stays under the hero.
+		if (demoForm(hero)) copy.sharedElement = 'demo-form';
+		else delete copy.sharedElement;
 	}
 	const sections: Rec[] = [];
 	for (const b of page.blocks) {

@@ -233,6 +233,50 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(!('entries' in ((pagesOf(plain).platform as Rec).problems as Rec)), 'a list of only problem pages writes no entries (drawn exactly as before)');
 }
 
+{
+	// The Book a demo form beside the hero's copy, on the three pages that draw it.
+	const slug = ((content.problems as Rec).items as Rec[])[0].slug as string;
+	const key = `problem-${slug}`;
+	const formOn = (p: Rec) => {
+		((block(p, 'hero').data as Rec).showDemoForm = true);
+	};
+	const pOn = problemOf(edit(key, formOn), slug)!;
+	check((pOn.hero as Rec).sharedElement === 'demo-form', 'problem page: the form switched on reaches the hero');
+	const pBoth = problemOf(edit(key, (p) => {
+		formOn(p);
+		(block(p, 'hero').data as Rec).showExplainer = true;
+	}), slug)!;
+	check((pBoth.hero as Rec).sharedElement === 'demo-form', 'problem page: with the explainer on too, the form wins');
+	// Switched off again, from content that had it on: the explainer switch decides as before.
+	const hadForm = JSON.parse(JSON.stringify(content)) as Rec;
+	(problemOf(hadForm, slug)!.hero as Rec).sharedElement = 'demo-form';
+	const offWithVideo = (p: Rec) => {
+		(block(p, 'hero').data as Rec).showDemoForm = false;
+		(block(p, 'hero').data as Rec).showExplainer = true;
+	};
+	const pp = JSON.parse(JSON.stringify(served[key])) as Rec;
+	offWithVideo(pp);
+	const pOff = problemOf(applyBlockPages(hadForm, validBlockPages({ [key]: pp })) as Rec, slug)!;
+	check((pOff.hero as Rec).sharedElement === 'explainer-video', 'problem page: the form switched off gives the hero back to the explainer');
+
+	const platOn = pagesOf(edit('platform', formOn)).platform as Rec;
+	check((platOn.hero as Rec).sharedElement === 'demo-form', '/platform: the form switched on reaches the hero');
+	const hadPlat = JSON.parse(JSON.stringify(content)) as Rec;
+	((pagesOf(hadPlat).platform as Rec).hero as Rec).sharedElement = 'demo-form';
+	const platOff = pagesOf(applyBlockPages(hadPlat, validBlockPages({ platform: served.platform })) as Rec).platform as Rec;
+	check(!('sharedElement' in (platOff.hero as Rec)), '/platform: switched off, the key goes and the explainer is back');
+
+	const withCustom = { ...content, customPages: [{ slug: 'made-here', meta: { title: 'Made here', description: '' }, eyebrow: '', title: 'Made here', intro: '', sections: [], cta: { eyebrow: '', title: '', body: '', micro: '' } }] } as Rec;
+	const base = JSON.parse(JSON.stringify(served.platform)) as Rec;
+	const hero = JSON.parse(JSON.stringify(block(base, 'hero'))) as Rec;
+	const customOf = (c: Rec) => (c.customPages as Rec[]).find((x) => x.slug === 'made-here') as Rec;
+	const page = (h: Rec) => ({ ...base, slug: 'made-here', blocks: [h] });
+	const cOn = customOf(applyBlockPages(withCustom, validBlockPages({ 'custom-made-here': page({ ...hero, data: { ...(hero.data as Rec), showDemoForm: true } }) })) as Rec);
+	check(cOn.sharedElement === 'demo-form', 'a page made in Sorted: the form switched on reaches the page');
+	const cOff = customOf(applyBlockPages({ ...withCustom, customPages: [{ ...(withCustom.customPages as Rec[])[0], sharedElement: 'demo-form' }] } as Rec, validBlockPages({ 'custom-made-here': page({ ...hero, data: { ...(hero.data as Rec), showDemoForm: false } }) })) as Rec);
+	check(!('sharedElement' in cOff), 'a page made in Sorted: switched off, the key goes');
+}
+
 // ── what is refused ──
 check(readBlockPage({ blocks: [] }) === null && readBlockPage(null) === null, 'something that is not a block page is refused');
 const hiddenEtc = readBlockPage({ v: 2, blocks: [{ id: 'a', type: 'text' }, { id: 'a', type: 'text' }, { id: 'h', type: 'text', hidden: true }, { id: 'l', type: 'text', link: 's1' }, { type: 'text' }] })!;

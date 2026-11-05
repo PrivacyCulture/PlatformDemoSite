@@ -95,6 +95,12 @@ The form at `/demo` books a HubSpot meeting (`HUBSPOT_MEETING_SLUG`, with a toke
 
 Every "Book a demo" button on the site is tagged with the page it was clicked on, from one hook in the root layout ([demo-link-utm.ts](src/lib/demo/demo-link-utm.ts)): the link becomes `/demo?from=<page>`, where `<page>` is `home`, `platform`, `pricing`, `dsar-overload` and so on. It is its own parameter, not a UTM, so it never reaches HubSpot's campaign fields, and a link that already has `from=` is left alone. First touch wins in HubSpot, so a visitor who arrived on a campaign keeps that campaign; the page reaches the team in the notification.
 
+The same form can sit beside a hero's copy instead of the explainer, on /platform, the problem pages, Page not found and pages made in Sorted: the hero block's **Show the Book a demo form beside the copy** switch in Sorted's page builder writes the page's `sharedElement: 'demo-form'` ([block-pages.ts](src/lib/site/block-pages.ts)). [HeroDemoForm](src/lib/components/site/HeroDemoForm.svelte) asks exactly the /demo form's questions (it is the same `BookDemoForm`, split by [steps.ts](src/lib/demo/steps.ts)) over three views: about you, your organisation (everything else, Sorted's extra questions included), then a time. Its own wording is `demoForm.heroForm`, edited in Sorted's Demo form document. The /demo page itself is unchanged.
+
+```
+npx tsx scripts/test-demo-steps.ts
+```
+
 When a booking succeeds the team is emailed. Who is set in Sorted, under Settings → Platform → *Book a demo — notification emails* (read through `/api/platform-demo-config`, so a change lands within five minutes). `DEMO_NOTIFY_EMAILS` (comma separated, any number) is only the fallback for when that list is empty or Sorted can't be reached. `SENDGRID_API_KEY` and `EMAIL_FROM` are the sender. With neither list set, nothing is sent.
 
 ### Journey clips

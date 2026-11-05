@@ -2301,6 +2301,35 @@
 				"Australia/Sydney",
 				"Asia/Singapore"
 			]
+		},
+		"heroForm": {
+			"about": {
+				"eyebrow": "Step 1 of 2 · About you",
+				"title": "Book a 30-minute demo",
+				"submit": "Continue to choose a time →",
+				"note": "30 minutes, using sample data, so there’s nothing to prepare or share.",
+				"privacy": "We only save your details when you submit, and only use them to arrange your demo.",
+				"privacyLinkLabel": "Privacy notice",
+				"privacyLinkHref": "/privacy-policy"
+			},
+			"organisation": {
+				"eyebrow": "Step 2 of 2 · Your organisation",
+				"title": "A little context, then pick a time",
+				"submit": "Choose a time",
+				"back": "Back to step 1"
+			},
+			"calendar": {
+				"eyebrow": "Last step · Your time",
+				"title": "Pick a time",
+				"intro": "Choose a slot that works. We’ll send the invite straight away."
+			},
+			"done": {
+				"eyebrow": "In the diary",
+				"title": "You’re booked",
+				"onlineBefore": "A calendar invite is on its way to",
+				"onlineAfter": ". Come as you are — curiosity beats preparation.",
+				"offline": "We’ve got your time. If the calendar invite needs a human nudge, we’ll follow up shortly."
+			}
 		}
 	},
 	"aeo": {

@@ -15,6 +15,8 @@
 	import AuditChecklist from './AuditChecklist.svelte';
 	import DemoCtaBlock from './DemoCtaBlock.svelte';
 	import ExplainerVideo from './ExplainerVideo.svelte';
+	import HeroDemoForm from './HeroDemoForm.svelte';
+	import { isDemoPath } from '$lib/demo/utm';
 	import { explainerFor } from '$lib/site/explainer';
 	import PageHero from './PageHero.svelte';
 	import MountainScene from './MountainScene.svelte';
@@ -38,7 +40,11 @@
 		const set = (v: unknown) => typeof v === 'string' && v.trim() !== '';
 		return Boolean(own && (set(own.src) || set(own.poster)));
 	});
-	const showExplainer = $derived(page.hero.sharedElement === 'explainer-video' || ownExplainer);
+	// The Book a demo form beside the copy, switched on in Sorted, takes the video's place.
+	const demoFormBeside = $derived(page.hero.sharedElement === 'demo-form');
+	const showExplainer = $derived(!demoFormBeside && (page.hero.sharedElement === 'explainer-video' || ownExplainer));
+	// With the form beside it, a hero button to the demo page would only lead to the same form.
+	const primary = $derived(demoFormBeside && isDemoPath(common.primary.href.split(/[?#]/)[0]) ? undefined : common.primary);
 	// The blocks between the hero and the pager, and the sections added in the CMS, in the order
 	// the CMS gives them. A block left out is not drawn (its content stays in the file, so it can
 	// be put back); no layout at all is the order the page always had.
@@ -66,6 +72,10 @@
 	<ExplainerVideo compact {...explainer} />
 {/snippet}
 
+{#snippet bookForm()}
+	<HeroDemoForm />
+{/snippet}
+
 <!-- The way to the other problem pages: right of the hero text, under the video when there is one. -->
 {#snippet stepper()}
 	<ProblemPager current={page.href} />
@@ -76,10 +86,10 @@
 	eyebrow={common.eyebrow}
 	title={page.hero.title}
 	body={page.hero.body}
-	primary={common.primary}
+	{primary}
 	secondary={common.secondary}
 	micro={site.pricing.micro}
-	children={showExplainer ? video : undefined}
+	children={demoFormBeside ? bookForm : showExplainer ? video : undefined}
 	under={stepper}
 />
 </PreviewBlock>
