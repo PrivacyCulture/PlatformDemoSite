@@ -5,6 +5,7 @@
 	import { cubicOut } from 'svelte/easing';
 	import { site } from '$lib/site/content';
 	import { visibleLinks, isArchived } from '$lib/site/archive';
+	import { isNavHidden } from '$lib/site/nav-hidden';
 	import FeaturesMenu from './FeaturesMenu.svelte';
 	import FeaturesAccordion from './FeaturesAccordion.svelte';
 	import { splitAtFeatures, featuresMenuFrom } from '$lib/site/features';
@@ -27,6 +28,9 @@
 	let toggle = $state<HTMLButtonElement>();
 	let sheet = $state<HTMLElement>();
 	const path = $derived(page.url.pathname);
+	// A page set in Sorted to hide its menu links: the logo and the Book a demo button only, which
+	// then shows on phones too, in place of the menu button.
+	const linksHidden = $derived(isNavHidden(path));
 	const hash = $derived(page.url.hash);
 	const reduceMotion =
 		typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -166,24 +170,27 @@
 	<div class="flex shrink-0 items-center gap-6 lg:gap-8">
 		<!-- top-[5px] lands the link baselines on the logo wordmark's baseline. An offset, not a
 		     transform: a transform would trap the Features panel under the page that follows. -->
+		{#if !linksHidden}
 		<nav aria-label={nav.ariaLabel} class="relative top-[5px] hidden items-baseline gap-7 whitespace-nowrap lg:flex">
 			{#each linksBefore as link, i (i)}{@render deskLink(link)}{/each}
 			<FeaturesMenu menu={featuresMenu} arrow={nav.arrow} />
 			{#each linksAfter as link, i (i)}{@render deskLink(link)}{/each}
 		</nav>
+		{/if}
 
 		<div class="flex items-center gap-2">
 			{#if showDemo}
 			<a
 				href={nav.demo.href}
 				aria-current={isCurrent(nav.demo.href) ? 'page' : undefined}
-				class="hidden min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] sm:inline-flex transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
+				class="{linksHidden ? 'inline-flex' : 'hidden sm:inline-flex'} min-h-11 shrink-0 cursor-pointer items-center gap-1.5 rounded-full bg-lens px-4 py-2.5 text-[13px] font-semibold tracking-wide whitespace-nowrap text-white no-underline shadow-[0_8px_28px_rgba(0,155,204,0.25)] transition-colors hover:bg-[#2eb8e0] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens sm:px-5 sm:text-[14px]"
 			>
 				{nav.demo.label}
 				<span aria-hidden="true">{nav.arrow}</span>
 			</a>
 			{/if}
 
+			{#if !linksHidden}
 			<button
 				type="button"
 				bind:this={toggle}
@@ -201,11 +208,12 @@
 					<path class="bar bot" d="M3 13h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" />
 				</svg>
 			</button>
+			{/if}
 		</div>
 	</div>
 </header>
 
-{#if open}
+{#if open && !linksHidden}
 	<!-- Tapping the dimmed page closes the menu -->
 	<button
 		type="button"

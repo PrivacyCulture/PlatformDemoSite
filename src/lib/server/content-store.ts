@@ -19,6 +19,7 @@ import { addedSection } from '$lib/site/added-sections';
 import database from '../../../data/database.json';
 import { validBlogPosts } from '$lib/site/blog';
 import { pageCopyKind } from '$lib/site/page-copies';
+import { navHiddenPathsOf } from '$lib/site/nav-hidden';
 
 export type ContentChannel = 'live' | 'draft';
 export type ContentSource = 'cms' | 'fallback';
@@ -103,7 +104,9 @@ export function validateContent(body: unknown): SiteContent {
 		// Post by post, like customPages: one bad post costs only that post. Absent = no blog yet.
 		blogPosts: validBlogPosts((body as Record<string, unknown>).blogPosts),
 		// Coerced, never validated as a whole: a stray entry must not cost the site its content.
-		archivedPaths: Array.isArray(archived) ? archived.filter((x): x is string => typeof x === 'string' && x.startsWith('/')) : []
+		archivedPaths: Array.isArray(archived) ? archived.filter((x): x is string => typeof x === 'string' && x.startsWith('/')) : [],
+		// From the block pages Sorted served: the ones set to hide their menu links.
+		navHiddenPaths: navHiddenPathsOf(validBlockPages((body as Record<string, unknown>).blockPages))
 	};
 }
 

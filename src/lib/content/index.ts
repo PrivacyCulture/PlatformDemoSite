@@ -222,6 +222,8 @@ export type SiteContent = Omit<Raw, 'journey' | 'problems' | 'site' | 'demoForm'
 	journey: JourneyContent;
 	problems: { common: Raw['problems']['common']; items: ProblemItem[] };
 	customPages?: CustomPage[];
+	/** Pages whose header shows no menu links (only the Book a demo button). See $lib/site/nav-hidden. */
+	navHiddenPaths?: string[];
 	/** Addresses archived in the CMS: answered with "not found", and links to them hidden. */
 	archivedPaths?: string[];
 	/**
@@ -243,6 +245,7 @@ export const demoForm = live((c) => c.demoForm);
 export const aeo = live((c) => c.aeo);
 export const customPages = live((c) => c.customPages ?? [], 'array');
 export const archivedPaths = live((c) => c.archivedPaths ?? [], 'array');
+export const navHiddenPaths = live((c) => c.navHiddenPaths ?? [], 'array');
 export const blogPosts = live((c) => c.blogPosts ?? [], 'array');
 
 /** A page created in the CMS, or undefined. Read inside a load, after `await parent()`. */
