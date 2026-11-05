@@ -11,11 +11,18 @@
 	let {
 		form,
 		tone = 'light',
+		from,
 		onBack,
 		onBooked
 	}: {
 		form: DemoFormValues;
 		tone?: 'light' | 'dark';
+		/**
+		 * The page the booking came from, for the team's notification. Absent = the demo page's own
+		 * from= parameter (the page whose Book a demo button was clicked). The form beside a hero
+		 * names the page it is on.
+		 */
+		from?: string;
 		onBack: () => void;
 		onBooked: (result: {
 			start: string;
@@ -220,7 +227,7 @@
 					utms: readStoredUtms(),
 					// What this page's address says now: the page whose Book a demo button was
 					// clicked (from=), and any campaign link. For the team's notification, not HubSpot.
-					from: demoFromSearch(location.search),
+					from: from || demoFromSearch(location.search),
 					pageUtms: utmsFromSearch(location.search),
 					page: location.pathname
 				})

@@ -9,6 +9,7 @@
 	import { page } from '$app/state';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import HeroDemoForm from '$lib/components/site/HeroDemoForm.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import SeoHead from '$lib/components/site/SeoHead.svelte';
 	import SiteShell from '$lib/components/site/SiteShell.svelte';
@@ -34,13 +35,14 @@
 	const secondary = $derived(usable(copy.hero.secondary) ? copy.hero.secondary : undefined);
 	// Absent (content written before the field existed) or anything unrecognised reads as none.
 	const showExplainer = $derived(copy.hero.sharedElement === 'explainer-video');
+	const demoFormBeside = $derived((copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
 	const links = $derived(visibleLinks(copy.whereNext.items));
 </script>
 
 <SeoHead title={brandedTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} index={false} />
 
 <SiteShell>
-	{#if showExplainer}
+	{#if showExplainer || demoFormBeside}
 		<PageHero
 			eyebrow={`${page.status} · ${hero.eyebrow}`}
 			title={hero.title}
@@ -50,7 +52,11 @@
 			micro={notFound ? copy.hero.micro : undefined}
 			logos={false}
 		>
-			<ExplainerVideo compact {...explainerFor(copy)} />
+			{#if demoFormBeside}
+				<HeroDemoForm />
+			{:else}
+				<ExplainerVideo compact {...explainerFor(copy)} />
+			{/if}
 		</PageHero>
 	{:else}
 		<PageHero

@@ -128,8 +128,11 @@ export type JourneyContent = {
 	};
 };
 
-/** Shared elements a problem page's hero may carry. Keep in step with the CMS's ENUM_RULES. */
-export const HERO_SHARED_ELEMENTS = ['none', 'explainer-video'] as const;
+/**
+ * Shared elements a hero may carry in its right-hand column: nothing, the explainer, or the Book a
+ * demo form (HeroDemoForm). Keep in step with the CMS's ENUM_RULES.
+ */
+export const HERO_SHARED_ELEMENTS = ['none', 'explainer-video', 'demo-form'] as const;
 export type HeroSharedElement = (typeof HERO_SHARED_ELEMENTS)[number];
 
 /**
@@ -192,6 +195,8 @@ export type CustomPage = {
 	cta: { eyebrow: string; title: string; body: string; micro: string };
 	/** false = the page draws no CTA (its block was removed in Sorted's page builder). Absent = drawn. */
 	showCta?: boolean;
+	/** 'demo-form' = the Book a demo form beside the hero's copy. Absent = the hero is copy alone. */
+	sharedElement?: 'demo-form';
 	/** An explainer video under the introduction (`src`, `poster`, `captions`, `label`, `chapters`,
 	 *  `uploadDate`, `durationSeconds`), read by `explainerFor`. Absent, or with neither a file nor a
 	 *  thumbnail, the page shows none — a page made in the CMS never borrows the default video. */

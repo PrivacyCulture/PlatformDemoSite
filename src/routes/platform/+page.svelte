@@ -8,6 +8,8 @@
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
 	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
 	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import HeroDemoForm from '$lib/components/site/HeroDemoForm.svelte';
+	import { isDemoPath } from '$lib/demo/utm';
 	import { explainerFor } from '$lib/site/explainer';
 	import MountainScene from '$lib/components/site/MountainScene.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
@@ -39,8 +41,14 @@
 	const articlesCopy = $derived((copy as { articles?: { eyebrow?: string; title?: string; loadMore?: string } }).articles ?? {});
 	const ARTICLE_STEP = 6;
 	let articlesShown = $state(ARTICLE_STEP);
-	// The explainer in the hero, as structured data.
-	const video = $derived(explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript));
+	// The Book a demo form beside the copy, switched on in Sorted, takes the explainer's place there
+	// (absent = the explainer, as the page always had it). Its Watch button goes with the video, and
+	// a button to the demo page would only lead to the same form.
+	const demoFormBeside = $derived((copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
+	const heroPrimary = $derived(demoFormBeside && isDemoPath(copy.hero.primary.href.split(/[?#]/)[0]) ? undefined : copy.hero.primary);
+	// The explainer as structured data — only while the page draws it, in the hero or as a block.
+	const explainerDrawn = $derived(!demoFormBeside || bodyEntries.some((e) => e.id === 'explainer'));
+	const video = $derived(explainerDrawn ? explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript) : null);
 </script>
 
 <SeoHead
@@ -61,14 +69,18 @@
 	title={copy.hero.title}
 	titleLines={copy.hero.titleLines}
 	body={copy.hero.body}
-	primary={copy.hero.primary}
+	primary={heroPrimary}
 	logos={heroLogos}
-	secondary={explainerProps.image ? undefined : {
+	secondary={demoFormBeside || explainerProps.image ? undefined : {
 		label: copy.hero.secondary.label,
 		onSelect: () => explainer?.play()
 	}}
 >
-	<ExplainerVideo bind:this={explainer} compact {...explainerProps} />
+	{#if demoFormBeside}
+		<HeroDemoForm />
+	{:else}
+		<ExplainerVideo bind:this={explainer} compact {...explainerProps} />
+	{/if}
 </PageHero>
 </PreviewBlock>
 
