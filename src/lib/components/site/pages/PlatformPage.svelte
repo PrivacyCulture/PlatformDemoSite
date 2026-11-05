@@ -1,0 +1,230 @@
+<script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
+	import { page } from '$app/state';
+	import { SIZES, imageSize, responsive } from '$lib/site/images';
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
+	import { explainerVideoNode, SOFTWARE_ID } from '$lib/site/aeo';
+	import AddedSection from '$lib/components/site/AddedSection.svelte';
+	import DemoCtaBlock from '$lib/components/site/DemoCtaBlock.svelte';
+	import ExplainerVideo from '$lib/components/site/ExplainerVideo.svelte';
+	import HeroDemoForm from '$lib/components/site/HeroDemoForm.svelte';
+	import { isDemoPath } from '$lib/demo/utm';
+	import { explainerFor } from '$lib/site/explainer';
+	import MountainScene from '$lib/components/site/MountainScene.svelte';
+	import PageHero from '$lib/components/site/PageHero.svelte';
+	import PricingStrip from '$lib/components/site/PricingStrip.svelte';
+	import LogoStrip from '$lib/components/site/LogoStrip.svelte';
+	import { platformLayout, logosInHero } from '$lib/site/page-layout';
+	import { blogPosts, pages, pageTitle } from '$lib/content';
+	import BlogCard from '$lib/components/site/blog/BlogCard.svelte';
+	import { postEyebrow } from '$lib/site/blog';
+	import LensCta from '$lib/components/site/LensCta.svelte';
+	import { problemListEntries, problems as problemItems } from '$lib/site/problems';
+	import { rich } from '$lib/site/rich';
+
+	// The page's content: its own on its own route, or a copy's (a page added here in Sorted).
+	let { copy }: { copy: typeof pages.platform } = $props();
+
+	// The hero CTA starts the explainer through its play method, inside the click itself: a phone
+	// browser refuses playback that is requested after the gesture has finished.
+	let explainer = $state<ExplainerVideo | null>(null);
+	// Blocks and the sections added in the CMS, in the order the page draws them.
+	const entries = $derived(platformLayout(copy));
+	// This page's own explainer, or the default from Site globals.
+	const explainerProps = $derived(explainerFor(copy));
+	// First in the list, the logos are drawn inside the hero where they always were; the loop
+	// below then skips them so they are not drawn twice.
+	const heroLogos = $derived(logosInHero(entries));
+	const bodyEntries = $derived(heroLogos ? entries.slice(1) : entries);
+	// The Latest articles block. Its words are optional leaves in the CMS (absent = these defaults);
+	// the cards are the newest blog posts, six at a time.
+	const articlesCopy = $derived((copy as { articles?: { eyebrow?: string; title?: string; loadMore?: string } }).articles ?? {});
+	const ARTICLE_STEP = 6;
+	let articlesShown = $state(ARTICLE_STEP);
+	// The Book a demo form beside the copy, switched on in Sorted, takes the explainer's place there
+	// (absent = the explainer, as the page always had it). Its Watch button goes with the video, and
+	// a button to the demo page would only lead to the same form.
+	const demoFormBeside = $derived((copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
+	const heroPrimary = $derived(demoFormBeside && isDemoPath(copy.hero.primary.href.split(/[?#]/)[0]) ? undefined : copy.hero.primary);
+	// The explainer as structured data — only while the page draws it, in the hero or as a block.
+	const explainerDrawn = $derived(!demoFormBeside || bodyEntries.some((e) => e.id === 'explainer'));
+	const video = $derived(explainerDrawn ? explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript) : null);
+</script>
+
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+	image={copy.fit?.image?.src}
+	imageWidth={copy.fit?.image?.width}
+	imageHeight={copy.fit?.image?.height}
+	imageAlt={copy.fit?.image?.alt}
+	mainEntityId={SOFTWARE_ID(page.url.origin)}
+	schema={[video]}
+/>
+
+<PreviewBlock id="hero">
+<PageHero
+	eyebrow={copy.hero.eyebrow}
+	title={copy.hero.title}
+	titleLines={copy.hero.titleLines}
+	body={copy.hero.body}
+	primary={heroPrimary}
+	logos={heroLogos}
+	secondary={demoFormBeside || explainerProps.image ? undefined : {
+		label: copy.hero.secondary.label,
+		onSelect: () => explainer?.play()
+	}}
+>
+	{#if demoFormBeside}
+		<HeroDemoForm />
+	{:else}
+		<ExplainerVideo bind:this={explainer} compact {...explainerProps} />
+	{/if}
+</PageHero>
+</PreviewBlock>
+
+{#snippet fitBlock()}
+	<section class="mt-10 w-full sm:mt-16">
+		<div class="rounded-3xl bg-silver/45 p-6 ring-1 ring-ink/5 sm:p-10">
+			<div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+				<div class="min-w-0">
+					<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{copy.fit.eyebrow}</p>
+					<h2
+						class="max-w-[20ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
+					>
+						{#each copy.fit.titleLines as line, i (i)}
+							{#if i > 0}<br />{/if}{line}
+						{/each}
+					</h2>
+					<p class="rt mt-4 max-w-[52ch] text-[15px] leading-relaxed font-light text-ink/70">
+						{@html rich(copy.fit.body)}
+					</p>
+				</div>
+				<div class="rounded-2xl bg-white p-4 sm:p-6 lg:p-8">
+					<img
+						class="aspect-video w-full object-contain"
+						src={copy.fit.image.src}
+						{...responsive(copy.fit.image.src, SIZES.half)}
+						{...imageSize(copy.fit.image)}
+						loading="lazy"
+						decoding="async"
+						alt={copy.fit.image.alt}
+					/>
+				</div>
+			</div>
+
+			<ul class="mt-8 grid gap-4 sm:grid-cols-3 sm:mt-10">
+				{#each copy.fit.pillars as pillar, i (i)}
+					<li class="rounded-2xl bg-white/80 p-5 ring-1 ring-ink/5">
+						<p class="flex items-center gap-2.5">
+							<span class="size-2.5 shrink-0 bg-gold" aria-hidden="true"></span>
+							<span class="text-[1.05rem] font-bold tracking-tight text-heading">{pillar.title}</span>
+						</p>
+						<p class="rt mt-3 text-[14px] leading-relaxed font-light text-ink/70">{@html rich(pillar.body)}</p>
+					</li>
+				{/each}
+			</ul>
+		</div>
+	</section>
+{/snippet}
+
+{#snippet problemsBlock()}
+	<MountainScene side="left" class="mt-16 sm:mt-24">
+		<section class="w-full">
+				<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{copy.problems.eyebrow}</p>
+				<h2
+					class="max-w-[22ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight"
+				>
+					{copy.problems.title}
+				</h2>
+
+				<ul class="mt-10 grid border-t border-ink/10 sm:grid-cols-2 sm:gap-x-10 lg:gap-x-16">
+					{#each problemListEntries(copy.problems) as item, i (item.href)}
+						<li class="border-b border-ink/10">
+							<a
+								href={item.href}
+								class="group flex h-full cursor-pointer items-baseline gap-4 py-5 no-underline transition-colors hover:bg-ink/[0.03] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-lens"
+							>
+								<span
+									class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums transition-colors group-hover:text-lens"
+									aria-hidden="true"
+								>
+									{String(i + 1).padStart(2, '0')}
+								</span>
+								<span class="min-w-0 flex-1">
+									<span class="block text-[1.05rem] font-bold tracking-tight text-heading transition-colors group-hover:text-lens">
+										{item.title}
+									</span>
+									<span class="rt mt-1.5 block max-w-[40ch] text-[14px] leading-relaxed font-light text-ink/70">
+										{@html rich(item.summary)}
+									</span>
+								</span>
+								<span
+									class="shrink-0 text-ink/35 transition-transform group-hover:translate-x-1 group-hover:text-lens"
+									aria-hidden="true">→</span
+								>
+							</a>
+						</li>
+					{/each}
+				</ul>
+		</section>
+	</MountainScene>
+{/snippet}
+
+{#snippet pricingBlock()}
+	<MountainScene side="right" class="mt-16 sm:mt-24">
+		<PricingStrip />
+	</MountainScene>
+{/snippet}
+
+{#snippet articlesBlock()}
+	<!-- Nothing at all with no posts: an empty heading would read as a broken section. -->
+	{#if blogPosts.length}
+		<section class="mt-16 w-full sm:mt-24" aria-labelledby="latest-articles-heading">
+			<div class="flex flex-wrap items-end justify-between gap-4">
+				<div>
+					<p class="mb-3 text-[12px] tracking-[0.22em] text-lens uppercase">{articlesCopy.eyebrow?.trim() || 'Latest articles'}</p>
+					<h2 id="latest-articles-heading" class="max-w-[24ch] text-[clamp(1.7rem,3.4vw,2.5rem)] leading-tight font-bold tracking-tight">
+						{articlesCopy.title?.trim() || 'Practical notes for privacy teams.'}
+					</h2>
+				</div>
+				<a href="/blog" class="text-[13px] text-ink/55 no-underline hover:text-lens hover:underline">{blogPosts.length} {blogPosts.length === 1 ? 'article' : 'articles'}</a>
+			</div>
+			<ul class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+				{#each blogPosts.slice(0, articlesShown) as post (post.slug)}
+					<li><BlogCard {post} eyebrow={postEyebrow(post, problemItems)} readLabel={pages.blog.article.readMore} variant="compact" /></li>
+				{/each}
+			</ul>
+			{#if articlesShown < blogPosts.length}
+				<div class="mt-8 flex justify-center">
+					<LensCta label={articlesCopy.loadMore?.trim() || pages.blog.archive.loadMore} onclick={() => (articlesShown += ARTICLE_STEP)} />
+				</div>
+			{/if}
+		</section>
+	{/if}
+{/snippet}
+
+{#snippet ctaBlock()}
+	<div class="mt-10 w-full">
+		<DemoCtaBlock />
+	</div>
+{/snippet}
+
+<!-- The blocks between the hero and the end of the page, in the order the CMS gives them. -->
+{#each bodyEntries as entry (entry.id)}
+<PreviewBlock id={entry.id}>
+	{#if entry.kind === 'section'}<AddedSection section={entry.section} />
+	{:else if entry.id === 'fit'}{@render fitBlock()}
+	{:else if entry.id === 'problems'}{@render problemsBlock()}
+	{:else if entry.id === 'pricing'}{@render pricingBlock()}
+	{:else if entry.id === 'cta'}{@render ctaBlock()}
+	{:else if entry.id === 'articles'}{@render articlesBlock()}
+	{:else if entry.id === 'explainer'}
+		<section class="mt-14 w-full sm:mt-20"><div class="max-w-[52rem]"><ExplainerVideo {...explainerProps} /></div></section>
+	{:else if entry.id === 'trusted'}
+		<section class="mt-12 w-full sm:mt-16"><LogoStrip /></section>
+	{/if}
+</PreviewBlock>
+{/each}

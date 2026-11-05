@@ -6,7 +6,7 @@
 	import { rich } from '$lib/site/rich';
 	import { featureParts, pricingNotes, pricingPlans } from '$lib/site/pricing';
 
-	let { asPage = false }: { asPage?: boolean } = $props();
+	let { asPage = false, notesFrom }: { asPage?: boolean; /** The pricing page whose notes to draw; absent = /pricing's. */ notesFrom?: unknown } = $props();
 
 	const plans = $derived(pricingPlans(site.pricing));
 	// Read loosely: content served before Sorted is synced has no intro.
@@ -14,7 +14,7 @@
 	// The three notes under the cards are edited once, on the Pricing page in Sorted, and drawn
 	// wherever the cards are. They say what the old footnote said and more, so the footnote is
 	// only the fallback for content that has no notes yet.
-	const notes = $derived(pricingNotes((pages.pricing as { notes?: unknown }).notes));
+	const notes = $derived(pricingNotes(((notesFrom ?? pages.pricing) as { notes?: unknown }).notes));
 </script>
 
 <section id="pricing" class={['w-full scroll-mt-24', asPage && 'pt-6 sm:pt-10']}>

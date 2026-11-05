@@ -1,0 +1,54 @@
+<script lang="ts">
+	import PreviewBlock from '$lib/components/site/PreviewBlock.svelte';
+	import SeoHead from '$lib/components/site/SeoHead.svelte';
+	import { metaKeywords } from '$lib/site/seo';
+	import GoldCta from '$lib/components/site/GoldCta.svelte';
+	import PageHero from '$lib/components/site/PageHero.svelte';
+	import { pages, pageTitle } from '$lib/content';
+
+	// The page's content: its own on its own route, or a copy's (a page added here in Sorted).
+	let { copy }: { copy: typeof pages.trust } = $props();
+	const pillars = $derived(copy.pillars);
+</script>
+
+<SeoHead
+	title={pageTitle(copy.meta.title)}
+	description={copy.meta.description}
+	keywords={metaKeywords(copy.meta)}
+/>
+
+<PreviewBlock id="hero">
+<PageHero
+	eyebrow={copy.hero.eyebrow}
+	title={copy.hero.title}
+	body={copy.hero.body}
+	primary={copy.hero.primary}
+	secondary={copy.hero.secondary}
+/>
+</PreviewBlock>
+
+<PreviewBlock id="pillars">
+<section class="mt-14 w-full sm:mt-20">
+	<p class="mb-3 text-[12px] tracking-[0.22em] text-gold uppercase">{copy.pillarsEyebrow}</p>
+	<ul class="grid gap-4 sm:grid-cols-2">
+		{#each pillars as item, i (item.id)}
+			<li
+				id={item.id}
+				class="scroll-mt-24 rounded-2xl border border-lens/50 bg-transparent p-5"
+			>
+				<p class="font-mono text-[10px] tracking-[0.18em] text-gold tabular-nums">
+					{String(i + 1).padStart(2, '0')}
+				</p>
+				<h2 class="mt-2 text-[1.15rem] leading-snug font-bold tracking-tight">{item.title}</h2>
+				<p class="mt-2 text-[14px] leading-relaxed font-light text-ink/70">{item.body}</p>
+			</li>
+		{/each}
+	</ul>
+</section>
+
+<section class="mt-16 w-full sm:mt-24">
+	<div class="flex flex-wrap gap-3">
+		<GoldCta href={copy.ctas.dpa.href} label={copy.ctas.dpa.label} />
+	</div>
+</section>
+</PreviewBlock>

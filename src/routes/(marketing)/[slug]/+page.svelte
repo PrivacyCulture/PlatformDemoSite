@@ -22,6 +22,15 @@
 	import { page as route } from '$app/state';
 
 	import ProblemPage from '$lib/components/site/ProblemPage.svelte';
+	import PlatformPage from '$lib/components/site/pages/PlatformPage.svelte';
+	import FaqPage from '$lib/components/site/pages/FaqPage.svelte';
+	import PricingPage from '$lib/components/site/pages/PricingPage.svelte';
+	import TrustPage from '$lib/components/site/pages/TrustPage.svelte';
+	import DpaPage from '$lib/components/site/pages/DpaPage.svelte';
+	import CookieNoticePage from '$lib/components/site/pages/CookieNoticePage.svelte';
+	import PrivacyPolicyPage from '$lib/components/site/pages/PrivacyPolicyPage.svelte';
+	import { pages } from '$lib/content';
+	import { withDefaults } from '$lib/site/page-copies';
 
 	let { data } = $props();
 	// A problem page created in the page builder is drawn by the same component as the ten built in.
@@ -46,6 +55,21 @@
 
 {#if data.problemHref}
 	<ProblemPage href={data.problemHref} />
+{:else if page.pageKind === 'platform'}
+	<!-- A copy of a one-of-a-kind page, drawn by that page's own component from its own content. -->
+	<PlatformPage copy={withDefaults(pages.platform, page.content)} />
+{:else if page.pageKind === 'faq'}
+	<FaqPage copy={withDefaults(pages.faq, page.content)} />
+{:else if page.pageKind === 'pricing'}
+	<PricingPage copy={withDefaults(pages.pricing, page.content)} />
+{:else if page.pageKind === 'trust'}
+	<TrustPage copy={withDefaults(pages.trust, page.content)} />
+{:else if page.pageKind === 'dpa'}
+	<DpaPage copy={withDefaults(pages.dpa, page.content)} />
+{:else if page.pageKind === 'cookie-notice'}
+	<CookieNoticePage copy={withDefaults(pages.cookieNotice, page.content)} />
+{:else if page.pageKind === 'privacy-policy'}
+	<PrivacyPolicyPage copy={withDefaults(pages.privacyPolicy, page.content)} />
 {:else}
 
 <SeoHead

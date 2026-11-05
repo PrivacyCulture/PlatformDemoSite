@@ -10,6 +10,7 @@ import type raw from '../../../data/database.json';
 import { live } from './runtime';
 import type { AddedSection } from '$lib/site/added-sections';
 import type { BlogPost } from '$lib/site/blog';
+import type { PageCopyKind } from '$lib/site/page-copies';
 
 export type { AddedSection } from '$lib/site/added-sections';
 
@@ -201,6 +202,10 @@ export type CustomPage = {
 	 *  `uploadDate`, `durationSeconds`), read by `explainerFor`. Absent, or with neither a file nor a
 	 *  thumbnail, the page shows none — a page made in the CMS never borrows the default video. */
 	explainer?: Record<string, string>;
+	/** A copy of one of the site's one-of-a-kind pages (see $lib/site/page-copies): drawn by that page's
+	 *  component from `content`, its own copy of that page's content. Absent = an ordinary page added here. */
+	pageKind?: PageCopyKind;
+	content?: Record<string, unknown>;
 };
 
 type Raw = typeof raw;

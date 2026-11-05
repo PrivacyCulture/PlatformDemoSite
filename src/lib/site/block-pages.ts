@@ -18,6 +18,8 @@
  * Pure: no $env, no server imports.
  */
 
+import { pageCopyKind } from './page-copies';
+
 type Rec = Record<string, unknown>;
 
 const isRec = (v: unknown): v is Rec => !!v && typeof v === 'object' && !Array.isArray(v);
@@ -235,7 +237,9 @@ const demoForm = (hero: BlockPageBlock) => hero.data.showDemoForm === true;
 const PLATFORM_DEFAULT = ['trusted', 'fit', 'problems', 'articles', 'pricing', 'cta'];
 const PROBLEM_DEFAULT = ['quote', 'inPlatform', 'functionality', 'pricing', 'cta'];
 
-function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): void {
+/** `isCopy`: a copy of /platform (a page added in Sorted). Its list is its own, so it never reorders
+ *  the problem pages or rewrites their lines — that belongs to /platform's list alone. */
+function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[], isCopy = false): void {
 	seo(copy, page);
 	const hero = byId(page, 'hero', 'hero');
 	if (hero) {
@@ -268,11 +272,12 @@ function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[]): voi
 	const problems = byId(page, 'problems', 'problems');
 	if (problems) {
 		const list: Rec = { ...rec(copy.problems), eyebrow: str(problems.data.eyebrow), title: problems.header.heading };
-		applyProblemRows(problemItems, problems.data.items);
+		if (!isCopy) applyProblemRows(problemItems, problems.data.items);
 		const entries = listEntries(problemItems, problems.data.items);
 		// Written only when the list holds a row that is not a problem page: otherwise the list is
-		// the problem pages in their order, exactly what the page drew before.
-		if (entries.some((e) => 'href' in e)) list.entries = entries;
+		// the problem pages in their order, exactly what the page drew before. A copy always keeps its
+		// own order, since it does not set the problem pages' order.
+		if (isCopy || entries.some((e) => 'href' in e)) list.entries = entries;
 		else delete list.entries;
 		copy.problems = list;
 	}
@@ -608,6 +613,26 @@ function applyNotFound(copy: Rec, page: BlockPage): void {
 	if (error) copy.error = { ...rec(copy.error), eyebrow: str(error.data.eyebrow), title: error.header.heading, body: error.header.body };
 }
 
+/** A page added in Sorted: an ordinary one, or a copy of a one-of-a-kind page (see page-copies.ts). */
+function applyCopy(item: Rec, page: BlockPage, problemItems: unknown[]): void {
+	switch (pageCopyKind(item.pageKind)) {
+		case 'platform':
+			return applyPlatform(item, page, problemItems, true);
+		case 'faq':
+			return applyFaq(item, page);
+		case 'pricing':
+			return applyPricing(item, page);
+		case 'trust':
+			return applyTrust(item, page);
+		case 'dpa':
+		case 'cookie-notice':
+		case 'privacy-policy':
+			return applyLegal(item, page);
+		default:
+			return applyCustom(item, page);
+	}
+}
+
 function applyCustom(copy: Rec, page: BlockPage): void {
 	seo(copy, page);
 	if (page.title) copy.title = page.title;
@@ -672,7 +697,8 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 				if (isRec(item)) applyProblem(item, page);
 			} else if (key.startsWith('custom-')) {
 				const item = custom.find((i) => `custom-${str(rec(i).slug)}` === key);
-				if (isRec(item)) applyCustom(item, page);
+				// A copy of a one-of-a-kind page is written back as that page is.
+				if (isRec(item)) applyCopy(item, page, problemItems);
 			} else if (key === 'faq' && isRec(pages.faq)) applyFaq(pages.faq, page);
 			else if (key === 'pricing' && isRec(pages.pricing)) applyPricing(pages.pricing, page);
 			else if (key === 'trust' && isRec(pages.trust)) applyTrust(pages.trust, page);
