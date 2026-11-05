@@ -18,7 +18,7 @@
  * Pure: no $env, no server imports.
  */
 
-import { pageCopyKind } from './page-copies';
+import { pageCopyKind, PAGE_COPY_PAGES_KEY, type PageCopyKind } from './page-copies';
 
 type Rec = Record<string, unknown>;
 
@@ -45,6 +45,8 @@ export interface BlockPage {
 	blocks: BlockPageBlock[];
 	/** The header shows no menu links on this page (see nav-hidden.ts). */
 	hideNavigation?: boolean;
+	/** On a copy of a one-of-a-kind page (see page-copies.ts): which page it copies. */
+	pageKind?: PageCopyKind;
 }
 
 /** One block page from Sorted, coerced field by field; null when it is not one. */
@@ -75,7 +77,7 @@ export function readBlockPage(v: unknown): BlockPage | null {
 			data: rec(b.data)
 		});
 	}
-	return { title: str(v.title), slug: str(v.slug), summary: str(v.summary), seo: { title: str(seo.title), description: str(seo.description), keywords: str(seo.keywords) }, blocks, ...(v.hideNavigation === true ? { hideNavigation: true } : {}) };
+	return { title: str(v.title), slug: str(v.slug), summary: str(v.summary), seo: { title: str(seo.title), description: str(seo.description), keywords: str(seo.keywords) }, blocks, ...(v.hideNavigation === true ? { hideNavigation: true } : {}), ...(pageCopyKind(v.pageKind) ? { pageKind: pageCopyKind(v.pageKind)! } : {}) };
 }
 
 /** Every block page Sorted served, by page key. One bad page costs only that page. */
@@ -684,10 +686,15 @@ export function applyBlockPages<T>(content: T, blockPages: Record<string, BlockP
 	let addedCustom = false;
 	for (const key of keys) {
 		const slug = key.startsWith('custom-') ? key.slice('custom-'.length) : '';
-		if (slug && /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug) && !custom.some((i) => str(rec(i).slug) === slug)) {
-			custom.push(newCustomItem(slug));
+		if (!slug || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) continue;
+		const kind = blockPages[key].pageKind;
+		const existing = custom.find((i) => str(rec(i).slug) === slug);
+		if (!existing) {
+			// A copy of a one-of-a-kind page starts from that page, so whatever its blocks do not hold
+			// is the original's; an ordinary page added here starts empty.
+			custom.push(kind && isRec(pages[PAGE_COPY_PAGES_KEY[kind]]) ? { ...clone(pages[PAGE_COPY_PAGES_KEY[kind]] as Rec), slug, pageKind: kind } : newCustomItem(slug));
 			addedCustom = true;
-		}
+		} else if (kind && isRec(existing) && !str(existing.pageKind)) existing.pageKind = kind;
 	}
 	if (addedCustom) out.customPages = custom;
 	for (const key of keys) {

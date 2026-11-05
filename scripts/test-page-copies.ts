@@ -79,5 +79,19 @@ for (const kind of PAGE_COPY_KINDS) {
 	}
 }
 
+// Published from the page builder before its content area was approved: the live content has no
+// entry for the copy, only its block page. It must still be drawn as the page it copies.
+for (const kind of PAGE_COPY_KINDS) {
+	const bp = clone(served[kind]) as Rec;
+	bp.slug = `${kind}-copy`;
+	bp.pageKind = kind;
+	const after = applyBlockPages(clone(content), validBlockPages({ [`custom-${kind}-copy`]: bp })) as Rec;
+	const item = ((after.customPages as Rec[]) ?? []).find((i) => i.slug === `${kind}-copy`) as Rec | undefined;
+	check(item?.pageKind === kind, `${kind}: a live copy with no content area is still a copy of ${kind}`);
+	const { slug: _s, pageKind: _k, ...body } = item ?? {};
+	if (kind === 'platform') delete ((body.problems ?? {}) as Rec).entries;
+	check(canon(body) === canon(pages[PAGE_COPY_PAGES_KEY[kind]]), `${kind}: and draws exactly as the original`);
+}
+
 console.log(`test-page-copies: ${passes} passed, ${failures} failed`);
 if (failures) process.exit(1);
