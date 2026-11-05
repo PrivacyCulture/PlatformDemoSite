@@ -187,8 +187,7 @@ export function explainerVideoNode(
 }
 
 /** The FAQ page's questions, every one of which is drawn on the page. */
-export function faqNode(origin: string, pathname: string): JsonLdNode | null {
-	const copy = pages.faq;
+export function faqNode(origin: string, pathname: string, copy: typeof pages.faq = pages.faq): JsonLdNode | null {
 	return faqPageNode({
 		origin,
 		pathname,
