@@ -43,6 +43,8 @@ export interface BlockPage {
 	summary: string;
 	seo: { title: string; description: string; keywords: string };
 	blocks: BlockPageBlock[];
+	/** The header shows no menu links on this page (see nav-hidden.ts). */
+	hideNavigation?: boolean;
 }
 
 /** One block page from Sorted, coerced field by field; null when it is not one. */
@@ -73,7 +75,7 @@ export function readBlockPage(v: unknown): BlockPage | null {
 			data: rec(b.data)
 		});
 	}
-	return { title: str(v.title), slug: str(v.slug), summary: str(v.summary), seo: { title: str(seo.title), description: str(seo.description), keywords: str(seo.keywords) }, blocks };
+	return { title: str(v.title), slug: str(v.slug), summary: str(v.summary), seo: { title: str(seo.title), description: str(seo.description), keywords: str(seo.keywords) }, blocks, ...(v.hideNavigation === true ? { hideNavigation: true } : {}) };
 }
 
 /** Every block page Sorted served, by page key. One bad page costs only that page. */

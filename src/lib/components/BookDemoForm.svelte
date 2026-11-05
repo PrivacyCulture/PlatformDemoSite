@@ -199,61 +199,23 @@
 		{/if}
 	</label>
 
-	{#if part === 'organisation'}
-		<!-- Beside a hero the answers are cards to tap, as one radio group. -->
-		<fieldset>
-			<legend id="demo-tooling-label" class={labelClass}>{L.tooling}</legend>
-			<div
-				role="radiogroup"
-				aria-labelledby="demo-tooling-label"
-				aria-invalid={Boolean(errors.tooling)}
-				class="mt-1.5 flex flex-col gap-2"
-			>
-				{#each TOOLING_OPTIONS as option (option)}
-					<label
-						class={[
-							'flex min-h-11 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-[15px] transition-colors',
-							light
-								? 'border-ink/15 bg-white text-ink/80 hover:border-lens/40 has-[:checked]:border-lens has-[:checked]:bg-lens/5'
-								: 'border-bone/15 bg-ink text-bone/85 hover:border-lens/40 has-[:checked]:border-lens has-[:checked]:bg-lens/15',
-							'has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-lens'
-						]}
-					>
-						<input
-							type="radio"
-							name="demo-tooling"
-							class="h-4 w-4 shrink-0 cursor-pointer accent-lens"
-							value={option}
-							bind:group={values.tooling}
-							onchange={() => blurValidate('tooling')}
-						/>
-						<span class="block first-letter:uppercase">{option}</span>
-					</label>
-				{/each}
-			</div>
-			{#if errors.tooling}
-				<span class={errorClass}>{errors.tooling}</span>
-			{/if}
-		</fieldset>
-	{:else}
-		<label class={labelClass}>
-			{L.tooling}
-			<select
-				class="{fieldClass} cursor-pointer"
-				bind:value={values.tooling}
-				onblur={() => blurValidate('tooling')}
-				aria-invalid={Boolean(errors.tooling)}
-			>
-				<option value="" disabled>{L.toolingPlaceholder}</option>
-				{#each TOOLING_OPTIONS as option (option)}
-					<option value={option}>{option}</option>
-				{/each}
-			</select>
-			{#if errors.tooling}
-				<span class={errorClass}>{errors.tooling}</span>
-			{/if}
-		</label>
-	{/if}
+	<label class={labelClass}>
+		{L.tooling}
+		<select
+			class="{fieldClass} cursor-pointer"
+			bind:value={values.tooling}
+			onblur={() => blurValidate('tooling')}
+			aria-invalid={Boolean(errors.tooling)}
+		>
+			<option value="" disabled>{L.toolingPlaceholder}</option>
+			{#each TOOLING_OPTIONS as option (option)}
+				<option value={option}>{option.charAt(0).toUpperCase() + option.slice(1)}</option>
+			{/each}
+		</select>
+		{#if errors.tooling}
+			<span class={errorClass}>{errors.tooling}</span>
+		{/if}
+	</label>
 
 	<label class={labelClass}>
 		{L.timing}
