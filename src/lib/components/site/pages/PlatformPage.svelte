@@ -22,6 +22,7 @@
 	import LensCta from '$lib/components/site/LensCta.svelte';
 	import { problemListEntries, problems as problemItems } from '$lib/site/problems';
 	import { rich } from '$lib/site/rich';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	// The page's content: its own on its own route, or a copy's (a page added here in Sorted).
 	let { copy }: { copy: typeof pages.platform } = $props();
@@ -45,10 +46,12 @@
 	// The Book a demo form beside the copy, switched on in Sorted, takes the explainer's place there
 	// (absent = the explainer, as the page always had it). Its Watch button goes with the video, and
 	// a button to the demo page would only lead to the same form.
-	const demoFormBeside = $derived((copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
+	// The split hero (Sorted's "Split: pitch and services" layout) has neither the form nor the video.
+	const split = $derived(readHeroSplit((copy.hero as { split?: unknown }).split));
+	const demoFormBeside = $derived(!split && (copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
 	const heroPrimary = $derived(demoFormBeside && isDemoPath(copy.hero.primary.href.split(/[?#]/)[0]) ? undefined : copy.hero.primary);
 	// The explainer as structured data — only while the page draws it, in the hero or as a block.
-	const explainerDrawn = $derived(!demoFormBeside || bodyEntries.some((e) => e.id === 'explainer'));
+	const explainerDrawn = $derived((!split && !demoFormBeside) || bodyEntries.some((e) => e.id === 'explainer'));
 	const video = $derived(explainerDrawn ? explainerVideoNode(page.url.origin, page.url.pathname, explainerProps, page.data?.videoTranscript) : null);
 </script>
 
@@ -72,6 +75,7 @@
 	body={copy.hero.body}
 	primary={heroPrimary}
 	logos={heroLogos}
+	{split}
 	secondary={demoFormBeside || explainerProps.image ? undefined : {
 		label: copy.hero.secondary.label,
 		onSelect: () => explainer?.play()

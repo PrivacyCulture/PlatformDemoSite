@@ -17,6 +17,7 @@
 	import { isArchived, visibleLinks } from '$lib/site/archive';
 	import { explainerFor } from '$lib/site/explainer';
 	import { plain, rich } from '$lib/site/rich';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	const copy = pages.notFound;
 	const notFound = $derived(page.status === 404);
@@ -37,12 +38,24 @@
 	const showExplainer = $derived(copy.hero.sharedElement === 'explainer-video');
 	const demoFormBeside = $derived((copy.hero as { sharedElement?: string }).sharedElement === 'demo-form');
 	const links = $derived(visibleLinks(copy.whereNext.items));
+	// The split hero (Sorted's "Split: pitch and services" layout), on a 404 only: an error that is
+	// not one shows its shorter words in the ordinary frame.
+	const split = $derived(notFound ? readHeroSplit((copy.hero as { split?: unknown }).split) : null);
 </script>
 
 <SeoHead title={brandedTitle(plain(notFound ? copy.meta.title : copy.error.eyebrow))} description={copy.meta.description} index={false} />
 
 <SiteShell>
-	{#if showExplainer || demoFormBeside}
+	{#if split}
+		<PageHero
+			eyebrow={`${page.status} · ${hero.eyebrow}`}
+			title={hero.title}
+			body={hero.body}
+			{primary}
+			logos={false}
+			{split}
+		/>
+	{:else if showExplainer || demoFormBeside}
 		<PageHero
 			eyebrow={`${page.status} · ${hero.eyebrow}`}
 			title={hero.title}

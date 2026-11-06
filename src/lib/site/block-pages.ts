@@ -19,6 +19,7 @@
  */
 
 import { pageCopyKind, PAGE_COPY_PAGES_KEY, type PageCopyKind } from './page-copies';
+import { splitFromBlock } from './split-hero';
 
 type Rec = Record<string, unknown>;
 
@@ -236,6 +237,17 @@ const byId = (page: BlockPage, id: string, type: string) => page.blocks.find((b)
 /** The hero block's "Show the Book a demo form beside the copy" switch (HeroDemoForm on the site). */
 const demoForm = (hero: BlockPageBlock) => hero.data.showDemoForm === true;
 
+/**
+ * The hero block's "Split: pitch and services" layout (split-hero.ts), written as `split` beside the
+ * hero's words. Any other layout = the ordinary hero, which is a page with no `split` at all, so the
+ * key goes rather than says so and an unedited page comes back exactly as it was.
+ */
+function writeSplit(target: Rec, hero: BlockPageBlock): void {
+	const split = splitFromBlock(hero, (m) => image(m, null));
+	if (split) target.split = split;
+	else delete target.split;
+}
+
 // ── the pages ───────────────────────────────────────────────────────────────────────────────
 
 const PLATFORM_DEFAULT = ['trusted', 'fit', 'problems', 'articles', 'pricing', 'cta'];
@@ -259,6 +271,7 @@ function applyPlatform(copy: Rec, page: BlockPage, problemItems: unknown[], isCo
 		// what the page draws with no `sharedElement` at all, so the key goes rather than says so.
 		if (demoForm(hero)) h.sharedElement = 'demo-form';
 		else if (h.sharedElement === 'demo-form') delete h.sharedElement;
+		writeSplit(h, hero);
 		copy.hero = h;
 		explainer(copy, hero.data);
 	}
@@ -392,6 +405,7 @@ function applyProblem(item: Rec, page: BlockPage): void {
 		else if (!('sharedElement' in h)) h.sharedElement = 'none';
 		// The Book a demo form beside the copy wins over the video (the page keeps its video for later).
 		if (demoForm(hero)) h.sharedElement = 'demo-form';
+		writeSplit(h, hero);
 		item.hero = h;
 		explainer(item, show ? hero.data : { ...hero.data, video: null, poster: null });
 	}
@@ -443,6 +457,7 @@ function applyFaq(copy: Rec, page: BlockPage): void {
 		copy.eyebrow = str(hero.data.eyebrow);
 		copy.title = hero.header.heading;
 		copy.intro = hero.header.body;
+		writeSplit(copy, hero);
 	}
 	const q = byId(page, 'questions', 'faq');
 	if (q) {
@@ -485,6 +500,7 @@ function applyTrust(copy: Rec, page: BlockPage): void {
 		const [primary, secondary] = hero.header.buttons;
 		if (primary) h.primary = button(primary, h.primary);
 		if (secondary) h.secondary = button(secondary, h.secondary);
+		writeSplit(h, hero);
 		copy.hero = h;
 	}
 	const pillars = byId(page, 'pillars', 'cards');
@@ -599,6 +615,7 @@ function applyNotFound(copy: Rec, page: BlockPage): void {
 		h.secondary = button(secondary ?? { label: '', url: '' }, h.secondary);
 		const show = hero.data.showExplainer === true;
 		h.sharedElement = demoForm(hero) ? 'demo-form' : show ? 'explainer-video' : 'none';
+		writeSplit(h, hero);
 		copy.hero = h;
 		explainer(copy, show ? hero.data : { ...hero.data, video: null, poster: null });
 	}
@@ -650,6 +667,7 @@ function applyCustom(copy: Rec, page: BlockPage): void {
 		// The Book a demo form beside the copy. The page's own video, if any, stays under the hero.
 		if (demoForm(hero)) copy.sharedElement = 'demo-form';
 		else delete copy.sharedElement;
+		writeSplit(copy, hero);
 	}
 	const sections: Rec[] = [];
 	for (const b of page.blocks) {

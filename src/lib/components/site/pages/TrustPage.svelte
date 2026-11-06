@@ -5,6 +5,7 @@
 	import GoldCta from '$lib/components/site/GoldCta.svelte';
 	import PageHero from '$lib/components/site/PageHero.svelte';
 	import { pages, pageTitle } from '$lib/content';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	// The page's content: its own on its own route, or a copy's (a page added here in Sorted).
 	let { copy }: { copy: typeof pages.trust } = $props();
@@ -24,6 +25,7 @@
 	body={copy.hero.body}
 	primary={copy.hero.primary}
 	secondary={copy.hero.secondary}
+	split={readHeroSplit((copy.hero as { split?: unknown }).split)}
 />
 </PreviewBlock>
 

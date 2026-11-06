@@ -11,6 +11,7 @@ import { live } from './runtime';
 import type { AddedSection } from '$lib/site/added-sections';
 import type { BlogPost } from '$lib/site/blog';
 import type { PageCopyKind } from '$lib/site/page-copies';
+import type { HeroSplit } from '$lib/site/split-hero';
 
 export type { AddedSection } from '$lib/site/added-sections';
 
@@ -162,6 +163,8 @@ export type ProblemItem = {
 		 * Optional so content written before it existed still renders — absent reads as 'none'.
 		 */
 		sharedElement?: HeroSharedElement;
+		/** The split hero (split-hero.ts), chosen in Sorted's page builder. Absent = the ordinary hero. */
+		split?: unknown;
 	};
 	quote?: string;
 	/** Product screenshot section. Omitted when `panel` is used instead. */
@@ -198,6 +201,8 @@ export type CustomPage = {
 	showCta?: boolean;
 	/** 'demo-form' = the Book a demo form beside the hero's copy. Absent = the hero is copy alone. */
 	sharedElement?: 'demo-form';
+	/** The split hero (see $lib/site/split-hero), coerced. Absent = the ordinary hero. */
+	split?: HeroSplit;
 	/** An explainer video under the introduction (`src`, `poster`, `captions`, `label`, `chapters`,
 	 *  `uploadDate`, `durationSeconds`), read by `explainerFor`. Absent, or with neither a file nor a
 	 *  thumbnail, the page shows none — a page made in the CMS never borrows the default video. */

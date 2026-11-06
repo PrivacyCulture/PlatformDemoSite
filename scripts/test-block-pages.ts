@@ -6,6 +6,7 @@
 // changes). The round trip is the property that matters: converting must cost no page anything.
 import { readFileSync } from 'node:fs';
 import { applyBlockPages, validBlockPages, readBlockPage } from '../src/lib/site/block-pages';
+import { readHeroSplit } from '../src/lib/site/split-hero';
 
 let failures = 0;
 let passes = 0;
@@ -275,6 +276,72 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(cOn.sharedElement === 'demo-form', 'a page made in Sorted: the form switched on reaches the page');
 	const cOff = customOf(applyBlockPages({ ...withCustom, customPages: [{ ...(withCustom.customPages as Rec[])[0], sharedElement: 'demo-form' }] } as Rec, validBlockPages({ 'custom-made-here': page({ ...hero, data: { ...(hero.data as Rec), showDemoForm: false } }) })) as Rec);
 	check(!('sharedElement' in cOff), 'a page made in Sorted: switched off, the key goes');
+}
+
+{
+	// The split hero: the Hero block's "Split: pitch and services" layout, written as `split`.
+	const splitData = {
+		background: { url: '/Images/network.webp', alt: 'A network', mime: 'image/webp', width: 1920, height: 1080 },
+		stats: [{ id: 's1', title: 'Simple', body: 'Live in weeks' }, { id: 's2', title: 'Visual', body: 'See the blast radius' }],
+		ctaNote: 'From £800 a month.',
+		pitchOverlay: '#0B1F5C',
+		pitchOpacity: 70,
+		pitchTone: 'light',
+		servicesEyebrow: 'Privacy services',
+		servicesHeading: 'Expert help',
+		servicesBody: 'Our specialists take on the day to day.',
+		services: [{ id: 'v1', title: 'DPO as a Service', buttonUrl: '/dpo', icon: 'adviser' }, { id: 'v2', title: 'Privacy Training', buttonUrl: '', icon: 'presentation' }],
+		servicesButtonText: 'Start a conversation',
+		servicesButtonUrl: '/demo',
+		servicesOverlay: '#f3f5fa',
+		servicesOpacity: 95,
+		servicesTone: 'dark'
+	};
+	const toSplit = (swap: boolean) => (p: Rec) => {
+		const h = block(p, 'hero');
+		h.layout = 'split';
+		h.swap = swap;
+		Object.assign(h.data as Rec, splitData);
+	};
+	const plat = (pagesOf(edit('platform', toSplit(false))).platform as Rec).hero as Rec;
+	const s = readHeroSplit(plat.split)!;
+	check(!!s, '/platform: the split layout reaches the hero as `split`');
+	check(s.swap === false && s.background?.src === '/Images/network.webp' && s.background.width === 1920 && s.video === '', '/platform: the shared background picture comes through');
+	check(s.pitch.overlay === '#0b1f5c' && s.pitch.opacity === 70 && s.pitch.tone === 'light', '/platform: the pitch overlay, opacity and tone come through');
+	check(s.pitch.stats.length === 2 && s.pitch.stats[0].title === 'Simple' && s.pitch.ctaNote === 'From £800 a month.', '/platform: the stats and the card line come through');
+	check(s.cta.label === ((block(served.platform as Rec, 'hero').header as Rec).buttons as Rec[])[0].label, "/platform: the card is the hero block's first button");
+	check(s.services.links.length === 2 && s.services.links[0].icon === 'adviser' && s.services.links[0].href === '/dpo', '/platform: the services and their icons come through');
+	check(s.services.button.label === 'Start a conversation' && s.services.heading === 'Expert help', "/platform: the services panel's words and button come through");
+	check(readHeroSplit(((pagesOf(edit('platform', toSplit(true))).platform as Rec).hero as Rec).split)!.swap, '/platform: swap comes through');
+
+	const slug = ((content.problems as Rec).items as Rec[])[0].slug as string;
+	const pOn = problemOf(edit(`problem-${slug}`, (p) => {
+		toSplit(false)(p);
+		(block(p, 'hero').data as Rec).showDemoForm = true;
+	}), slug)!;
+	check(!!readHeroSplit((pOn.hero as Rec).split), 'problem page: the split layout reaches the hero');
+	check(!!readHeroSplit((pagesOf(edit('faq', toSplit(false))).faq as Rec).split), 'FAQ: the split layout is written beside its top-level words');
+	check(!!readHeroSplit(((pagesOf(edit('trust', toSplit(false))).trust as Rec).hero as Rec).split), 'Trust: the split layout reaches the hero');
+	check(!!readHeroSplit(((pagesOf(edit('not-found', toSplit(false))).notFound as Rec).hero as Rec).split), 'Page not found: the split layout reaches the hero');
+
+	const vid = readHeroSplit(((pagesOf(edit('platform', (p) => {
+		toSplit(false)(p);
+		(block(p, 'hero').data as Rec).background = { url: '/media/loop.mp4', alt: '', mime: 'video/mp4' };
+	})).platform as Rec).hero as Rec).split)!;
+	check(vid.video === '/media/loop.mp4' && vid.background === null, 'a video background is carried as the video, not as a picture');
+
+	// Back to the ordinary layout, from content that had it split: the key goes.
+	const hadSplit = JSON.parse(JSON.stringify(content)) as Rec;
+	((pagesOf(hadSplit).platform as Rec).hero as Rec).split = { swap: true };
+	const back = pagesOf(applyBlockPages(hadSplit, validBlockPages({ platform: served.platform })) as Rec).platform as Rec;
+	check(!('split' in (back.hero as Rec)), 'the ordinary layout again: `split` goes from the hero');
+
+	// Coerced before it is drawn.
+	const bad = readHeroSplit({ pitch: { overlay: 'red', opacity: 140 }, services: { overlay: '#ABC', opacity: '-5', tone: 'neon', links: [{ label: '', href: '/x' }, { label: 'Kept', icon: 'not-an-icon' }] } })!;
+	check(bad.pitch.overlay === '' && bad.pitch.opacity === 100, 'an overlay that is not a hex colour is none; an opacity over 100 is 100');
+	check(bad.services.overlay === '#aabbcc' && bad.services.opacity === 0 && bad.services.tone === 'dark', 'a short hex colour is widened; a negative opacity is 0; an unknown tone is the default');
+	check(bad.services.links.length === 1 && bad.services.links[0].icon === '', 'a link with no label is dropped; an unknown icon is none');
+	check(readHeroSplit(undefined) === null && readHeroSplit('split') === null, 'no split is null');
 }
 
 // ── what is refused ──
