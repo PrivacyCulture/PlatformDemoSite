@@ -31,6 +31,7 @@
 	import PrivacyPolicyPage from '$lib/components/site/pages/PrivacyPolicyPage.svelte';
 	import { pages } from '$lib/content';
 	import { withDefaults } from '$lib/site/page-copies';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	let { data } = $props();
 	// A problem page created in the page builder is drawn by the same component as the ten built in.
@@ -47,7 +48,9 @@
 	const explainer = $derived(explainerFor(page));
 	// The Book a demo form beside the copy, switched on in Sorted: the hero splits, text left and
 	// form right. The page's own explainer, if it has one, stays under the hero as before.
-	const demoFormBeside = $derived(page.sharedElement === 'demo-form');
+	// The split hero (Sorted's "Split: pitch and services" layout) takes the form's place too.
+	const split = $derived(readHeroSplit(page.split));
+	const demoFormBeside = $derived(!split && page.sharedElement === 'demo-form');
 	const videoNode = $derived(
 		showExplainer && !explainer.image ? explainerVideoNode(route.url.origin, route.url.pathname, explainer, route.data?.videoTranscript) : null
 	);
@@ -84,8 +87,12 @@
 	schema={videoNode ? [videoNode] : undefined}
 />
 
-<div class={['w-full', !demoFormBeside && 'pt-6 sm:pt-10']}>
-	{#if demoFormBeside}
+<div class={['w-full', !demoFormBeside && !split && 'pt-6 sm:pt-10']}>
+	{#if split}
+		<div data-block-id="hero" style="display: contents">
+			<PageHero eyebrow={page.eyebrow || undefined} title={page.title} body={page.intro} logos={false} {split} />
+		</div>
+	{:else if demoFormBeside}
 		<div data-block-id="hero" style="display: contents">
 			<PageHero eyebrow={page.eyebrow || undefined} title={page.title} body={page.intro} logos={false}>
 				<HeroDemoForm />

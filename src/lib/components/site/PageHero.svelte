@@ -2,6 +2,8 @@
 	import GoldCta from './GoldCta.svelte';
 	import LensCta from './LensCta.svelte';
 	import LogoStrip from './LogoStrip.svelte';
+	import SplitHero from './SplitHero.svelte';
+	import type { HeroSplit } from '$lib/site/split-hero';
 	import { rich } from '$lib/site/rich';
 
 	let {
@@ -14,7 +16,8 @@
 		micro,
 		logos = true,
 		children,
-		under
+		under,
+		split
 	}: {
 		eyebrow?: string;
 		title: string;
@@ -31,21 +34,29 @@
 		 * the buttons. It makes the hero split even with no side element, so it sits in the same place.
 		 */
 		under?: import('svelte').Snippet;
+		/**
+		 * The split hero (Sorted's "Split: pitch and services" layout): drawn instead, from these same
+		 * words, with the primary button as its gold card. The side element is not drawn with it.
+		 */
+		split?: HeroSplit | null;
 	} = $props();
 
-	const split = $derived(Boolean(children || under));
+	const sided = $derived(Boolean(children || under));
 	const lines = $derived(titleLines?.length ? titleLines : [title]);
 </script>
 
+{#if split}
+<SplitHero {split} {eyebrow} {title} {titleLines} {body} {primary} {logos} {under} />
+{:else}
 <header
 	class={[
 		'w-full',
-		split
+		sided
 			? 'flex min-h-[calc(min(78vh,46rem)-5.5rem)] flex-col py-6'
 			: 'pt-6 sm:pt-10'
 	]}
 >
-	{#if split}
+	{#if sided}
 		<div class="flex flex-1 flex-col justify-center">
 			<!-- With something under the video (the problem pager), wide screens use a grid. Left: text,
 			     buttons and micro in rows 1-3. Right: the video centred against the text in row 1, as the
@@ -161,3 +172,4 @@
 		{/if}
 	{/if}
 </header>
+{/if}

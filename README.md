@@ -103,6 +103,10 @@ npx tsx scripts/test-demo-steps.ts
 
 When a booking succeeds the team is emailed. Who is set in Sorted, under Settings → Platform → *Book a demo — notification emails* (read through `/api/platform-demo-config`, so a change lands within five minutes). `DEMO_NOTIFY_EMAILS` (comma separated, any number) is only the fallback for when that list is empty or Sorted can't be reached. `SENDGRID_API_KEY` and `EMAIL_FROM` are the sender. With neither list set, nothing is sent.
 
+### Split hero
+
+The hero block's second layout in Sorted's page builder, **Split: pitch and services**, draws [SplitHero](src/lib/components/site/SplitHero.svelte) in place of the usual hero on /platform, the problem pages, Trust, FAQ, Page not found and pages made in Sorted: the hero's own words with its first button as a gold card, beside a list of services (icon, label, link) and an outline button, the two sides on one full-width background (a picture or a looping video; none = the navy gradient). Each side lays its own colour over the background at its own opacity and sets light or dark text; **Swap the columns** puts the services on the left, and on a phone the left side comes first. [block-pages.ts](src/lib/site/block-pages.ts) writes it as `split` beside the hero's words (top level on the FAQ and on pages made in Sorted) and removes it when the layout goes back; [split-hero.ts](src/lib/site/split-hero.ts) coerces every field before it is drawn. The services icons are ids in [feature-icons.ts](src/lib/site/feature-icons.ts), which Sorted's `$lib/feature-icons` must list id for id.
+
 ### Journey clips
 
 Scene clips live in `src/lib/assets/clips/Mountain/` (`start.mp4` = hero loop, `shot-2.mp4` … `shot-8.mp4` = scenes) and are listed in the content under `journey.clips`. Because clips are bundled at build time, the CMS cannot add new ones: if it names a clip this build does not have, the site keeps the build's own clip list. They are imported rather than served from `static/` so Vite fingerprints the URLs and they ship with a one-year immutable cache header. To replace a clip, overwrite the file with the same name.

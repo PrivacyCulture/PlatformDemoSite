@@ -29,7 +29,19 @@ export const FEATURE_ICONS: Readonly<Record<string, string>> = {
 	globe:
 		'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/>',
 	alert: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15L6 16Z"/><path d="M10 20.5a2 2 0 0 0 4 0"/>',
-	settings: '<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>'
+	settings: '<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/>',
+	// Services (the split hero's list), also offered to the Features menu.
+	adviser:
+		'<circle cx="12" cy="7" r="3.5"/><path d="M5 21v-.5a7 7 0 0 1 14 0v.5"/><path d="m10.4 14.2 1.6 2.3 1.6-2.3"/>',
+	headset:
+		'<path d="M4 14v-2a8 8 0 0 1 16 0v2"/><rect x="3" y="13" width="4" height="6" rx="1.5"/><rect x="17" y="13" width="4" height="6" rx="1.5"/><path d="M19 19c0 1.6-2 2.5-5 2.5h-1.5"/>',
+	presentation:
+		'<rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M12 16v4M8 20.5h8"/><path d="m7.5 12 3-3 2.5 2.5L16.5 8"/>',
+	'document-redact':
+		'<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5Z"/><path d="M14 3v5h5"/><path d="M9 12h6"/><rect x="8.5" y="15" width="7" height="2.5" rx=".6" fill="currentColor" stroke="none"/>',
+	'clipboard-list':
+		'<path d="M8.5 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1.5"/><rect x="8.5" y="3" width="7" height="4" rx="1"/><path d="M9 11.5h.01M12 11.5h3M9 15.5h.01M12 15.5h3"/>',
+	'user-circle': '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="10" r="3"/><path d="M6.6 18.4a6 6 0 0 1 10.8 0"/>'
 };
 
 /** The icon's markup, or nothing for an empty or unknown id. Only ever this module's own strings. */

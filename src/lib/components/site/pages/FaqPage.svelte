@@ -10,6 +10,7 @@
 	import { page } from '$app/state';
 	import { faqLayout } from '$lib/site/page-layout';
 	import AddedSection from '$lib/components/site/AddedSection.svelte';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	// The page's content: its own on its own route, or a copy's (a page added here in Sorted).
 	let { copy }: { copy: typeof pages.faq } = $props();
@@ -30,7 +31,7 @@
 	mainEntityId={FAQ_ID(page.url.origin, page.url.pathname)}
 />
 
-<PreviewBlock id="hero"><PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} /></PreviewBlock>
+<PreviewBlock id="hero"><PageHero eyebrow={copy.eyebrow} title={copy.title} body={copy.intro} split={readHeroSplit((copy as { split?: unknown }).split)} /></PreviewBlock>
 
 {#snippet questionsBlock()}
 	<section

@@ -26,6 +26,7 @@
 	import { site } from '$lib/site/content';
 	import { problemByHref, problemCommon, problemLayout } from '$lib/site/problems';
 	import { rich } from '$lib/site/rich';
+	import { readHeroSplit } from '$lib/site/split-hero';
 
 	let { href }: { href: string } = $props();
 
@@ -41,8 +42,10 @@
 		return Boolean(own && (set(own.src) || set(own.poster)));
 	});
 	// The Book a demo form beside the copy, switched on in Sorted, takes the video's place.
-	const demoFormBeside = $derived(page.hero.sharedElement === 'demo-form');
-	const showExplainer = $derived(!demoFormBeside && (page.hero.sharedElement === 'explainer-video' || ownExplainer));
+	// The split hero (Sorted's "Split: pitch and services" layout) has neither the form nor the video.
+	const split = $derived(readHeroSplit(page.hero.split));
+	const demoFormBeside = $derived(!split && page.hero.sharedElement === 'demo-form');
+	const showExplainer = $derived(!split && !demoFormBeside && (page.hero.sharedElement === 'explainer-video' || ownExplainer));
 	// With the form beside it, a hero button to the demo page would only lead to the same form.
 	const primary = $derived(demoFormBeside && isDemoPath(common.primary.href.split(/[?#]/)[0]) ? undefined : common.primary);
 	// The blocks between the hero and the pager, and the sections added in the CMS, in the order
@@ -91,6 +94,7 @@
 	micro={site.pricing.micro}
 	children={demoFormBeside ? bookForm : showExplainer ? video : undefined}
 	under={stepper}
+	{split}
 />
 </PreviewBlock>
 

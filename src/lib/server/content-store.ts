@@ -20,6 +20,7 @@ import database from '../../../data/database.json';
 import { validBlogPosts } from '$lib/site/blog';
 import { pageCopyKind } from '$lib/site/page-copies';
 import { navHiddenPathsOf } from '$lib/site/nav-hidden';
+import { readHeroSplit } from '$lib/site/split-hero';
 
 export type ContentChannel = 'live' | 'draft';
 export type ContentSource = 'cms' | 'fallback';
@@ -164,6 +165,7 @@ function validCustomPages(v: unknown): CustomPage[] {
 			cta: { eyebrow: str(cta.eyebrow), title: str(cta.title), body: str(cta.body), micro: str(cta.micro) },
 			...(p.showCta === false ? { showCta: false } : {}),
 			...(p.sharedElement === 'demo-form' ? { sharedElement: 'demo-form' as const } : {}),
+			...(readHeroSplit(p.split) ? { split: readHeroSplit(p.split)! } : {}),
 			...(isObject(p.explainer) ? { explainer: explainerStrings(p.explainer) } : {}),
 			// A copy of a one-of-a-kind page keeps that page's content whole; its component reads it.
 			...(pageCopyKind(p.pageKind) && !Array.isArray(p) ? { pageKind: pageCopyKind(p.pageKind)!, content: structuredClone(p) as Record<string, unknown> } : {})

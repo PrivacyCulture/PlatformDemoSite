@@ -12,6 +12,8 @@ import { optimisedWidth, responsiveSrcset, variantUrl, variantWidths } from './r
  * side padding of up to 7vw, so "90vw" is the narrow-screen width of anything full-column.
  */
 export const SIZES = {
+	/** The full width of the window (the split hero's background). */
+	full: '100vw',
 	/** The whole page column. */
 	column: '(min-width: 1344px) 1152px, 90vw',
 	/** One side of a two-column row (lg:grid-cols-2). */
