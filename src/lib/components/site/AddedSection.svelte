@@ -11,6 +11,7 @@
 <script lang="ts">
 	import GoldCta from './GoldCta.svelte';
 	import FoldoutList from './FoldoutList.svelte';
+	import DownloadForm from './DownloadForm.svelte';
 	import { SIZES, imageSize, responsive, sourceSrcset } from '$lib/site/images';
 	import { asset } from '$lib/content/assets';
 	import type { AddedSection, AddedImage } from '$lib/site/added-sections';
@@ -117,5 +118,7 @@
 		{/if}
 	{:else if section.template === 'foldout'}
 		<FoldoutList title={section.title || 'More'} intro={section.intro} items={section.items} />
+	{:else if section.template === 'download'}
+		<DownloadForm {section} />
 	{/if}
 </section>

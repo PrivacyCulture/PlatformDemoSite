@@ -7,6 +7,7 @@
 import { readFileSync } from 'node:fs';
 import { applyBlockPages, validBlockPages, readBlockPage } from '../src/lib/site/block-pages';
 import { readHeroSplit } from '../src/lib/site/split-hero';
+import { addedSections } from '../src/lib/site/added-sections';
 
 let failures = 0;
 let passes = 0;
@@ -342,6 +343,21 @@ const block = (p: Rec, id: string) => blocks(p).find((b) => b.id === id) as Rec;
 	check(bad.services.overlay === '#aabbcc' && bad.services.opacity === 0 && bad.services.tone === 'dark', 'a short hex colour is widened; a negative opacity is 0; an unknown tone is the default');
 	check(bad.services.links.length === 1 && bad.services.links[0].icon === '', 'a link with no label is dropped; an unknown icon is none');
 	check(readHeroSplit(undefined) === null && readHeroSplit('split') === null, 'no split is null');
+}
+
+// ── a Download form: written as a 'download' section naming its page, never its file ──
+{
+	const dl = { id: 'report', type: 'download-form', layout: 'default', swap: false, header: { heading: 'Our report', body: 'Read it.', buttons: [] }, data: { eyebrow: 'Free', file: null, hasFile: true, fileName: 'report.pdf', fileKind: 'PDF', buttonLabel: 'Get it', formOpen: false, askConsent: true, consentLabel: '', thankYou: '' } };
+	const pages = validBlockPages({ 'custom-guide': { v: 2, title: 'Guide', slug: 'guide', seo: {}, blocks: [dl] } });
+	check(pages['custom-guide'].key === 'custom-guide', 'a block page knows the key it was served under');
+	const out = applyBlockPages({ ...(content as Rec), customPages: [{ slug: 'guide', title: 'Guide', sections: [] }] }, pages) as Rec;
+	const page = (out.customPages as Rec[]).find((p) => p.slug === 'guide') as Rec;
+	const s = addedSections(page).get('report');
+	check(s?.template === 'download', 'the block becomes a download section');
+	check(s?.template === 'download' && s.pageKey === 'custom-guide' && s.fileName === 'report.pdf' && s.buttonLabel === 'Get it' && s.hasFile, 'it carries the page key, the file name and the button');
+	check(!JSON.stringify(page).includes('"url"'), 'no file address is written into the page');
+	check(addedSections({ sections: [{ id: 'x', template: 'download', pageKey: '' }] }).size === 0, 'a download section with no page key is not drawn');
+	check(addedSections({ sections: [{ id: 'x', template: 'download', pageKey: 'platform' }] }).get('x')?.template === 'download', 'one with a page key is');
 }
 
 // ── what is refused ──
