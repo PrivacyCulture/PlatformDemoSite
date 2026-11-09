@@ -48,6 +48,8 @@ export interface BlockPage {
 	hideNavigation?: boolean;
 	/** On a copy of a one-of-a-kind page (see page-copies.ts): which page it copies. */
 	pageKind?: PageCopyKind;
+	/** The page key Sorted served it under (set by validBlockPages): a Download form names it. */
+	key?: string;
 }
 
 /** One block page from Sorted, coerced field by field; null when it is not one. */
@@ -86,7 +88,7 @@ export function validBlockPages(v: unknown): Record<string, BlockPage> {
 	const out: Record<string, BlockPage> = {};
 	for (const [key, p] of Object.entries(rec(v))) {
 		const page = readBlockPage(p);
-		if (page && /^[a-z0-9-]+$/.test(key)) out[key] = page;
+		if (page && /^[a-z0-9-]+$/.test(key)) out[key] = { ...page, key };
 	}
 	return out;
 }
@@ -180,7 +182,7 @@ function explainer(target: Rec, d: Rec): void {
 }
 
 /** A block the page has no part for, as an added section — or null when no template can draw it. */
-function asSection(b: BlockPageBlock): Rec | null {
+function asSection(b: BlockPageBlock, pageKey = ''): Rec | null {
 	const h = b.header;
 	const d = b.data;
 	switch (b.type) {
@@ -198,6 +200,27 @@ function asSection(b: BlockPageBlock): Rec | null {
 			return { id: b.id, template: 'image', title: h.heading, image: image(d.media, null) ?? { src: '', alt: '' }, caption: str(d.caption) };
 		case 'foldout':
 			return { id: b.id, template: 'foldout', title: h.heading, intro: h.body, items: items(d.items) };
+		case 'download-form':
+			// Sorted serves this block without the file's address (download-form.ts there); the form
+			// asks for it by page key and block id once a name and email are given.
+			if (!pageKey) return null;
+			return {
+				id: b.id,
+				template: 'download',
+				pageKey,
+				eyebrow: str(d.eyebrow),
+				title: h.heading,
+				body: h.body,
+				image: image(d.image, null) ?? { src: '', alt: '' },
+				fileName: str(d.fileName),
+				fileKind: str(d.fileKind),
+				hasFile: d.hasFile === true,
+				buttonLabel: str(d.buttonLabel),
+				formOpen: d.formOpen === true,
+				askConsent: d.askConsent !== false,
+				consentLabel: str(d.consentLabel),
+				thankYou: str(d.thankYou)
+			};
 	}
 	return null;
 }
@@ -216,7 +239,7 @@ function writeLayout(target: Rec, page: BlockPage, own: Record<string, (b: Block
 			order.push(b.id);
 			continue;
 		}
-		const s = asSection(b);
+		const s = asSection(b, page.key);
 		if (s) {
 			sections.push(s);
 			order.push(b.id);
@@ -672,7 +695,7 @@ function applyCustom(copy: Rec, page: BlockPage): void {
 	const sections: Rec[] = [];
 	for (const b of page.blocks) {
 		if (b.id === 'hero' || (b.id === 'cta' && b.type === 'cta')) continue;
-		const s = asSection(b);
+		const s = asSection(b, page.key);
 		if (s) sections.push(s);
 	}
 	copy.sections = sections;

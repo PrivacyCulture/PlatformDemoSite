@@ -14,6 +14,32 @@
 export const SECTION_TEMPLATE_IDS = ['text', 'copyImage', 'cards', 'quote', 'cta', 'image', 'foldout'] as const;
 export type SectionTemplateId = (typeof SECTION_TEMPLATE_IDS)[number];
 
+/**
+ * A Download form, made only by Sorted's page builder (block-pages.ts writes it from a
+ * 'download-form' block), so it is not one of the templates the old editor offers. It carries the
+ * file's name, never its address: the visitor gives a name and email, the site's server asks Sorted
+ * for the file (POST /api/download-request), and only then is the address handed over.
+ * Keep the keys in step with Sorted's src/lib/page-builder/download-form.ts.
+ */
+export type DownloadSection = {
+	template: 'download';
+	id: string;
+	/** The block page this sits on ('platform', 'custom-x') — what Sorted finds the file by. */
+	pageKey: string;
+	eyebrow: string;
+	title: string;
+	body: string;
+	image: AddedImage;
+	fileName: string;
+	fileKind: string;
+	hasFile: boolean;
+	buttonLabel: string;
+	formOpen: boolean;
+	askConsent: boolean;
+	consentLabel: string;
+	thankYou: string;
+};
+
 /** An image as an added section holds it. `src` blank = no image is drawn. */
 export type AddedImage = { src: string; webp: string; alt: string; width: number; height: number };
 
@@ -24,7 +50,8 @@ export type AddedSection =
 	| { template: 'quote'; id: string; title: string; quote: string; attribution: string }
 	| { template: 'cta'; id: string; eyebrow: string; title: string; body: string; label: string; href: string }
 	| { template: 'image'; id: string; title: string; image: AddedImage; caption: string }
-	| { template: 'foldout'; id: string; title: string; intro: string; items: { title: string; body: string }[] };
+	| { template: 'foldout'; id: string; title: string; intro: string; items: { title: string; body: string }[] }
+	| DownloadSection;
 
 const str = (v: unknown): string => (typeof v === 'string' ? v : '');
 const num = (v: unknown): number => (typeof v === 'number' && Number.isFinite(v) && v > 0 ? Math.round(v) : typeof v === 'string' && /^\d+$/.test(v) ? Number(v) : 0);
@@ -80,6 +107,28 @@ export function addedSection(v: unknown): AddedSection | null {
 		case 'foldout': {
 			const items = Array.isArray(v.items) ? v.items.filter(isObject).map((it) => ({ title: str(it.title), body: str(it.body) })) : [];
 			return { template, id, title, intro: str(v.intro), items };
+		}
+		case 'download': {
+			const pageKey = str(v.pageKey).trim();
+			// With no page to name, Sorted could never find the file: nothing worth drawing.
+			if (!/^[a-z0-9-]+$/.test(pageKey)) return null;
+			return {
+				template,
+				id,
+				pageKey,
+				eyebrow: str(v.eyebrow),
+				title,
+				body: str(v.body),
+				image: image(v.image),
+				fileName: str(v.fileName),
+				fileKind: str(v.fileKind),
+				hasFile: v.hasFile === true,
+				buttonLabel: str(v.buttonLabel),
+				formOpen: v.formOpen === true,
+				askConsent: v.askConsent !== false,
+				consentLabel: str(v.consentLabel),
+				thankYou: str(v.thankYou)
+			};
 		}
 		default:
 			return null;
