@@ -117,10 +117,8 @@
 		{#if section.body}
 			<p class="rt mt-4 max-w-[62ch] text-[15px] leading-relaxed font-light whitespace-pre-line text-ink/70">{@html rich(section.body)}</p>
 		{/if}
-		{#if section.fileName}
-			<p class="mt-4 font-mono text-[11px] tracking-[0.14em] text-ink/50 uppercase">
-				{section.fileKind ? `${section.fileKind} · ` : ''}{section.fileName}
-			</p>
+		{#if section.fileKind}
+			<p class="mt-4 font-mono text-[11px] tracking-[0.14em] text-ink/50 uppercase">{section.fileKind}</p>
 		{/if}
 
 		{#if !section.hasFile}
@@ -129,7 +127,7 @@
 			<div bind:this={thanks} tabindex="-1" class="mt-8 max-w-[34rem] rounded-2xl border border-gold/35 bg-gold/10 p-5 outline-none" role="status">
 				<p class="text-[15px] leading-relaxed text-ink/80">{section.thankYou.trim() || DEFAULTS.thankYou}</p>
 				<a href={done.url} download={done.fileName} rel="noopener" class="mt-3 inline-flex items-center gap-2 text-[14px] font-semibold text-lens underline underline-offset-2 hover:text-heading">
-					Download {done.fileName}
+					Download the file
 				</a>
 			</div>
 		{:else if !showForm}
