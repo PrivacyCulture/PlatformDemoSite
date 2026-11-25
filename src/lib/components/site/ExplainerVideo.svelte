@@ -14,7 +14,8 @@
 		compact = false,
 		// A still in place of the video: the page has a thumbnail and no file of its own.
 		image = false,
-		// A chapter file from Sorted: play opens the full-screen chapter player instead of playing here.
+		// A chapter file from Sorted: play opens the chapter player instead of playing here — in a
+		// centred window on desktop (with a full-screen button), full screen on touch devices.
 		chapters = '',
 		open = $bindable(false)
 	}: {
@@ -211,6 +212,7 @@
 			captionsLang={site.video.captionsLang}
 			captionsLabel={site.video.captionsLabel}
 			title={label}
+			windowed={!touch}
 			onclose={closePlayer}
 		/>
 	{/if}

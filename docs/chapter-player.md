@@ -47,8 +47,9 @@ site's own content names in a `chapters` field.
 | `autoplay` | boolean | `true` | Start on open. If the browser refuses, the paused screen shows |
 | `startAt` | number | `0` | Seconds to start from |
 | `contained` | boolean | `false` | Fill the parent box instead of the viewport (the demo frames) |
-| `fullscreen` | boolean | `true` | Ask for real full screen on open (ignored when `contained`) |
-| `onclose` | `() => void` | | Exit button, Escape, or leaving full screen |
+| `fullscreen` | boolean | `true` | Ask for real full screen on open (ignored when `contained` or `windowed`) |
+| `windowed` | boolean | `false` | Play in a centred 16:9 window over the dimmed page (the site's explainer on desktop). A Full screen button, F or a double-click goes full screen; leaving full screen returns to the window. Ignored when `contained` |
+| `onclose` | `() => void` | | Exit/Close button, Escape, a click on the backdrop (`windowed`), or leaving full screen (not `windowed`) |
 | `onchapterchange` | `(detail) => void` | | See events |
 | `onplay`, `onpause` | `() => void` | | See events |
 
@@ -79,6 +80,7 @@ With focus anywhere in the player:
 | Home / End | Start of the film / start of the last chapter |
 | C | Captions on / off |
 | M | Mute |
+| F | Full screen on / off (`windowed` only) |
 | Esc | Close the preview card, else close the player |
 
 Every control is a real `<button>` with an `aria-label`. The progress bar is a native range input
