@@ -1,7 +1,9 @@
 <!--
 	A full-screen, chaptered explainer player.
 
-	One film, split into chapters. The video fills the screen, letterboxed on ink; a slim bar along
+	One film, split into chapters. The video fills the screen, letterboxed on ink — or, `windowed`
+	(desktop), plays in a centred 16:9 window over the dimmed page, with a button that takes it full
+	screen and back. A slim bar along
 	the bottom carries play/pause, previous/next chapter, the time within the current chapter, its
 	title, one numbered circle per chapter, captions and exit. Above the bar, a 3px progress bar in
 	one segment per chapter, each as wide as its chapter is long.
@@ -47,6 +49,7 @@
 		startAt = 0,
 		contained = false,
 		fullscreen = true,
+		windowed = false,
 		onclose,
 		onchapterchange,
 		onplay,
@@ -74,7 +77,12 @@
 		contained?: boolean;
 		/** Ask the browser for real full screen on open (ignored when `contained`). */
 		fullscreen?: boolean;
-		/** The viewer closed the player (the exit button, Escape, or leaving full screen). */
+		/** Play in a centred window over the dimmed page instead of filling the screen (desktop). A
+		 *  button, F or a double-click takes it full screen; leaving full screen returns to the window
+		 *  rather than closing. Overrides `fullscreen` on open; ignored when `contained`. */
+		windowed?: boolean;
+		/** The viewer closed the player (the close button, Escape, the backdrop, or — when not
+		 *  `windowed` — leaving full screen). */
 		onclose?: () => void;
 		onchapterchange?: (detail: ChapterChangeDetail) => void;
 		onplay?: () => void;
@@ -104,6 +112,9 @@
 	const chapter = $derived(current >= 0 ? chapters[current] : null);
 	const nextTime = $derived(nextChapterTime(chapters, time));
 	const atFirstStart = $derived(current <= 0 && time <= RESTART_THRESHOLD_SECONDS);
+	/** A film known to have no chapters of its own (one chapter, the whole film): no circles, no
+	 *  previous/next, no chapter title — just a player. Unknown while a chapter file is loading. */
+	const plain = $derived(chapters.length <= 1 && (chaptersIn !== undefined || fetched !== null));
 
 	// ── Chapters from an address ────────────────────────────────────────────
 	$effect(() => {
@@ -213,8 +224,16 @@
 	});
 
 	// ── Full screen and closing ─────────────────────────────────────────────
+	const windowMode = $derived(windowed && !contained);
 	let enteredFullscreen = false;
+	let isFullscreen = $state(false);
 	let closing = false;
+	function toggleFullscreen() {
+		if (!root) return;
+		if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+		else if (root.requestFullscreen) root.requestFullscreen().catch(() => {});
+		autohide.activity();
+	}
 	async function close() {
 		if (closing) return;
 		closing = true;
@@ -223,9 +242,11 @@
 		onclose?.();
 	}
 	function onFullscreenChange() {
-		if (document.fullscreenElement === root) enteredFullscreen = true;
-		// Leaving full screen by the browser's own means (Escape, the system gesture) closes the player.
-		else if (enteredFullscreen && !document.fullscreenElement) void close();
+		isFullscreen = document.fullscreenElement === root;
+		if (isFullscreen) enteredFullscreen = true;
+		// Leaving full screen by the browser's own means (Escape, the system gesture) closes the
+		// player — unless it is windowed, where it goes back to the centred window.
+		else if (enteredFullscreen && !document.fullscreenElement && !windowMode) void close();
 	}
 
 	// ── Keyboard ────────────────────────────────────────────────────────────
@@ -253,6 +274,7 @@
 		if (k === 'End' && chapters.length) return (seekTo(chapters[chapters.length - 1].start), handled());
 		if ((k === 'c' || k === 'C') && captions) return (toggleCaptions(), handled());
 		if ((k === 'm' || k === 'M') && video) return ((video.muted = !video.muted), handled());
+		if ((k === 'f' || k === 'F') && windowMode) return (toggleFullscreen(), handled());
 		if (/^[0-9]$/.test(k)) {
 			const i = k === '0' ? 9 : Number(k) - 1;
 			if (i < chapters.length) goToChapter(i);
@@ -376,7 +398,7 @@
 		if (!contained) {
 			restoreOverflow = document.documentElement.style.overflow;
 			document.documentElement.style.overflow = 'hidden';
-			if (fullscreen && root?.requestFullscreen) root.requestFullscreen().catch(() => {});
+			if (fullscreen && !windowed && root?.requestFullscreen) root.requestFullscreen().catch(() => {});
 		}
 		raf = requestAnimationFrame(frame);
 		void tick().then(() => root?.focus({ preventScroll: true }));
@@ -408,11 +430,17 @@
 	const compact = $derived(rootWidth > 0 && rootWidth < 640);
 </script>
 
+{#if windowMode}
+	<!-- The dimmed page behind the window; a click on it closes the player. -->
+	<div class="cp-backdrop" aria-hidden="true" onclick={() => void close()}></div>
+{/if}
+
 <div
 	bind:this={root}
 	bind:clientWidth={rootWidth}
 	class="cp"
 	class:contained
+	class:windowed={windowMode}
 	class:idle={!controlsVisible}
 	role="dialog"
 	aria-modal={contained ? undefined : 'true'}
@@ -458,7 +486,14 @@
 	</video>
 
 	<!-- The picture itself: a click plays or pauses (a tap shows the controls on a phone). -->
-	<button type="button" class="cp-stage" tabindex="-1" aria-hidden="true" onclick={onStageClick}></button>
+	<button
+		type="button"
+		class="cp-stage"
+		tabindex="-1"
+		aria-hidden="true"
+		onclick={onStageClick}
+		ondblclick={() => windowMode && !touch && toggleFullscreen()}
+	></button>
 
 	{#if paused}
 		<button type="button" class="cp-bigplay" aria-label={ended ? 'Replay from the start' : started ? 'Play' : `Play ${title}`} onclick={play}>
@@ -523,40 +558,46 @@
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" /></svg>
 					{/if}
 				</button>
-				<button type="button" class="cp-btn" aria-label="Previous chapter" title="Previous chapter" disabled={!chapters.length || atFirstStart} onclick={previous}>
-					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 6.13v11.74a.8.8 0 0 1-1.23.67L9.8 13.35a1.6 1.6 0 0 1 0-2.7l7.97-5.19A.8.8 0 0 1 19 6.13z" /></svg>
-				</button>
-				<button type="button" class="cp-btn" aria-label="Next chapter" title="Next chapter" disabled={nextTime === null} onclick={next}>
-					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 6.13v11.74a.8.8 0 0 0 1.23.67l7.97-5.19a1.6 1.6 0 0 0 0-2.7L6.23 5.46A.8.8 0 0 0 5 6.13z" /></svg>
-				</button>
+				{#if !plain}
+					<button type="button" class="cp-btn" aria-label="Previous chapter" title="Previous chapter" disabled={!chapters.length || atFirstStart} onclick={previous}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 6.13v11.74a.8.8 0 0 1-1.23.67L9.8 13.35a1.6 1.6 0 0 1 0-2.7l7.97-5.19A.8.8 0 0 1 19 6.13z" /></svg>
+					</button>
+					<button type="button" class="cp-btn" aria-label="Next chapter" title="Next chapter" disabled={nextTime === null} onclick={next}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 6.13v11.74a.8.8 0 0 0 1.23.67l7.97-5.19a1.6 1.6 0 0 0 0-2.7L6.23 5.46A.8.8 0 0 0 5 6.13z" /></svg>
+					</button>
+				{/if}
 				<span class="cp-time">{chapterTimeLabel(chapters, time)}</span>
-				{#if chapter && !compact}<span class="cp-title" title={chapter.title}>{chapter.title}</span>{/if}
+				{#if chapter && !compact && !plain}<span class="cp-title" title={chapter.title}>{chapter.title}</span>{/if}
 			</div>
 
-			<ol class="cp-chapters" aria-label="Chapters">
-				{#each chapters as c, i (i)}
-					<li>
-						<button
-							type="button"
-							class="cp-dot"
-							class:done={i < current}
-							class:now={i === current}
-							aria-label={`Chapter ${i + 1}: ${c.title}, ${formatTime(c.start)}`}
-							aria-current={i === current ? 'step' : undefined}
-							onclick={() => circleClick(i)}
-							onpointerdown={(e) => circleDown(e, i)}
-							onpointermove={circleMove}
-							onpointerup={cancelHold}
-							onpointercancel={cancelHold}
-							oncontextmenu={(e) => e.preventDefault()}
-							onpointerenter={(e) => e.pointerType === 'mouse' && tipForCircle(i, e.currentTarget)}
-							onpointerleave={() => hideTip('circle')}
-							onfocus={(e) => tipForCircle(i, e.currentTarget)}
-							onblur={() => hideTip('circle')}
-						>{i + 1}</button>
-					</li>
-				{/each}
-			</ol>
+			{#if plain}
+				<span></span>
+			{:else}
+				<ol class="cp-chapters" aria-label="Chapters">
+					{#each chapters as c, i (i)}
+						<li>
+							<button
+								type="button"
+								class="cp-dot"
+								class:done={i < current}
+								class:now={i === current}
+								aria-label={`Chapter ${i + 1}: ${c.title}, ${formatTime(c.start)}`}
+								aria-current={i === current ? 'step' : undefined}
+								onclick={() => circleClick(i)}
+								onpointerdown={(e) => circleDown(e, i)}
+								onpointermove={circleMove}
+								onpointerup={cancelHold}
+								onpointercancel={cancelHold}
+								oncontextmenu={(e) => e.preventDefault()}
+								onpointerenter={(e) => e.pointerType === 'mouse' && tipForCircle(i, e.currentTarget)}
+								onpointerleave={() => hideTip('circle')}
+								onfocus={(e) => tipForCircle(i, e.currentTarget)}
+								onblur={() => hideTip('circle')}
+							>{i + 1}</button>
+						</li>
+					{/each}
+				</ol>
+			{/if}
 
 			<div class="cp-right">
 				<button type="button" class="cp-btn" aria-label="Loop" aria-pressed={looping} title={looping ? 'Loop on — plays again from the start' : 'Loop off'} onclick={toggleLoop}>
@@ -567,9 +608,28 @@
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2zm0 2v10h16V7zm2.5 3.5A1.5 1.5 0 0 1 8 9h2.5v1.5H8v3h2.5V15H8a1.5 1.5 0 0 1-1.5-1.5zm7 0A1.5 1.5 0 0 1 15 9h2.5v1.5H15v3h2.5V15H15a1.5 1.5 0 0 1-1.5-1.5z" /></svg>
 					</button>
 				{/if}
-				<button type="button" class="cp-btn" aria-label="Exit full screen" title="Exit full screen" onclick={close}>
-					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h2v7H4V9h3.59L3.3 4.7l1.4-1.4L9 7.59zm6 0h-2v7h7V9h-3.59l4.3-4.3-1.42-1.4L15 7.59zM9 20h2v-7H4v2h3.59l-4.3 4.3 1.42 1.4L9 16.41zm6 0h-2v-7h7v2h-3.59l4.3 4.3-1.42 1.4L15 16.41z" /></svg>
-				</button>
+				{#if windowMode}
+					<button
+						type="button"
+						class="cp-btn"
+						aria-label={isFullscreen ? 'Exit full screen' : 'Full screen'}
+						title={isFullscreen ? 'Exit full screen' : 'Full screen'}
+						onclick={toggleFullscreen}
+					>
+						{#if isFullscreen}
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3h2v7H3V8h5zm6 0h2v5h5v2h-7zM3 14h7v7H8v-5H3zm11 0h7v2h-5v5h-2z" /></svg>
+						{:else}
+							<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h7v2H5v5H3zm11 0h7v7h-2V5h-5zM3 14h2v5h5v2H3zm16 0h2v7h-7v-2h5z" /></svg>
+						{/if}
+					</button>
+					<button type="button" class="cp-btn" aria-label="Close" title="Close" onclick={close}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6.4 5 12 10.6 17.6 5 19 6.4 13.4 12l5.6 5.6-1.4 1.4-5.6-5.6L6.4 19 5 17.6l5.6-5.6L5 6.4z" /></svg>
+					</button>
+				{:else}
+					<button type="button" class="cp-btn" aria-label="Exit full screen" title="Exit full screen" onclick={close}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4h2v7H4V9h3.59L3.3 4.7l1.4-1.4L9 7.59zm6 0h-2v7h7V9h-3.59l4.3-4.3-1.42-1.4L15 7.59zM9 20h2v-7H4v2h3.59l-4.3 4.3 1.42 1.4L9 16.41zm6 0h-2v-7h7v2h-3.59l4.3 4.3-1.42 1.4L15 16.41z" /></svg>
+					</button>
+				{/if}
 			</div>
 		</div>
 	</div>
@@ -650,6 +710,47 @@
 	}
 	.cp.contained {
 		position: absolute;
+	}
+
+	/* ── Windowed (desktop): a centred 16:9 window over the dimmed page ── */
+	.cp-backdrop {
+		position: fixed;
+		inset: 0;
+		z-index: 999;
+		background: rgba(11, 18, 32, 0.82);
+		animation: cp-fade-in 200ms ease-out;
+	}
+	.cp.windowed {
+		inset: auto;
+		left: 50%;
+		top: 50%;
+		width: min(92vw, calc(86vh * 16 / 9), 1600px);
+		aspect-ratio: 16 / 9;
+		transform: translate(-50%, -50%);
+		border-radius: 14px;
+		box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+		animation: cp-window-in 220ms ease-out;
+	}
+	.cp.windowed:fullscreen {
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		aspect-ratio: auto;
+		transform: none;
+		border-radius: 0;
+		box-shadow: none;
+		animation: none;
+	}
+	@keyframes cp-fade-in {
+		from {
+			opacity: 0;
+		}
+	}
+	@keyframes cp-window-in {
+		from {
+			opacity: 0;
+			transform: translate(-50%, -50%) scale(0.96);
+		}
 	}
 	.cp.idle {
 		cursor: none;
@@ -1005,6 +1106,7 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
+		.cp-backdrop,
 		.cp *,
 		.cp {
 			transition: none !important;

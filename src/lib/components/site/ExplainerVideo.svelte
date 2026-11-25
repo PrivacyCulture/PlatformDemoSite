@@ -14,7 +14,8 @@
 		compact = false,
 		// A still in place of the video: the page has a thumbnail and no file of its own.
 		image = false,
-		// A chapter file from Sorted: play opens the full-screen chapter player instead of playing here.
+		// A chapter file from Sorted: play opens the chapter player, full screen on touch devices.
+		// On desktop every film, chaptered or not, opens in a centred lightbox (see `lightbox`).
 		chapters = '',
 		open = $bindable(false)
 	}: {
@@ -42,6 +43,12 @@
 	 */
 	let touch = $state(false);
 	const posterUrl = $derived(poster?.trim() ? asset(poster.trim()) : undefined);
+	/**
+	 * Play opens the chapter player instead of playing in the column: on desktop always — a centred
+	 * lightbox over the dimmed page, a button to go full screen, a click outside closes and pauses
+	 * it — and on touch devices when the film has chapters (full screen there).
+	 */
+	const lightbox = $derived(!image && (chaptered || !touch));
 
 	$effect(() => {
 		const query = window.matchMedia('(hover: none)');
@@ -58,7 +65,7 @@
 	 */
 	export function play() {
 		if (image) return;
-		if (chaptered) {
+		if (lightbox) {
 			playerOpen = true;
 			open = true;
 			return;
@@ -173,7 +180,7 @@
 			class="block aspect-video w-full rounded-[inherit] bg-transparent object-cover"
 			{src}
 			poster={posterUrl ? imageAtWidth(posterUrl, 1440) : undefined}
-			controls={!chaptered && (started || touch)}
+			controls={!lightbox && (started || touch)}
 			playsinline
 			preload="metadata"
 			aria-label={label}
@@ -192,7 +199,7 @@
 			<track kind="captions" src={captions || undefined} srclang={site.video.captionsLang} label={site.video.captionsLabel} />
 		</video>
 
-		{#if !started && (!touch || chaptered)}
+		{#if !started && lightbox}
 			<button
 				type="button"
 				onclick={play}
@@ -205,12 +212,14 @@
 	{#if playerOpen}
 		<ChapterPlayer
 			{src}
-			chaptersUrl={`/api/explainer-chapters?url=${encodeURIComponent(chapters.trim())}`}
+			chapters={chaptered ? undefined : []}
+			chaptersUrl={chaptered ? `/api/explainer-chapters?url=${encodeURIComponent(chapters.trim())}` : ''}
 			poster={posterUrl ? imageAtWidth(posterUrl, 1920) : ''}
 			{captions}
 			captionsLang={site.video.captionsLang}
 			captionsLabel={site.video.captionsLabel}
 			title={label}
+			windowed={!touch}
 			onclose={closePlayer}
 		/>
 	{/if}

@@ -1,7 +1,8 @@
 <!--
 	The chapter player, on a placeholder film (static/demo/chapter-player/), at the two sizes it is
 	designed for: a 1920×1080 desktop (drawn scaled to fit this column, laid out at full size) and a
-	844×390 phone held landscape (drawn at its real size). "Open full screen" opens the real thing.
+	844×390 phone held landscape (drawn at its real size). "Open full screen" opens the real thing;
+	"Open windowed" opens it as the site's explainer does on desktop.
 -->
 <script lang="ts">
 	import ChapterPlayer from '$lib/components/site/ChapterPlayer.svelte';
@@ -12,6 +13,7 @@
 	const CHAPTERS = '/demo/chapter-player/chapters.json';
 
 	let full = $state(false);
+	let windowed = $state(false);
 	let deskWidth = $state(960);
 	const deskScale = $derived(Math.min(1, deskWidth / 1920));
 	let resets = $state({ desk: 0, phone: 0 });
@@ -31,6 +33,7 @@
 		<h1>Chapter player</h1>
 		<p>A placeholder film of ten chapters of different lengths. Hover or focus a numbered circle for its preview; on a phone, tap and hold. Keyboard: Space plays, ← → move 5s, Shift+← → or P/N change chapter, 1–9 and 0 jump to a chapter, C captions, Esc closes.</p>
 		<button type="button" class="open" onclick={() => (full = true)}>Open full screen</button>
+		<button type="button" class="open" onclick={() => (windowed = true)}>Open windowed (desktop)</button>
 	</header>
 
 	<section>
@@ -84,6 +87,21 @@
 		</ol>
 	</section>
 </main>
+
+{#if windowed}
+	<ChapterPlayer
+		windowed
+		src={SRC}
+		poster={POSTER}
+		captions={CAPTIONS}
+		chaptersUrl={CHAPTERS}
+		title="Placeholder explainer"
+		onclose={() => (windowed = false)}
+		onchapterchange={(d) => note(`windowed · chapterchange → ${d.index + 1} ${d.chapter.title}`)}
+		onplay={() => note('windowed · play')}
+		onpause={() => note('windowed · pause')}
+	/>
+{/if}
 
 {#if full}
 	<ChapterPlayer
