@@ -112,6 +112,9 @@
 	const chapter = $derived(current >= 0 ? chapters[current] : null);
 	const nextTime = $derived(nextChapterTime(chapters, time));
 	const atFirstStart = $derived(current <= 0 && time <= RESTART_THRESHOLD_SECONDS);
+	/** A film known to have no chapters of its own (one chapter, the whole film): no circles, no
+	 *  previous/next, no chapter title — just a player. Unknown while a chapter file is loading. */
+	const plain = $derived(chapters.length <= 1 && (chaptersIn !== undefined || fetched !== null));
 
 	// ── Chapters from an address ────────────────────────────────────────────
 	$effect(() => {
@@ -555,40 +558,46 @@
 						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h3.5v16H7zM13.5 4H17v16h-3.5z" /></svg>
 					{/if}
 				</button>
-				<button type="button" class="cp-btn" aria-label="Previous chapter" title="Previous chapter" disabled={!chapters.length || atFirstStart} onclick={previous}>
-					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 6.13v11.74a.8.8 0 0 1-1.23.67L9.8 13.35a1.6 1.6 0 0 1 0-2.7l7.97-5.19A.8.8 0 0 1 19 6.13z" /></svg>
-				</button>
-				<button type="button" class="cp-btn" aria-label="Next chapter" title="Next chapter" disabled={nextTime === null} onclick={next}>
-					<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 6.13v11.74a.8.8 0 0 0 1.23.67l7.97-5.19a1.6 1.6 0 0 0 0-2.7L6.23 5.46A.8.8 0 0 0 5 6.13z" /></svg>
-				</button>
+				{#if !plain}
+					<button type="button" class="cp-btn" aria-label="Previous chapter" title="Previous chapter" disabled={!chapters.length || atFirstStart} onclick={previous}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h2v14H6zM19 6.13v11.74a.8.8 0 0 1-1.23.67L9.8 13.35a1.6 1.6 0 0 1 0-2.7l7.97-5.19A.8.8 0 0 1 19 6.13z" /></svg>
+					</button>
+					<button type="button" class="cp-btn" aria-label="Next chapter" title="Next chapter" disabled={nextTime === null} onclick={next}>
+						<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 5h2v14h-2zM5 6.13v11.74a.8.8 0 0 0 1.23.67l7.97-5.19a1.6 1.6 0 0 0 0-2.7L6.23 5.46A.8.8 0 0 0 5 6.13z" /></svg>
+					</button>
+				{/if}
 				<span class="cp-time">{chapterTimeLabel(chapters, time)}</span>
-				{#if chapter && !compact}<span class="cp-title" title={chapter.title}>{chapter.title}</span>{/if}
+				{#if chapter && !compact && !plain}<span class="cp-title" title={chapter.title}>{chapter.title}</span>{/if}
 			</div>
 
-			<ol class="cp-chapters" aria-label="Chapters">
-				{#each chapters as c, i (i)}
-					<li>
-						<button
-							type="button"
-							class="cp-dot"
-							class:done={i < current}
-							class:now={i === current}
-							aria-label={`Chapter ${i + 1}: ${c.title}, ${formatTime(c.start)}`}
-							aria-current={i === current ? 'step' : undefined}
-							onclick={() => circleClick(i)}
-							onpointerdown={(e) => circleDown(e, i)}
-							onpointermove={circleMove}
-							onpointerup={cancelHold}
-							onpointercancel={cancelHold}
-							oncontextmenu={(e) => e.preventDefault()}
-							onpointerenter={(e) => e.pointerType === 'mouse' && tipForCircle(i, e.currentTarget)}
-							onpointerleave={() => hideTip('circle')}
-							onfocus={(e) => tipForCircle(i, e.currentTarget)}
-							onblur={() => hideTip('circle')}
-						>{i + 1}</button>
-					</li>
-				{/each}
-			</ol>
+			{#if plain}
+				<span></span>
+			{:else}
+				<ol class="cp-chapters" aria-label="Chapters">
+					{#each chapters as c, i (i)}
+						<li>
+							<button
+								type="button"
+								class="cp-dot"
+								class:done={i < current}
+								class:now={i === current}
+								aria-label={`Chapter ${i + 1}: ${c.title}, ${formatTime(c.start)}`}
+								aria-current={i === current ? 'step' : undefined}
+								onclick={() => circleClick(i)}
+								onpointerdown={(e) => circleDown(e, i)}
+								onpointermove={circleMove}
+								onpointerup={cancelHold}
+								onpointercancel={cancelHold}
+								oncontextmenu={(e) => e.preventDefault()}
+								onpointerenter={(e) => e.pointerType === 'mouse' && tipForCircle(i, e.currentTarget)}
+								onpointerleave={() => hideTip('circle')}
+								onfocus={(e) => tipForCircle(i, e.currentTarget)}
+								onblur={() => hideTip('circle')}
+							>{i + 1}</button>
+						</li>
+					{/each}
+				</ol>
+			{/if}
 
 			<div class="cp-right">
 				<button type="button" class="cp-btn" aria-label="Loop" aria-pressed={looping} title={looping ? 'Loop on — plays again from the start' : 'Loop off'} onclick={toggleLoop}>
